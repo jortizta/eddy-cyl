@@ -16,23 +16,11 @@
         real dtheta,dr,dz,dq1x3,dq3x1,dq2x3,dq3x2,dq2x1,dq1x2
 	REAL,ALLOCATABLE,DIMENSION(:,:,:)::U1_TMP2,U2_TMP2,U3_TMP2,rtmp1
 	
-!	if(mod(ICYCLE,10).eq.0) then
-	ALLOCATE(U1_TMP2(NX,NY,NZ),U2_TMP2(NX,NY,NZ),U3_TMP2(NX,NY,NZ),rtmp1(nx,ny,nz))
- 	CALL CENTER_VELOCITY(NX,NY,NZ,UO,U1_TMP2,1)
- 	CALL CENTER_VELOCITY(NX,NY,NZ,VO,U2_TMP2,2)
- 	CALL CENTER_VELOCITY(NX,NY,NZ,WO,U3_TMP2,3)
-! 	WRITE(*,*), UO(:,:,:)
-! 	IF(MYRANK.EQ.0) CALL GATHER_2D_SLAVES
-! 	IF(MYRANK.EQ.0) THEN
-!  	WRITE(*,*),P(:,5,1),P(:,5,KZ2),P(5,1 ,:),P(5,JY2,:)
-! 	WRITE(*,*),WO(NX/2,NY/2,NZ-2),WO(NX/2,NY/2,NZ-1),0.50*(WO(NX/2,NY/2,NZ-1)+WO(NX/2,NY/2,NZ-2)),U3_TMP2(NX/2,NY/2,NZ-1)
-! 	ELSE
-! 	WRITE(*,*),NZ,KZ1,KZ2,MYRANK
-! 	WRITE(*,*),WO(NX/2,NY/2,1),WO(NX/2,NY/2,2),0.50*(WO(NX/2,NY/2,NZ-1)+WO(NX/2,NY/2,NZ)),U3_TMP2(NX/2,NY/2,NZ-1)
-! 	ENDIF
-! 	CALL WRITE_PLANE(UO,2,NY/2,0,0,'UO_',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,ICYCLE,TIME,DTM1,STAT)
-! 	CALL WRITE_PLANE(UO,2,2,0,0,'UO_',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,ICYCLE,TIME,DTM1,STAT)
 
+	ALLOCATE(U1_TMP2(NX,NY,NZ),U2_TMP2(NX,NY,NZ),U3_TMP2(NX,NY,NZ),rtmp1(nx,ny,nz))
+	CALL CENTER_VELOCITY(NX,NY,NZ,UO,U1_TMP2,1)
+	CALL CENTER_VELOCITY(NX,NY,NZ,VO,U2_TMP2,2)
+	CALL CENTER_VELOCITY(NX,NY,NZ,WO,U3_TMP2,3)
 
 !----------------------------------------------------------------------------------------------------------------
 
@@ -49,7 +37,7 @@
 
 
 
- 	
+	
         CALL WRITE_PLANE(U1_TMP2,2,NY/2+NY/4+1,0,0,'U0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
         CALL WRITE_PLANE(U2_TMP2,2,NY/2+NY/4+1,0,0,'V0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
@@ -297,17 +285,6 @@
 
 
 
-!	CALL WRITE_PLANE(U3_TMP2,2,192,0,0,'omgaz1',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
-!     &			YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-	
-!        if(MYRANK==0) write(*,*)"********WHAT IS WRONG    1***********"
-!	CALL WRITE_PLANE(U3_TMP2,2,96,0,0,'omgaz1',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
-!     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-
-
-
-c$$$!        if(MYRANK==0) write(*,*)"********WHAT IS WRONG    2***********"
-
         do k=kz1,kz2
         do j=jy1,jy2
         do i=ix1,ix2
@@ -315,43 +292,6 @@ c$$$!        if(MYRANK==0) write(*,*)"********WHAT IS WRONG    2***********"
 	ENDDO
 	ENDDO
 	ENDDO
-!------------------------------------------------------------------------------------------------------	
-C$$$        CALL WRITE_PLANE(DENS,2,2,0,0,'RHO',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
-C$$$     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-
-C$$$        CALL WRITE_PLANE(DENS,2,NY/2,0,0,'RHO',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
-C$$$     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-
-C$$$        CALL WRITE_PLANE(DENS,2,NY/4,0,0,'RHO',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
-C$$$     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-
-C$$$        CALL WRITE_PLANE(DENS,2,NY/2+NY/4,0,0,'RHO',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
-C$$$     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-
-C$$$	CALL WRITE_PLANE(U3_TMP2,2,NY/4,0,0,'RHOP',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
-C$$$     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-
-C$$$	CALL WRITE_PLANE(U3_TMP2,2,NY/2+NY/4,0,0,'RHOP',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
-C$$$     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-!------------------------------------------------------------------------------------------------------	
-
-
-
-!        CALL WRITE_PLANE(U3_TMP2,3,768,0,0,'RHOP',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
-!     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-
-! 	CALL WRITE_PLANE(U3_TMP2,1,125,0,0,'WO',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,ICYCLE,TIME,DTM1,STAT)
-! 
-! 	CALL WRITE_PLANE(U3_TMP2,1,122,0,0,'WO',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,ICYCLE,TIME,DTM1,STAT)
-! 
-! 	CALL WRITE_PLANE(U3_TMP2,1,115,0,0,'WO',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,ICYCLE,TIME,DTM1,STAT)
-! 
-! 	CALL WRITE_PLANE(P,2,NY/2,0,0,'P',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,ICYCLE,TIME,DTM1,STAT)
-! 	write(*,*),U3_TMP2(2,2,nz),U3_TMP2(2,2,nz-1),U3_TMP2(2,2,1),U3_TMP2(2,2,2)
-! 	CALL WRITE_PLANE(WO,2,2,0,0,'WO_',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,ICYCLE,TIME,DTM1,STAT)
-!	endif
-!------------------------------------------------------------------------------------------------------	
-
 	END
 
 
@@ -509,23 +449,24 @@ C$$$     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 	call MPI_SEND(Temp_Recv,1*ny*nz,MPI_DOUBLE_PRECISION,0,1,commx2x3,status1,stat)
 
 	endif
+
 	
-    	if (MYRANK.EQ.myidM) then
-	 write(210) icycle,TIME,dtm,9.810d0,1.0d0,180.0,1.0
-    	 write(210) dir,index1, iu, iv, iw
-    	write(210) xc(index1), xu(index1)
-    	write(210) ny, nzg
-    	write(210) yc, yv
+	if (MYRANK.EQ.myidM) then
+        write(210) icycle,TIME,dtm,grav,rho_0,1.d0/ru1,1.0 !Prandtl# =1	
+        write(210) dir,index1, iu, iv, iw
+	write(210) xc(index1), xu(index1)
+	write(210) ny, nzg
+	write(210) yc, yv
         write(210) zcg, zwg
-    	if (prec.EQ.0) then
+	if (prec.EQ.0) then
      	allocate(SP_plane(1:ny,1:nzg))
      	SP_plane=PlnX1(:,:,1) !store plane in single precsion
      	write(210)  SP_plane
      	deallocate(SP_plane)
-    	else 
-    	write(210) PlnX1(:,:,1)
-    	endif
-   	endif
+	else 
+	write(210) PlnX1(:,:,1)
+	endif
+	endif
 
 	ELSEIF(DIR.EQ.2) THEN
 	
@@ -568,9 +509,9 @@ C$$$     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 	endif
 
 	
- 	if (MYRANK.EQ.myidM) then 
-    	write(210) icycle,TIME,dtm,9.810d0,1.0d0,180.0,1.0
-    	write(210) dir,index1, iu, iv, iw
+ 	if (MYRANK.EQ.myidM) then
+	write(210) icycle,TIME,dtm,grav,rho_0,1.d0/ru1,1.0 !Prandtl# =1
+        write(210) dir,index1, iu, iv, iw
     	write(210) yc(index1), yv(index1)
     	write(210) nx, nzg
     	write(210) xc, xu
@@ -597,144 +538,51 @@ C$$$     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 
  	if(Xmaster.eq.1) then 
 	index2=index1-(sz-2)
-!	write(*,*) index2
+
 	myidM2=MYRANK
 	allocate(Temp_Recv(nx,ny))
 	Temp_Recv(:,:)=var(:,:,index2)
-! 	call MPI_SEND(Temp_Recv,nx*ny*1,MPI_DOUBLE_PRECISION,0,1,commx1x2,status1,stat)
-! 	endif
-	
-
-! 	if(MYRANK.eq.0) then
-! 	allocate(Temp_Recv(nx,ny))
-! 	Temp_Recv=0.0
-! 	WRITE(*,*)"*********RECEIVE ERROR********"
-! 	call MPI_RECV(Temp_Recv,nx*ny*1,MPI_DOUBLE_PRECISION,0,1,commx1x2,status1,stat)
-! 	WRITE(*,*)"*********RECEIVE ERROR2********"
-! 
-! 	call MPI_BARRIER(MPI_COMM_EDDY,stat)
-! 	
-! 	elseif(MYRANK.eq.myidM2) then
-! 	allocate(Temp_Recv(nx,ny))
-! 	Temp_Recv(:,:)=var(:,:,nz-1)
-! 	call MPI_SEND(Temp_Recv,nx*ny*1,MPI_DOUBLE_PRECISION,0,1,commx1x2,status1,stat)
-! 	endif
 
 
 
+        write(filename,'(a,i4.4,a,i8.8,a)') trim(varname)//"_k",index1,
+     &  "_n",icycle,".pln"
 
-! 	Xmaster = -1
-!   	Xnode   = -1
-!   	if (index1.GT.sz-1.AND.index1.LT.ez+1) then !1 
-! !This node contains this plane
-!    	if (rankx1x2.EQ.0) then 
-!     	Xmaster = 1
-! !     	Master  = myid
-!    	else 
-!     	Xnode   = 1
-!    	endif 
-! 
-!   	elseif ( (index1.EQ.sz-1.AND.sz-1.EQ.1).OR.(index1.EQ.ez+1.AND.ez+1.EQ.NZG) )  then !1 
-! !This node contains this plane and its a boundary plane
-! 
-!    	if (rankx1x2.EQ.0) then 
-!     	Xmaster = 1
-! !     	Master  = myid
-!    	else 
-!     	Xnode   = 1
-!    	endif 
-! 
-! 	endif
-! 	write(*,*)Xmaster, Xnode
-! 	if(Xmaster.eq.1) then
-! 	allocate(Temp_Recv(nx,ny))
-! 	allocate(Temp_Send(nx,ny))
-! 	do j=1,ny
-!    	do i=1,nx
-!     	Temp_Send(i,j) = var(i,j,index1)
-!    	enddo
-!   	enddo
-! 	write(*,*)"****INDIR31*****"
-! 	sp1=size(PlnX3,1)
-! 	sp2=size(PlnX3,2)
-! 	allocate(Outplane(1:sp1,1:sp2))
-! 	
-! ! 	if(myrank.eq.0) then
-! 
-! 	DO n=0,sizex1x2-1
-! 	write(*,*)"****INDIR32*****"
-! 	  if(n.eq.0) then
-! 	    do i=2,nx-1
-! 	     do j=2,ny-1
-! 	      Outplane(i,j)=Temp_Recv(i,j)
-! 	     enddo
-! 	    enddo
-! 	    Temp_Recv=Temp_Send
-! 	  else
-!  	      call MPI_RECV(Temp_Recv,nx*ny*1,MPI_DOUBLE_PRECISION,n,1,commx1x2,status1,stat)
-! 	  endif
-! 	 
-! 	 if(n.ne.0) then
-! 	      jstart=n*(ny-2)/nyprocs
-!  	      istart=n*(nx-2)/nxprocs
-! 	 endif
-! 	      do i=2,nx-1
-! 	       do j=2,ny-1
-! 	        js=jstart+j
-! 		is=istart+i
-!  	        Outplane(is,js)=Temp_Recv(i,j)
-! 	       enddo
-! 	      enddo
-! 	ENDDO
-! 	PlnX3(:,:,1)=Outplane(:,:)
-! 	elseif(Xnode.eq.1) then
-! 	allocate( Temp_Send(nx,ny), STAT=s1)
-!     	do j=1,ny
-!     	do i=1,nx
-!      	Temp_Send(i,j) = var(i,j,index1)
-!     	enddo
-!    	enddo
-! 	call MPI_SEND(Temp_Recv,nx*ny*1,MPI_DOUBLE_PRECISION,0,1,commx1x2,status1,stat)
-! 
-! 	endif
-! 	if (MYRANK.EQ.myidM2) then
-	write(filename,'(a,i4.4,a,i8.8,a)') trim(varname)//"_k",index1,"_n",icycle,".pln"
-
-  	open(210,file=filename,form='unformatted',status='unknown',iostat=s1) 
-    	write(210) icycle,TIME,dtm,9.810d0,1.0d0,180.0,1.0
-    	write(210) dir,index1, iu, iv, iw
-    	write(210) zcg(index1), zwg(index1)
-    	write(210) nx, ny
-    	write(210) xc, xu
-    	write(210) yc, yv
-    	if (prec.EQ.0) then
+        open(210,file=filename,form='unformatted',status='unknown',iostat=s1) 
+        write(210) icycle,TIME,dtm,grav,rho_0,1.d0/ru1,1.0 !Prandtl# =1
+        write(210) dir,index1, iu, iv, iw
+	write(210) zcg(index1), zwg(index1)
+	write(210) nx, ny
+	write(210) xc, xu
+	write(210) yc, yv
+        if (prec.EQ.0) then
      	allocate( SP_plane(1:nx,1:ny),STAT=s1 )
      	SP_plane=Temp_Recv !store plane in single precsion
      	write(210)  SP_plane
      	deallocate(SP_plane)
-    	else 
+	else 
      	write(210) Temp_Recv(:,:)
-    	endif
+	endif
 	WRITE(*,*)"***************WROTE PLANE IN Z DIR********************"
-   	endif 
+	endif 
 	ENDIF
 	
 	close(210)
-	err1=0
- 	stat=err1
- 	return
+        err1=0
+	stat=err1
+        return
  
 1000    continue
   
- 	if (MYRANK.EQ.0) then
-  	inquire(unit=210,opened=cfile)
-  	if (cfile) then
-   	write(210) "ERROR ERROR"
-   	close(210)
-  	endif
+	if (MYRANK.EQ.0) then
+	inquire(unit=210,opened=cfile)
+	if (cfile) then
+	write(210) "ERROR ERROR"
+	close(210)
 	endif
- 	stat=-1
- 	return
+	endif
+	stat=-1
+	return
 	end subroutine write_plane
 ! 
 	subroutine Reduce_Plane_to_Master(var,dir,plane,Master,PX,sp1,sp2,nx,ny,nz,nzg,stat)
@@ -1339,7 +1187,6 @@ c$$$        END
 	REAL    ::  URMS(NX,NZ),  VRMS(NX,NZ),  WRMS(NX,NZ),  DENSRMS(NX,NZ)
 	REAL    ::  TMP1(NX,NZ),  TMP2(NX,NZ),  TMP3(NX,NZ),     TMP4(NX,NZ)
 
-c	if(myrank ==0 ) write(*,*) "NY = ", NY
 
 	DO I=IX1,IX2
 	DO K=KZ1,KZ2

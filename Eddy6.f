@@ -347,7 +347,7 @@ c...input parameters (namelist-statements)
 c
       CALL INPALL(nx,ny,nz,nzg)
 c      hspdir = '/home/karu/code_Finfty_LES/run/'
-      hspdir = '/home/jose/WORK/EDDY_SPHEROID_200/run/'
+      hspdir = '/home/jose/WORK/SOURCE_EDDY_CYL/run/'
 
       CALL MPI_SETUP(nx,ny,nz,nzg,ierr)
       MYLEFT  = MYRANK-1
@@ -3836,7 +3836,7 @@ c
 !      endif
 c
 !      if((time-timep).gt.((periodo5)*(iplant9+1))) then
-         if(mod(icycle,100).eq.0) then
+         if(mod(icycle,5).eq.0) then
          clocktemp = tclock()
          iplant9=iplant9+1
 c
