@@ -347,7 +347,8 @@ c...input parameters (namelist-statements)
 c
       CALL INPALL(nx,ny,nz,nzg)
 c      hspdir = '/home/karu/code_Finfty_LES/run/'
-      hspdir = '/home/jose/WORK/SOURCE_EDDY_CYL/run/'
+      hspdir = './'
+  
 
       CALL MPI_SETUP(nx,ny,nz,nzg,ierr)
       MYLEFT  = MYRANK-1
