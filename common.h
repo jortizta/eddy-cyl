@@ -11,7 +11,7 @@ c                                                             parameters
 C-----------------------------------------------------------------------
 c
       IMPLICIT NONE
-      INTEGER, PARAMETER :: MMX=512,MMY=128,MMZ=2048
+      INTEGER, PARAMETER :: MMX=514,MMY=130,MMZ=2050
       INTEGER, PARAMETER :: NIMPLXMAX=2,NIMPLYMAX=2
       REAL, PARAMETER :: pi=3.141592653589793
       
