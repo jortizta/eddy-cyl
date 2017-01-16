@@ -328,9 +328,11 @@ c.... Pipe flow
       character*160 filetprb,fileycor,fileyspc,fileprbtmp,filetmavg,filereg
 
       character*160 icycle_string
-c
+
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-c
+c                                                 directories
+
+
 c-----------------------------------------------------------------------
 c                                                 input data and setup
 c-----------------------------------------------------------------------

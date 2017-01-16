@@ -542,8 +542,8 @@ C     IF DIR = -1 READ ELSE WRITE
 c     note that all files read the input, but only root writes to output
         IF(MYRANK==0) THEN
         KMAX=1114;KMIN=151;
-        NKRR = KMAX-KMIN+1+5*(FLOOR((6144-KMAX)/20.0))
-        ALLOCATE (TMPF(NX,NY,6144),TEMP(NX-10,NY,NKRR))
+        NKRR = KMAX-KMIN+1+5*(FLOOR((NZG-2-KMAX)/20.0))
+        ALLOCATE (TMPF(NX,NY,NZG),TEMP(NX-10,NY,NKRR))
           OPEN(19,FILE=NAME,STATUS='UNKNOWN',FORM='UNFORMATTED')
           WRITE(19) NX,NY,MYSIZE*(NZ-2)+2,1
           IF(MYSIZE==1) THEN
@@ -599,7 +599,7 @@ C
 
 !           write(*,*) 'ALREADY HERE1'
            MK = KX;COUNTER = 1;NK = 1;
-           DO NKR=1,FLOOR((6144-KMAX)/20.0)
+           DO NKR=1,FLOOR((NZG-2-KMAX)/20.0)
             MK = MK+1
             KXX0 = KMAX+NK*20-2
             KXX1 = KMAX+NK*20-1
