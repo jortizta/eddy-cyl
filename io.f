@@ -518,6 +518,9 @@ C
 
 C     IF DIR = -1 READ ELSE WRITE
 
+      NZG = MYSIZE*(NZ-2)+2
+
+
       IF(DIR==-1) THEN
         OPEN(19,FILE=NAME,STATUS='UNKNOWN',FORM='UNFORMATTED')
         READ(19) I,J,K,JP 
