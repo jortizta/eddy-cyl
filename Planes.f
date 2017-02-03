@@ -420,7 +420,7 @@
 	allocate(Outplane(1:ny,1:nzg))
 	if(myrank.eq.0) then
 
-	DO n=0,sizex2x3-1
+	DO n=0,sizex2x3-1  ! sizex2x3 - processor number  
 	  if(n.eq.0) then
 	    do j=2,ny-1
 	     do k=2,nz-1
@@ -430,12 +430,15 @@
 	  else
  	      call MPI_RECV(Temp_Recv,1*ny*nz,MPI_DOUBLE_PRECISION,n,1,commx2x3,status1,stat)
 	  endif
+
+         
+         kstart=0
 	 if(n.ne.0) then
 	      kstart=n*(nzg-2)/nzprocs
 ! 	      istart=(nx-2)/nxprocs
 !  	      write(*,*), kstart
 	 endif
-	 kstart=0
+	
 	      do j=2,ny-1
 	       do k=2,nz-1
 	        ks=kstart+k
