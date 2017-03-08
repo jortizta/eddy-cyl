@@ -507,7 +507,7 @@ c
       INCLUDE 'mpif.h'
 c
       CHARACTER NAME*(*)
-      INTEGER DIR,NX,NY,NZ,nstep
+      INTEGER DIR,NX,NY,NZ,NZG,nstep
       REAL P(NX,NY,NZ),DP(NX,NY,NZ)
 c      REAL*4 P1(NX,NY,NZ)
       REAL TIME,DTM1
