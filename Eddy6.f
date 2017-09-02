@@ -198,7 +198,7 @@ c.....immersed boundary
       integer, dimension(:,:), allocatable :: mrksb
       real, dimension(:), allocatable :: pbd,dudxb,dudyb,dudzb
      &                ,dvdxb,dvdyb,dvdzb,dwdxb,dwdyb,dwdzb,areaf,cf
-      real, dimension(:,:), allocatable :: dsb
+      real, dimension(:,:), allocatable :: dsb,cf_aux
 
       real, dimension(:,:), allocatable :: trvtx,vtxnrm
       integer, dimension(:), allocatable :: mrkpvtx,vtxno
@@ -348,9 +348,9 @@ c
 c...input parameters (namelist-statements)
 c
       CALL INPALL(nx,ny,nz,nzg)
-c      hspdir = '/home/karu/code_Finfty_LES/run/'
+
       hspdir = './'
-  
+      IF(MYRANK.EQ.0) write(6,'(A)') 'hspdir='//trim(hspdir) 
 
       CALL MPI_SETUP(nx,ny,nz,nzg,ierr)
       MYLEFT  = MYRANK-1
@@ -1062,7 +1062,7 @@ c
             ALLOCATE(pbd(nfacet),mrkpb(nfacet),mrksb(9,nfacet)    !!!!!! instead of mrksb(nfacet,9)
      &          ,dudxb(nfacet),dudyb(nfacet),dudzb(nfacet)
      &          ,dvdxb(nfacet),dvdyb(nfacet),dvdzb(nfacet)
-     &          ,dwdxb(nfacet),dwdyb(nfacet),dwdzb(nfacet))
+     &          ,dwdxb(nfacet),dwdyb(nfacet),dwdzb(nfacet),cf_aux(nfacet,6))
           ELSEIF(IVRTX==1) THEN
             ALLOCATE(limpnd(nbd,nflp),mimpnd(nbd,nflp))
             IF(ICALF>0) THEN
@@ -1074,7 +1074,7 @@ c
             ALLOCATE(pbd(n),mrkpb(n),mrksb(9,n))
             ALLOCATE(dudxb(n),dudyb(n),dudzb(n)
      &            ,dvdxb(n),dvdyb(n),dvdzb(n)
-     &            ,dwdxb(n),dwdyb(n),dwdzb(n))
+     &            ,dwdxb(n),dwdyb(n),dwdzb(n),cf_aux(n,6))
           ENDIF
         ENDIF
         ALLOCATE(areaf(nfacet),trino(nfacet))        
@@ -3150,20 +3150,25 @@ c the SHEAR is evaluated by SHEAR_BODY using the velocities UB,VB,WB
 c established by MOMFORC
 c output: components along X,Y,Z of the normal derivatives of U,V,W
 c (DUDXB,DUDYB,DUDZB,DVDXB,DVDYB,DVDZB,DWDXB,DWDYB,DWDZB)
+
+  
+
+
+
         IF(IVRTX==0) THEN
           DO ibd=1,mbdn-1
             ilb = lb(ibd)+1
             ile = lb(ibd)+mb(ibd)
             CALL SHEAR_BODY(ub,vb,wb,nx,ny,nz,xu,yv,zw,xc,yc,zc
      &            ,xu_car,yu_car,xv_car,yv_car,xc_car,yc_car,vertexc,unvect,nfacet
-     &            ,dudxb,dudyb,dudzb,dvdxb,dvdyb,dvdzb,dwdxb,dwdyb,dwdzb,mrksb,ibd,nbd,ilb,ile,tlevel,0)
+     &            ,dudxb,dudyb,dudzb,dvdxb,dvdyb,dvdzb,dwdxb,dwdyb,dwdzb,cf_aux,mrksb,ibd,nbd,ilb,ile,tlevel,0)
           ENDDO
           DO ibd=mbdn,nbd
             ilb = lb(ibd)+1
             ile = lb(ibd)+mb(ibd)
             CALL SHEAR_BODY(ub,vb,wb,nx,ny,nz,xu,yv,zw,xc,yc,zc
      &            ,xu_car,yu_car,xv_car,yv_car,xc_car,yc_car,vertexc,unvect,nfacet
-     &            ,dudxb,dudyb,dudzb,dvdxb,dvdyb,dvdzb,dwdxb,dwdyb,dwdzb,mrksb,ibd,nbd,ilb,ile,tlevel,1)
+     &            ,dudxb,dudyb,dudzb,dvdxb,dvdyb,dvdzb,dwdxb,dwdyb,dwdzb,cf_aux,mrksb,ibd,nbd,ilb,ile,tlevel,1)
           ENDDO
         ELSE
           DO ibd=1,mbdn-1
@@ -3171,20 +3176,24 @@ c (DUDXB,DUDYB,DUDZB,DVDXB,DVDYB,DVDZB,DWDXB,DWDYB,DWDZB)
             ile = lv(ibd)+mv(ibd)
             CALL SHEAR_BODY(ub,vb,wb,nx,ny,nz,xu,yv,zw,xc,yc,zc
      &            ,xu_car,yu_car,xv_car,yv_car,xc_car,yc_car,trvtx,vtxnrm,nvtx
-     &            ,dudxb,dudyb,dudzb,dvdxb,dvdyb,dvdzb,dwdxb,dwdyb,dwdzb,mrksb,ibd,nbd,ilb,ile,tlevel,0)
+     &            ,dudxb,dudyb,dudzb,dvdxb,dvdyb,dvdzb,dwdxb,dwdyb,dwdzb,cf_aux,mrksb,ibd,nbd,ilb,ile,tlevel,0)
           ENDDO
           DO ibd=mbdn,nbd
             ilb = lv(ibd)+1
             ile = lv(ibd)+mv(ibd)
             CALL SHEAR_BODY(ub,vb,wb,nx,ny,nz,xu,yv,zw,xc,yc,zc
      &            ,xu_car,yu_car,xv_car,yv_car,xc_car,yc_car,trvtx,vtxnrm,nvtx
-     &            ,dudxb,dudyb,dudzb,dvdxb,dvdyb,dvdzb,dwdxb,dwdyb,dwdzb,mrksb,ibd,nbd,ilb,ile,tlevel,1)
+     &            ,dudxb,dudyb,dudzb,dvdxb,dvdyb,dvdzb,dwdxb,dwdyb,dwdzb,cf_aux,mrksb,ibd,nbd,ilb,ile,tlevel,1)
           ENDDO
         ENDIF
 
         nwritebdy = nwritebdy+1
 
 c The values of pressure and shear stress are written on a file
+
+
+
+
         DO ibd=1,nbd
           IF(IVRTX==0) THEN
             ilb = lb(ibd)+1
@@ -3199,7 +3208,7 @@ c$$$     &         ,dwdxb,dwdyb,dwdzb,mrkpb,mrksb,nfacet,nfacetot,ilb,ile)
 
             CALL IOSHEARVERTEXC('imb'//index(ibd)//'.'//trim(icycle_string)
      &         //'.tno',nbd,trino,pbd,dudxb,dudyb,dudzb,dvdxb,dvdyb,dvdzb
-     &         ,dwdxb,dwdyb,dwdzb,mrkpb,mrksb,nfacet,nfacetot,ilb,ile)
+     &         ,dwdxb,dwdyb,dwdzb,cf_aux,mrkpb,mrksb,nfacet,nfacetot,ilb,ile)
 
 
 
@@ -3210,7 +3219,7 @@ c$$$     &         ,dwdxb,dwdyb,dwdzb,mrkpb,mrksb,nfacet,nfacetot,ilb,ile)
             ile = lv(ibd)+mv(ibd)
             CALL IOSHEARVERTEXC('imb.'//index(ibd)//'.'//index(nwritebdy)
      &         //'.vno',nbd,vtxno,pbd,dudxb,dudyb,dudzb,dvdxb,dvdyb,dvdzb
-     &         ,dwdxb,dwdyb,dwdzb,mrkpb,mrksb,nvtx,nvtxtot,ilb,ile)
+     &         ,dwdxb,dwdyb,dwdzb,cf_aux,mrkpb,mrksb,nvtx,nvtxtot,ilb,ile)
           ENDIF
         ENDDO
 !        if(myrank.eq.0) then
@@ -3529,19 +3538,23 @@ c.....compute forcing in z momentum
           clock(62) = clock(62) + tclock()-clocktemp
  
           clocktemp = tclock()
+
+
+
+
           DO ibd=1,mbdn-1
             ilb = lb(ibd)+1
             ile = lb(ibd)+mb(ibd)
             CALL SHEAR_BODY(ub,vb,wb,nx,ny,nz,xu,yv,zw,xc,yc,zc
      &,xu_car,yu_car,xv_car,yv_car,xc_car,yc_car,vertexc,unvect,nfacet
-     &,dudxb,dudyb,dudzb,dvdxb,dvdyb,dvdzb,dwdxb,dwdyb,dwdzb,mrksb,ibd,nbd,ilb,ile,tlevel,0)
+     &,dudxb,dudyb,dudzb,dvdxb,dvdyb,dvdzb,dwdxb,dwdyb,dwdzb,cf_aux,mrksb,ibd,nbd,ilb,ile,tlevel,0)
           ENDDO
           DO ibd=mbdn,nbd
             ilb = lb(ibd)+1
             ile = lb(ibd)+mb(ibd)
             CALL SHEAR_BODY(ub,vb,wb,nx,ny,nz,xu,yv,zw,xc,yc,zc
      &,xu_car,yu_car,xv_car,yv_car,xc_car,yc_car,vertexc,unvect,nfacet
-     &,dudxb,dudyb,dudzb,dvdxb,dvdyb,dvdzb,dwdxb,dwdyb,dwdzb,mrksb,ibd,nbd,ilb,ile,tlevel,1)
+     &,dudxb,dudyb,dudzb,dvdxb,dvdyb,dvdzb,dwdxb,dwdyb,dwdzb,cf_aux,mrksb,ibd,nbd,ilb,ile,tlevel,1)
           ENDDO
           clock(63) = clock(63) + tclock()-clocktemp
 

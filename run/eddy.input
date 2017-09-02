@@ -16,7 +16,7 @@
         STR3='x3_grid.in',
         STR4='suboff.grd',
         STR5='stl.input',
-        STR6='string_test'
+        STR6='./'
 &END
 *
 *******************************************************************

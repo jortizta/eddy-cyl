@@ -1753,7 +1753,7 @@ C     PURPOSE: Write shear stresses on center of triangles.
 C
 C------------------------------------------------------------------------
       subroutine ioshearvertexc(filename,nbd,trino,pbd,dudxb,dudyb,dudzb
-     &     ,dvdxb,dvdyb,dvdzb,dwdxb,dwdyb,dwdzb,mrkp,mrks,nfacet,nfacetot,ilb,ile)
+     &     ,dvdxb,dvdyb,dvdzb,dwdxb,dwdyb,dwdzb,cf_aux,mrkp,mrks,nfacet,nfacetot,ilb,ile)
 
       include 'common.h'
       include 'immersed.h'
@@ -1768,6 +1768,9 @@ c      real    vertexc(3,nfacet)
       real    dudxb(nfacet),dudyb(nfacet),dudzb(nfacet)
      &       ,dvdxb(nfacet),dvdyb(nfacet),dvdzb(nfacet)
      &       ,dwdxb(nfacet),dwdyb(nfacet),dwdzb(nfacet)
+     &       ,cf_aux(nfacet,6),ut11(nfacet),ut12(nfacet)
+     &       ,ut13(nfacet),dF1(nfacet),dF2(nfacet),uF1dF1(nfacet)
+
       character*(*) filename
 c
 c.... Local arrays
@@ -1786,6 +1789,25 @@ c.... Local arrays
       call ioscaltrinobd('dwdx.'//trim(filename),trino,dwdxb,mrks(7,1:nfacet),nfacet,nfacetmax,nfacetot,ilb,ile)
       call ioscaltrinobd('dwdy.'//trim(filename),trino,dwdyb,mrks(8,1:nfacet),nfacet,nfacetmax,nfacetot,ilb,ile)
       call ioscaltrinobd('dwdz.'//trim(filename),trino,dwdzb,mrks(9,1:nfacet),nfacet,nfacetmax,nfacetot,ilb,ile)
+
+
+  
+      ut11   = cf_aux(:,1)
+      ut12   = cf_aux(:,2)
+      ut13   = cf_aux(:,3)
+      dF1    = cf_aux(:,4)
+      dF2    = cf_aux(:,5) 
+      uF1dF1 = cf_aux(:,6)
+
+
+
+      call ioscaltrinobd('ut11.'//trim(filename),trino,ut11,mrks(4,1:nfacet),nfacet,nfacetmax,nfacetot,ilb,ile)
+      call ioscaltrinobd('ut12.'//trim(filename),trino,ut12,mrks(5,1:nfacet),nfacet,nfacetmax,nfacetot,ilb,ile)
+      call ioscaltrinobd('ut13.'//trim(filename),trino,ut13,mrks(6,1:nfacet),nfacet,nfacetmax,nfacetot,ilb,ile)
+      call ioscaltrinobd('dF1.'//trim(filename),trino,dF1,mrks(7,1:nfacet),nfacet,nfacetmax,nfacetot,ilb,ile)
+      call ioscaltrinobd('dF2.'//trim(filename),trino,dF2,mrks(8,1:nfacet),nfacet,nfacetmax,nfacetot,ilb,ile)
+      call ioscaltrinobd('uF1dF1.'//trim(filename),trino,uF1dF1,mrks(9,1:nfacet),nfacet,nfacetmax,nfacetot,ilb,ile)
+
       
       return
 

@@ -781,7 +781,7 @@ C-----------------------------------------------------------------------
       subroutine shear_body(uo,vo,wo,nx,ny,nz,xu,yv,zw,xc,yc,zc
      &     ,xu_car,yu_car,xv_car,yv_car,xc_car,yc_car,vertexc,unvect
      &     ,nfacet,dudxb,dudyb,dudzb,dvdxb,dvdyb,dvdzb,dwdxb,dwdyb,dwdzb
-     &     ,mrks,ibd,nbd,ilb,ile,tlevel,io)
+     &     ,cf_aux,mrks,ibd,nbd,ilb,ile,tlevel,io)
 
 c      IMPLICIT NONE
       include 'common.h'
@@ -800,6 +800,8 @@ c.... Input/Output Arrays
       REAL    dudxb(nfacet),dudyb(nfacet),dudzb(nfacet)
      &       ,dvdxb(nfacet),dvdyb(nfacet),dvdzb(nfacet)
      &       ,dwdxb(nfacet),dwdyb(nfacet),dwdzb(nfacet)
+      REAL    cf_aux(nfacet,6)
+
 c
 c.... Local arrays
       INTEGER i,j,k,ii,ifacet,iext,jext,kext,nzg,iflag,n1,dir,ksign,n
@@ -841,6 +843,9 @@ c.... Functions
       dwdxb(ilb:ile) = 0.0     !!!!!!
       dwdyb(ilb:ile) = 0.0     !!!!!!
       dwdzb(ilb:ile) = 0.0     !!!!!!
+
+      cf_aux = 0.0
+
 
       q = 0.0
       rvec = 0.0
@@ -1312,6 +1317,14 @@ c            c3 = ub1
             dwdyb(ifacet) = dwdn*a2
             dwdzb(ifacet) = dwdn*a3
      
+
+            cf_aux(ifacet,1)  = ut1(1)
+            cf_aux(ifacet,2)  = ut1(2)
+            cf_aux(ifacet,3)  = ut1(3)
+            cf_aux(ifacet,4)  = dF1
+            cf_aux(ifacet,5)  = dF2
+            cf_aux(ifacet,6)  = uF1/dF1
+
 
 ! Turn on to compute C_tau using Aniskesh Matlab code;
 
