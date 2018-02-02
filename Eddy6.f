@@ -564,10 +564,10 @@ c
 ! 	CALL BOUNDARY_P(P,XC,NX,NY,NZ)
 
 	IF(MP==0) THEN
-          P(1 ,:,:) = P(IX2,:,:)
+          P(1 ,:,:) = P(IX2,:,:) !Neumann
           P(NX,:,:) = P(IX1,:,:)
         ELSE
-          P(1 ,:,:) = -P(IX1,:,:)
+          P(1 ,:,:) = -P(IX1,:,:) !Dirichlet
           P(NX,:,:) = -P(IX2,:,:)
         ENDIF
 

@@ -171,7 +171,7 @@ c the centered values of velocity and pressure are evaluated
 !      &                     + wo(iprb2(i)  ,jprb2(i)  ,kprb2(i)-1) )
 
         pprb = p(iprb2(i)  ,jprb2(i)  ,kprb2(i))
-         write(750+ii,'(5(4x,e15.8),i6,i6,i6)') time,uprb,vprb,wprb,pprb,iprb2(i),jprb2(i),kprb2(i)
+         write(750+ii,'(5(4x,e15.8),i6,i6,i6)') time,uprb,vprb,wprb,pprb,iprb2(i),jprb2(i),kprb2(i)+myrank(nz-2)
 !         write(*,*) "WRITING PROBE DATA"
          close(750+ii)
 !         write(*,*) time,uprb,vprb,wprb,pprb,iprb2(i),jprb2(i),kprb2(i)
