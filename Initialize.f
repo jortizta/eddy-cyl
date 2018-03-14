@@ -113,7 +113,8 @@ c	dens_bg(i,j)  =  denP1*(xc(i)-1.0)
 !   end select
 ! 
          if (MYRANK==0) then
-	    write(*,'(a,3(1x,f12.6))') "    ADDED DENSITY PROFILE:with parameters 1-1=",denP1
+	    write(*,'(a,3(1x,f12.6))') "    ADDED DENSITY PROFILE:with 
+     &      parameters 1-1=",denP1
 	 endif
 
 	 CALL BOUNDARY_DENS(DENS,XC,YC,NX,NY,NZ)
@@ -121,11 +122,11 @@ c	dens_bg(i,j)  =  denP1*(xc(i)-1.0)
 
 	    
 	stat=max(0,err1)
- 	return
+	return
 	end subroutine add_density
 
 
-    	SUBROUTINE SPONGE_SETUP(NX,NY,NZ,NZG,XC,XU,ZWG,ZCG,stat)
+        SUBROUTINE SPONGE_SETUP(NX,NY,NZ,NZG,XC,XU,ZWG,ZCG,stat)
 	
         USE SPNGE
         INCLUDE 'common.h'
@@ -138,11 +139,10 @@ c	dens_bg(i,j)  =  denP1*(xc(i)-1.0)
 	ALLOCATE(PHIX1(NX,2))
         ALLOCATE(dfxug(NZG),dfxwg(NZG),dfxul(NZ),dfxwl(NZ),dfxu(NX),dfxw(NX))
 	ALLOCATE(X1inf(NX,NY,2,5))
-	x1spng(1)=40
-        x1spng(2)=10
-      !        IF(MYRANK.eq.0) then
+	x1spng(1)=10 !sponge thickness in the inlet
+        x1spng(2)=10 !sponge thickness in the radial direction
 
-c	write(*,*) "myrank,IBU,IEU,IX1,IX2 = ", myrank, IBU,IEU,IX1,IX2
+       ! Sponge in the radial direction
 
        DO I=IBU,IEU
 	  dfxu(i)=0.0
@@ -150,6 +150,8 @@ c	write(*,*) "myrank,IBU,IEU,IX1,IX2 = ", myrank, IBU,IEU,IX1,IX2
 	     dfxu(i)=5.0*((xu(i)-xu(IEU-x1spng(2)))/(xu(IEU)-xu(IEU-x1spng(2))))**2.d0
 	  endif
        ENDDO
+ 
+       ! Sponge in the radial direction
 
        DO I=IX1,IX2
 	  dfxw(i)=0.0
@@ -158,6 +160,9 @@ c	write(*,*) "myrank,IBU,IEU,IX1,IX2 = ", myrank, IBU,IEU,IX1,IX2
 	  endif
        ENDDO
 
+
+       ! Sponge in the inlet
+
         DO K=NZG,1,-1
          dfxug(K)=0.0
          if (K.LE.x1spng(1)+1.AND.x1spng(1).GT.0) then
@@ -165,24 +170,16 @@ c	write(*,*) "myrank,IBU,IEU,IX1,IX2 = ", myrank, IBU,IEU,IX1,IX2
          IF(MYRANK.eq.0)write(*,*)"GLOBAL",dfxug(K),K
          endif
         ENDDO
-!        CALL MPI_BCAST(dfxug ,1,MTYPE,0,MPI_COMM_EDDY,IERR)
-!        ENDIF
 
 	write(*,*) "myrank,KZ1,KZ2= ", myrank,KZ1,KZ2
          
          DO K=KZ1,KZ2
          dfxul(K)=dfxug((KZ2-1)*(myrank)+K)
-c$$$          if(myrank.eq.0)write(*,*)dfxul(K),K,myrank
-c$$$          if(myrank.eq.1)write(*,*)dfxul(K),K,myrank
-c$$$          if(myrank.eq.2)write(*,*)dfxul(K),K,myrank
-c$$$          if(myrank.eq.3)write(*,*)dfxul(K),K,myrank
-c$$$          if(myrank.eq.4)write(*,*)dfxul(K),K,myrank
          ENDDO
 
-c	 write(*,*) "myrank, mysize = ", myrank, mysize
       
 
-!       write(*,*),dfxul(2), myrank
+       ! Sponge in the inlet
 
        DO K=NZG,1,-1
          dfxwg(K)=0.0
@@ -192,17 +189,9 @@ c	 write(*,*) "myrank, mysize = ", myrank, mysize
          endif
        ENDDO
          DO K=KZ1,KZ2
-
-c$$$	    if(myrank==1) then
-c$$$	       write(6,*) "((KZ2-1)*(mysize+1)+K) =  ", ((KZ2-1)*(mysize+1)+K)
-c$$$	       write(6,*) "KZ2 = ", KZ2
-c$$$	       write(6,*) "mysize = ", mysize
-c$$$	    endif
-
-c         dfxwl(K)=dfxwg((KZ2-1)*(mysize+1)+K)
          dfxwl(K)=dfxwg((KZ2-1)*(myrank)+K)
+         ENDDO
 
-       ENDDO
 
 	stat=0
 	if (MYRANK==0) write(*,'(a)') "SPONGE SETUP COMPLETED"
