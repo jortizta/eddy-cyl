@@ -1,9 +1,9 @@
-	SUBROUTINE WRITE_PLANES(NX,NY,NZ,NZG,NBD,ICYCLE,TIME,DTM1,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+	SUBROUTINE WRITE_PLANES(NX,NY,NZ,NZG,NBD,ICYCLE,TIME,DTM1,XC,XU,YC,YV,ZC,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,P,VO,UO,WO,DENS)
         
         use vorticity
         use density_bg
-	INCLUDE 'common.h'
+	    INCLUDE 'common.h'
         INCLUDE 'mpif.h'
 	INTEGER :: NX,NY,NZ,NZG,NBD,ICYCLE
 	REAL	:: DTM1,TIME
@@ -21,129 +21,168 @@
 	CALL CENTER_VELOCITY(NX,NY,NZ,UO,U1_TMP2,1)
 	CALL CENTER_VELOCITY(NX,NY,NZ,VO,U2_TMP2,2)
 	CALL CENTER_VELOCITY(NX,NY,NZ,WO,U3_TMP2,3)
-
+ 
 !----------------------------------------------------------------------------------------------------------------
+!----------------------------------------------------------------------------------------------------------------
+! Sheel Nidhan, 29 March 2018
+! Introducing an extra index after the variable for proper centering in
+! write_plane subroutine
 
+        !write(*,*), "Entering here"
+!------------------------------------ pi/2 plane--------------
 
-
-        CALL WRITE_PLANE(U1_TMP2,2,NY/4+1,0,0,'U0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+        CALL WRITE_PLANE(U1_TMP2,1,2,NY/4+2,0,0,'U0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-        CALL WRITE_PLANE(U2_TMP2,2,NY/4+1,0,0,'V0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+        
+        !! V velocity is already at the pi/2 plane
+        CALL WRITE_PLANE(VO,2,2,NY/4+2,0,0,'V0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-        CALL WRITE_PLANE(U3_TMP2,2,NY/4+1,0,0,'W0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+
+        CALL WRITE_PLANE(P,2,2,NY/4+1,0,0,'P0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 
+         CALL WRITE_PLANE(U3_TMP2,3,2,NY/4+2,0,0,'W0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 
-
-
-
+!-----------------------------------3pi/2--------------------
 	
-        CALL WRITE_PLANE(U1_TMP2,2,NY/2+NY/4+1,0,0,'U0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+        CALL WRITE_PLANE(U1_TMP2,1,2,NY/2+NY/4+2,0,0,'U0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-        CALL WRITE_PLANE(U2_TMP2,2,NY/2+NY/4+1,0,0,'V0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+        
+        !! V velocity is already at the 3pi/2 plane
+        CALL WRITE_PLANE(VO,2,2,NY/2+NY/4+2,0,0,'V0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-        CALL WRITE_PLANE(U3_TMP2,2,NY/2+NY/4+1,0,0,'W0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+
+        CALL WRITE_PLANE(P,2,2,NY/2+NY/4+1,0,0,'P0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+
+         CALL WRITE_PLANE(U3_TMP2,3,2,NY/2+NY/4+2,0,0,'W0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+
+!--------------------------- 0 == 2pi-----------------------
+
+        CALL WRITE_PLANE(U1_TMP2,1,2,2,0,0,'U0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+        
+        !! V velocity is already at the 2pi plane
+        CALL WRITE_PLANE(VO,2,2,2,0,0,'V0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+
+        CALL WRITE_PLANE(P,2,2,2,0,0,'P0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+
+        CALL WRITE_PLANE(U3_TMP2,3,2,2,0,0,'W0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+
+!-------------------------- pi plane-----------------------
+
+        CALL WRITE_PLANE(U1_TMP2,1,2,NY/2+2,0,0,'U0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+
+        !! V velocity is already at the pi plane
+        CALL WRITE_PLANE(VO,2,2,NY/2+2,0,0,'V0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+
+        CALL WRITE_PLANE(P,2,2,NY/2+1,0,0,'P0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+
+        CALL WRITE_PLANE(U3_TMP2,3,2,NY/2+2,0,0,'W0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+!---------------------------------------------------------------------
+
+!--------- Velocities in streamwise direction (u,v,w,p)----------------
+
+
+        CALL WRITE_PLANE(U1_TMP2,1,3,109,0,0,'U0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+        CALL WRITE_PLANE(U2_TMP2,2,3,109,0,0,'V0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+        CALL WRITE_PLANE(P,3,3,109,0,0,'P0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+        CALL WRITE_PLANE(U3_TMP2,3,3,109,0,0,'W0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+
+
+        CALL WRITE_PLANE(U1_TMP2,1,3,78,0,0,'U0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+        CALL WRITE_PLANE(U2_TMP2,2,3,78,0,0,'V0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+        CALL WRITE_PLANE(P,3,3,78,0,0,'P0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+        CALL WRITE_PLANE(U3_TMP2,3,3,78,0,0,'W0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 
 
 
-
-
-
-        CALL WRITE_PLANE(U1_TMP2,2,2,0,0,'U0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+        CALL WRITE_PLANE(U1_TMP2,1,3,46,0,0,'U0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-        CALL WRITE_PLANE(U2_TMP2,2,2,0,0,'V0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+        CALL WRITE_PLANE(U2_TMP2,2,3,46,0,0,'V0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-        CALL WRITE_PLANE(U3_TMP2,2,2,0,0,'W0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+        CALL WRITE_PLANE(P,3,3,46,0,0,'P0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-
-
-
-
-        CALL WRITE_PLANE(U1_TMP2,2,NY/2+1,0,0,'U0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
-     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-        CALL WRITE_PLANE(U2_TMP2,2,NY/2+1,0,0,'V0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
-     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-        CALL WRITE_PLANE(U3_TMP2,2,NY/2+1,0,0,'W0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
-     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-
-! VELOCITIES ACROSS THE BODY
-
-        CALL WRITE_PLANE(U1_TMP2,3,94,0,0,'U0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
-     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-        CALL WRITE_PLANE(U2_TMP2,3,94,0,0,'V0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
-     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-        CALL WRITE_PLANE(U3_TMP2,3,94,0,0,'W0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+        CALL WRITE_PLANE(U3_TMP2,3,3,46,0,0,'W0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 
 
-
-        CALL WRITE_PLANE(U1_TMP2,3,121,0,0,'U0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+        CALL WRITE_PLANE(U1_TMP2,1,3,23,0,0,'U0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-        CALL WRITE_PLANE(U2_TMP2,3,121,0,0,'V0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+        CALL WRITE_PLANE(U2_TMP2,2,3,23,0,0,'V0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-        CALL WRITE_PLANE(U3_TMP2,3,121,0,0,'W0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+        CALL WRITE_PLANE(P,3,3,23,0,0,'P0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-
-
-        CALL WRITE_PLANE(U1_TMP2,3,148,0,0,'U0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
-     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-        CALL WRITE_PLANE(U2_TMP2,3,148,0,0,'V0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
-     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-        CALL WRITE_PLANE(U3_TMP2,3,148,0,0,'W0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
-     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-
-        CALL WRITE_PLANE(U1_TMP2,3,175,0,0,'U0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
-     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-        CALL WRITE_PLANE(U2_TMP2,3,175,0,0,'V0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
-     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-        CALL WRITE_PLANE(U3_TMP2,3,175,0,0,'W0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
-     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-
-        CALL WRITE_PLANE(U1_TMP2,3,201,0,0,'U0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
-     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-        CALL WRITE_PLANE(U2_TMP2,3,201,0,0,'V0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
-     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-        CALL WRITE_PLANE(U3_TMP2,3,201,0,0,'W0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+        CALL WRITE_PLANE(U3_TMP2,3,3,23,0,0,'W0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 
 
-
-
-        CALL WRITE_PLANE(U1_TMP2,3,223,0,0,'U0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+        CALL WRITE_PLANE(U1_TMP2,1,3,453,0,0,'U0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-        CALL WRITE_PLANE(U2_TMP2,3,223,0,0,'V0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+        CALL WRITE_PLANE(U2_TMP2,2,3,453,0,0,'V0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-        CALL WRITE_PLANE(U3_TMP2,3,223,0,0,'W0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+        CALL WRITE_PLANE(P,3,3,453,0,0,'P0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-
-        CALL WRITE_PLANE(U1_TMP2,3,239,0,0,'U0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
-     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-        CALL WRITE_PLANE(U2_TMP2,3,239,0,0,'V0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
-     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-        CALL WRITE_PLANE(U3_TMP2,3,239,0,0,'W0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+        CALL WRITE_PLANE(U3_TMP2,3,3,453,0,0,'W0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 
-        CALL WRITE_PLANE(U1_TMP2,3,250,0,0,'U0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+
+        CALL WRITE_PLANE(U1_TMP2,1,3,598,0,0,'U0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-        CALL WRITE_PLANE(U2_TMP2,3,250,0,0,'V0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+        CALL WRITE_PLANE(U2_TMP2,2,3,598,0,0,'V0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-        CALL WRITE_PLANE(U3_TMP2,3,250,0,0,'W0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+        CALL WRITE_PLANE(P,3,3,598,0,0,'P0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+        CALL WRITE_PLANE(U3_TMP2,3,3,598,0,0,'W0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 
-    
 
+        CALL WRITE_PLANE(U1_TMP2,1,3,875,0,0,'U0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+        CALL WRITE_PLANE(U2_TMP2,2,3,875,0,0,'V0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+        CALL WRITE_PLANE(P,3,3,875,0,0,'P0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+        CALL WRITE_PLANE(U3_TMP2,3,3,875,0,0,'W0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+
+        CALL WRITE_PLANE(U1_TMP2,1,3,1137,0,0,'U0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+        CALL WRITE_PLANE(U2_TMP2,2,3,1137,0,0,'V0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+        CALL WRITE_PLANE(P,3,3,1137,0,0,'P0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+         CALL WRITE_PLANE(U3_TMP2,3,3,1137,0,0,'W0',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 
 
 
 !----------------------------------------------------------------------------------------------------------------
 
 
-
+        write(*,*), "kz1 and kz2", kz1, kz2
+        write(*,*), "nz", nz
         do k=kz1,kz2
         do j=jy1,jy2
         do i=ix1,ix2
-            dz=zcg(k)-zcg(k-1)
+            dz=zc(k)-zc(k-1)
             dr=xc(i)-xc(i-1)
             dq1x3=(0.25*(uo(i,j,k)+uo(i,j,k+1)+uo(i-1,j,k)+uo(i-1,j,k+1))-0.25*(uo(i,j,k)+uo(i,j,k-1)+uo(i-1,j,k)+uo(i-1,j,k-1)))/dz
             dq3x1=(0.25*(wo(i,j,k)+wo(i,j,k-1)+wo(i+1,j,k)+wo(i+1,j,k-1))-0.25*(wo(i,j,k)+wo(i,j,k-1)+wo(i-1,j,k)+wo(i-1,j,k-1)))/dr
@@ -152,19 +191,22 @@
         enddo
         enddo
 
-        CALL WRITE_PLANE(rtmp1,2,NY/4+1,0,0,'omgt',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+!!! omgt involves u and w which means it is centered in azimuthal grid
+!!! For omgt in horizontal and vertical plane, var_dir ~= dir ->
+!!! centering to pi/2 and 3pi/2 
+        CALL WRITE_PLANE(rtmp1,1,2,NY/4+2,0,0,'omgt',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 
 
-        CALL WRITE_PLANE(rtmp1,2,NY/2+NY/4+1,0,0,'omgt',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+        CALL WRITE_PLANE(rtmp1,1,2,NY/2+NY/4+2,0,0,'omgt',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 
 
-        CALL WRITE_PLANE(rtmp1,2,2,0,0,'omgt',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+        CALL WRITE_PLANE(rtmp1,1,2,2,0,0,'omgt',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 
 
-        CALL WRITE_PLANE(rtmp1,2,NY/2+1,0,0,'omgt',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+        CALL WRITE_PLANE(rtmp1,1,2,NY/2+2,0,0,'omgt',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 
 
@@ -178,16 +220,16 @@
         enddo
         enddo
 
-        CALL WRITE_PLANE(rtmp1,2,NY/4+1,0,0,'DURDR',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+        CALL WRITE_PLANE(rtmp1,1,2,NY/4+2,0,0,'DURDR',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &                          YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
  
-        CALL WRITE_PLANE(rtmp1,2,NY/2+NY/4+1,0,0,'DURDR',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+        CALL WRITE_PLANE(rtmp1,1,2,NY/2+NY/4+2,0,0,'DURDR',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &                          YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 
-        CALL WRITE_PLANE(rtmp1,2,2,0,0,'DURDR',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+        CALL WRITE_PLANE(rtmp1,1,2,2,0,0,'DURDR',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &                          YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 
-        CALL WRITE_PLANE(rtmp1,2,NY/2+1,0,0,'DURDR',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+        CALL WRITE_PLANE(rtmp1,1,2,NY/2+2,0,0,'DURDR',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &                          YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 
 
@@ -199,7 +241,7 @@
         do k=kz1,kz2
         do j=jy1,jy2
         do i=ix1,ix2
-        dz=zcg(k)-zcg(k-1)
+        dz=zc(k)-zc(k-1)
         dtheta=dely
         dq2x3=(0.25*(vo(i,j,k)+vo(i,j-1,k)+vo(i,j,k+1)+vo(i,j-1,k+1))-0.25*(vo(i,j,k)+vo(i,j-1,k)+vo(i,j,k-1)+vo(i,j-1,k-1)))/dz
         dq3x2=(0.25*(wo(i,j,k)+wo(i,j+1,k)+wo(i,j,k-1)+wo(i,j+1,k-1))-0.25*(wo(i,j,k)+wo(i,j-1,k)+wo(i,j,k-1)+wo(i,j-1,k-1)))/dtheta
@@ -208,17 +250,17 @@
         enddo
         enddo
 
-        CALL WRITE_PLANE(rtmp1,2,NY/4+1,0,0,'omgr',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+        CALL WRITE_PLANE(rtmp1,2,2,NY/4+1,0,0,'omgr',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 
  
-	CALL WRITE_PLANE(rtmp1,2,NY/2+NY/4+1,0,0,'omgr',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+	    CALL WRITE_PLANE(rtmp1,2,2,NY/2+NY/4+1,0,0,'omgr',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 
-        CALL WRITE_PLANE(rtmp1,2,2,0,0,'omgr',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+        CALL WRITE_PLANE(rtmp1,2,2,2,0,0,'omgr',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 
-        CALL WRITE_PLANE(rtmp1,2,NY/2+1,0,0,'omgr',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+        CALL WRITE_PLANE(rtmp1,2,2,NY/2+1,0,0,'omgr',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 
 !
@@ -235,63 +277,87 @@
         enddo
         enddo
 
-        CALL WRITE_PLANE(rtmp1,2,NY/4+1,0,0,'omgz',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+        CALL WRITE_PLANE(rtmp1,2,2,NY/4+1,0,0,'omgz',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 
  
-	CALL WRITE_PLANE(rtmp1,2,NY/2+NY/4+1,0,0,'omgz',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+    	CALL WRITE_PLANE(rtmp1,2,2,NY/2+NY/4+1,0,0,'omgz',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+    
+	    CALL WRITE_PLANE(rtmp1,2,2,2,0,0,'omgz',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 
-	CALL WRITE_PLANE(rtmp1,2,2,0,0,'omgz',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
-     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-
-	CALL WRITE_PLANE(rtmp1,2,NY/2+1,0,0,'omgz',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
-     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-
-
-! VORTICITY ACROSS THE BODY
-
-	CALL WRITE_PLANE(rtmp1,3,94,0,0,'omgz',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+    	CALL WRITE_PLANE(rtmp1,2,2,NY/2+1,0,0,'omgz',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 
 
-	CALL WRITE_PLANE(rtmp1,3,121,0,0,'omgz',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
-     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+!-------------------- VORTICITY ACROSS THE BODY----------------------
 
-	CALL WRITE_PLANE(rtmp1,3,148,0,0,'omgz',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
-     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
-
-	CALL WRITE_PLANE(rtmp1,3,175,0,0,'omgz',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+	CALL WRITE_PLANE(rtmp1,3,3,453,0,0,'omgz',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 
 
-	CALL WRITE_PLANE(rtmp1,3,201,0,0,'omgz',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+	CALL WRITE_PLANE(rtmp1,3,3,598,0,0,'omgz',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+
+	CALL WRITE_PLANE(rtmp1,3,3,875,0,0,'omgz',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+
+	CALL WRITE_PLANE(rtmp1,3,3,1137,0,0,'omgz',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 
 
-	CALL WRITE_PLANE(rtmp1,3,223,0,0,'omgz',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+	CALL WRITE_PLANE(rtmp1,3,3,109,0,0,'omgz',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 
 
-
-	CALL WRITE_PLANE(rtmp1,3,239,0,0,'omgz',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+	CALL WRITE_PLANE(rtmp1,3,3,78,0,0,'omgz',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 
 
-	CALL WRITE_PLANE(rtmp1,3,250,0,0,'omgz',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+	CALL WRITE_PLANE(rtmp1,3,3,46,0,0,'omgz',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 
 
+	CALL WRITE_PLANE(rtmp1,3,3,23,0,0,'omgz',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
 
+!------------------- Writing density perturbation across body------------------
 
-
-        do k=kz1,kz2
+       do k=kz1,kz2
         do j=jy1,jy2
-        do i=ix1,ix2
-	U3_TMP2(I,J,K)=DENS(I,J,K)-DENS_BG(I,J)
-	ENDDO
-	ENDDO
-	ENDDO
+         do i=ix1,ix2
+	        U3_TMP2(I,J,K)=DENS(I,J,K)-DENS_BG(I,J)
+	      ENDDO
+	      ENDDO
+	   ENDDO
+
+        CALL WRITE_PLANE(U3_TMP2,3,3,453,0,0,'dens',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+
+   	    CALL WRITE_PLANE(U3_TMP2,3,3,598,0,0,'dens',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+
+	    CALL WRITE_PLANE(U3_TMP2,3,3,875,0,0,'dens',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+
+	    CALL WRITE_PLANE(U3_TMP2,3,3,1137,0,0,'dens',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+
+	    CALL WRITE_PLANE(U3_TMP2,3,3,109,0,0,'dens',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+
+	    CALL WRITE_PLANE(U3_TMP2,3,3,78,0,0,'dens',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+
+	    CALL WRITE_PLANE(U3_TMP2,3,3,46,0,0,'dens',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+
+	    CALL WRITE_PLANE(U3_TMP2,3,3,23,0,0,'dens',.FALSE.,NX,NY,NZ,NZG,XC,XU,YC,YV,ZCG,ZWG,XC_CAR,
+     &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,ICYCLE,TIME,DTM1,STAT)
+
+!--------------------------------------------------------------------
+
 	END
 
 
@@ -358,14 +424,18 @@
 	end subroutine center_velocity
 
 
-        subroutine write_plane(var,dir,index1,myidM,prec,varname,verbose,nx,ny,nz,nzg,xc,xu,yc,yv,zcg,zwg,XC_CAR,
+        subroutine write_plane(var,var_dir,dir,index1,myidM,prec,varname,verbose,nx,ny,nz,nzg,xc,xu,yc,yv,zcg,zwg,XC_CAR,
      &				YC_CAR,XU_CAR,YU_CAR,XV_CAR,YV_CAR,icycle,TIME,dtm,stat)
 	INCLUDE 'common.h'
         INCLUDE 'mpif.h'
 
 
+        ! dir : direction of writing; 
+        ! index1 - index1 representing th exact location in that direction
+        ! x - 1; y - 2; z - 3
+
 !Passed Variables
-	integer,intent(in)    :: dir,index1,myidM,prec,nx,ny,nz,nzg,icycle
+	integer,intent(in)    :: var_dir,dir,index1,myidM,prec,nx,ny,nz,nzg,icycle
  	real,intent(in)       :: var(nx,ny,nz),TIME,dtm
  	real,intent(in)       :: xc(nx),xu(nx),yc(ny),yv(ny),zcg(nzg),zwg(nzg)
  	integer,intent(out)   :: stat
@@ -373,7 +443,7 @@
  	logical,intent(in)    :: verbose
 
 !Local Variables
- 	integer :: Msub, MsubG
+ 	    integer :: Msub, MsubG
         integer,parameter      :: realtype  =MPI_DOUBLE_PRECISION
         integer,parameter      :: inttype   =MPI_INTEGER
 	integer :: status1(MPI_STATUS_SIZE),index2
@@ -385,12 +455,13 @@
    	real,allocatable,dimension(:,:,:) :: PlnX1
    	real,allocatable,dimension(:,:,:) :: PlnX2
    	real,allocatable,dimension(:,:,:) :: PlnX3
+        real,   allocatable           :: var_avg(:,:,:)
 	real,allocatable,dimension(:,:) :: Outplane
 	real,allocatable,dimension(:,:) :: Temp_Recv, Temp_Send
 	integer                            :: Xmaster,Xnode
 	REAL	:: XU_CAR(NX,NY),YU_CAR(NX,NY),XV_CAR(NX,NY),YV_CAR(NX,NY),XC_CAR(NX,NY),YC_CAR(NX,NY)
 
-
+    
 	allocate(PlnX1(1:ny,1:nzg,2),PlnX2(1:nx,1:nzg,1:2),PlnX3(1:nx,1:ny,2))
 	iu=0
  	iv=0
@@ -472,9 +543,24 @@
 	endif
 
 	ELSEIF(DIR.EQ.2) THEN
-	
+
+!-------------------------------------------------------------------------------
+	    allocate(var_avg(nx,ny,nz))
+        ! Writing out the correct horizontal and vertical plane
+        ! velocities
+
+        !! Sheel Nidhan, 29 March 2018
+        if (var_dir.ne.dir) then
+            do j = 2,ny-1  !! Positioning the w,v velocity on pi/2 and 3pi/2
+                           !! planes
+                var_avg(:,j,:) = 0.5*(var(:,j,:) + var(:,j-1,:))
+            end do
+            var_avg(:,1,:) = var(:,1,:)        ! Artificial setup
+            var_avg(:,ny,:) = var_avg(:,ny,:)  ! Artificial setup
+        end if
+!-------------------------------------------------------------------------------
 	allocate(Temp_Recv(nx,nz))
-	Temp_Recv(:,:)=var(:,index1,:)
+	Temp_Recv(:,:)=var_avg(:,index1,:)
 	sp1=size(PlnX2,1)
 	sp2=size(PlnX2,2)
 	allocate(Outplane(sp1,sp2))
@@ -497,7 +583,7 @@
 ! 	      istart=(nx-2)/nxprocs
 ! 	      write(*,*), kstart
 !	 endif
-	 do i=2,nx-1
+	 do i=2,nx-1         !!! Only the actual cells are being written
 	    do k=2,nz-1
 	       ks=kstart+k
 !              is=istart+i

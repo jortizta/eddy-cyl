@@ -64,7 +64,7 @@ c
           aw = av
 c
 c.....generate uniform x grid
-c
+
         else
 c
           ix1=2
@@ -230,7 +230,8 @@ c
 
         endif
 c
-        kz2=(kz2-1)/mysize+1
+        kz2=(kz2-1)/mysize+1    !! Parallelization in the streamwise
+c                                  direction
 c
         if(IOGRID==1) then
 
@@ -612,7 +613,9 @@ C
 
         if(icyl==1) then
           do j=1,ny
-            uc(1,j,:) = -uc(2,jsym(j),:)
+            uc(1,j,:) = -uc(2,jsym(j),:)     ! Treatment of the pizza
+c                                            cell to ensure zero axis
+c                                            velocity
           enddo
         endif
 
@@ -626,11 +629,11 @@ C
         ENDDO
         ENDDO
 
-        UC(:,1,:) = UC(:,NY-1,:)
+        UC(:,1,:) = UC(:,NY-1,:)             ! Periodicity
 
         if(icyl==1) then
           do j=1,ny
-            uc(1,j,:) = -uc(2,jsym(j),:)
+            uc(1,j,:) = -uc(2,jsym(j),:)     ! Same as u
           enddo
         endif
 
@@ -648,7 +651,7 @@ C
 
         if(icyl==1) then
           do j=1,ny
-            uc(1,j,:) = uc(2,jsym(j),:)
+            uc(1,j,:) = uc(2,jsym(j),:)   ! Ensure proper w at axis
           enddo
         endif
 

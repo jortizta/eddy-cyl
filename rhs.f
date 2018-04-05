@@ -450,7 +450,7 @@ c
  !Passed Variables
  	real,intent(in)  :: time1
 ! 	real,intent(out)    :: g1
-	real		    :: gt1,gt2,g_orig
+!	real		    :: gt1,gt2,g_orig
  	
 
 !	 gt1=0.0d0
@@ -462,10 +462,11 @@ c
 c Re=10000 & Fr = 3. 
 c use unstratified restart file starting at around 126
 c restart file *_000314000.res
-	 gt1=0.0d0
-	 gt2=50.0d0
+	 !gt1=0.0d0
+	 !gt2=50.0d0
 
-	 g_orig = 0.0d0
+	 !g_orig = 0.0d0
+
 
 	 if (time1.LT.gt1) then
    	 grav = 0.d0

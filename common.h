@@ -1,9 +1,9 @@
-c 
+c
 c-----INCLUDE-FILE-- common.h -----------------I. Balaras-20/05/1998----
 c
 c-----------------------------------------------------------------------
-c                                                                      
-c         I. BALARAS                          
+c
+c         I. BALARAS
 c         LAST UPDATE      :  29/11/1998
 c
 c-----------------------------------------------------------------------
@@ -14,8 +14,8 @@ c
       INTEGER, PARAMETER :: MMX=1000,MMY=514,MMZ=7000
       INTEGER, PARAMETER :: NIMPLXMAX=2,NIMPLYMAX=2
       REAL, PARAMETER :: pi=3.141592653589793
-      
-c     
+
+c
       CHARACTER*120  str1,str2,str3,str4,str5,str6
       CHARACTER     index(0:9999)*4,proc(0:999)*3
       INTEGER  icyl,implx,imply,implz,implcx,implcy,implcz,icalf,icfl
@@ -30,7 +30,8 @@ c
       INTEGER  ibu,ieu,jbv,jev,kbw,kew
       INTEGER  itype(6)
       INTEGER  mp,lp,np
-      INTEGER  itmax,itini,itscr,istat,itser,itres,ivrtx,itbdy,itcalf,it2d,resstep
+      INTEGER  itmax,itini,itscr,istat,itser,itres,itpost,it5p,kmin5p,kmax5p,
+     &         itpln,ivrtx,itbdy,itcalf,it2d,resstep
      &        ,itVPfield,nVPfield,nwrite,nwrite2d,nwritebdy,iolvl,ioclock
       INTEGER  i2dflag,i3dflag
       INTEGER  itmprb,itke,yspctr,itmavg,iregtmavg
@@ -51,7 +52,7 @@ c      INTEGER, PARAMETER :: inttype=MPI_INTEGER
      &      ruimplx(mmx),rvimplx(mmx),rwimplx(mmx),ruimply(mmx),rvimply(mmx),rwimply(mmx)
       REAL  xmin,xmax,ymin,ymax,zmin,zmax,xlen,ylen,zlen
      &     ,delx,dely,delz,delxsq,delysq,delzsq
-      REAL  ru1,css,eps,dpdx,dpdy,dpdz,frn,prn,denP1,grav,rho_0
+      REAL  ru1,css,eps,dpdx,dpdy,dpdz,frn,prn,denP1,grav,rho_0,gt1,gt2,g_orig
       REAL  cflc,tstep,dtsave,tini
       REAL  alf(3),rho(3),gam(3)
       REAL  whx(1:mmx,-1:1),why(1:mmy,-1:1),whz(1:mmz,-1:1)
@@ -63,7 +64,7 @@ c      INTEGER, PARAMETER :: inttype=MPI_INTEGER
       INTEGER JSYM(MMY),RANKSYM
 
       LOGICAL stretch
-c                                                                       
+c
 c-----------------------------------------------------------------------
 c                                                                commons
 c-----------------------------------------------------------------------
@@ -80,9 +81,10 @@ c
       COMMON /BOUND1/  itype
       COMMON /MTCOEF/  ap,au,av,aw,bp,bu,bv,bw,cp,cu,cv,cw,cpg,cwg
       COMMON /IMPCOEF/ ruimplx,rvimplx,rwimplx,ruimply,rvimply,rwimply
-      COMMON /DAT1/    itmax,itini,itscr,istat,itser,itres,ivrtx,itbdy,itcalf,it2d,itVPfield,resstep
+      COMMON /DAT1/    itmax,itini,itscr,istat,itser,itres,itpost,it5p,kmin5p,kmax5p,
+     &                 itpln,ivrtx,itbdy,itcalf,it2d,itVPfield,resstep
      &                 ,nVPfield,nwrite,nwrite2d,nwritebdy,iolvl,ioclock
-      COMMON /DAT2/    ru1,css,eps,dpdx,dpdy,dpdz,frn,prn,denP1,grav,rho_0
+      COMMON /DAT2/    ru1,css,eps,dpdx,dpdy,dpdz,frn,prn,denP1,grav,rho_0,gt1,gt2,g_orig
       COMMON /IOFILE/  str1,str2,str3,str4,str5,str6
       COMMON /tmstep/  cflc,tstep,dtsave,tini
       COMMON /scheme/  alf,rho,gam

@@ -1326,7 +1326,7 @@ c            c3 = ub1
             cf_aux(ifacet,6)  = uF1/dF1
 
 
-! Turn on to compute C_tau using Anikesh Matlab code;
+! Turn on to compute C_tau using Aniskesh Matlab code;
 
 !            dvdxb(ifacet) = ut1(1)
 !            dvdyb(ifacet) = ut1(2) 

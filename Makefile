@@ -10,8 +10,8 @@ ANNPATH = /opt/ann_1.1.2
 HDF5_PATH = /opt/hdf5-1.8.15-patch1
 
 ##LAPACK_PATH = /usr/local/LAPACK
-#LAPACK_PATH = /opt/lapack-3.6.1
 LAPACK_PATH = /opt/lapack-3.5.0
+#LAPACK_PATH = /opt/lapack-3.5.0
 
 ##BLAS_PATH = /usr/local/BLAS
 BLAS_PATH = /opt/BLAS-3.6.0
@@ -27,8 +27,8 @@ BLAS_PATH = /opt/BLAS-3.6.0
 #CC_COMP = /opt/mpich2-1.5_intel/bin/mpicc
 
 
-F_COMP   = /opt/mpich-3.2_intel/bin/mpif90
-CC_COMP  = /opt/mpich-3.2_intel/bin/mpicc
+F_COMP   = /opt/openmpi/bin/mpif90
+CC_COMP  = /opt/openmpi/bin/mpicc
 #F_COMP = mpif90
 #CC_COMP = g++
 
@@ -67,6 +67,7 @@ CPPFLAGS = $(CC_COMP) -c $(OPT) -I$(ANNPATH)/include
 #PATHSCALE Compiler
 #OPT = -O3
 #EXTRA = -intrinsic=PGI
+
 #CFLAGS = $(F_COMP) $(OPT) -r8 -extend-source $(DEBUG) $(EXTRA) $(PROFILE) -c
 #LDFLAGS = $(F_COMP) -o
 
@@ -98,7 +99,7 @@ CFLAGS  = $(F_COMP) -c -r8 -132 $(OPT) $(EXTRA) $(DEBUG) -I$(ANNPATH)/include -I
 LDFLAGS = $(F_COMP) -r8 -132 $(OPT) $(DEBUG) -o 
 
 #export prefix= /home/Karu/WORKHERE/CODE_DOC_PAPER/CODE/hdf5-1.8.15-patch1-installdir
-export prefix=/home/jose/WORK/export
+export prefix=/home/sheel/Work/export
 
 #CLIBS    = -I$(ANNPATH)/include -L$(ANNPATH)/lib -l$(ANNLIB) -pgcpplibs -lm
 #CLIBS    = -I$(ANNPATH)/include -L$(ANNPATH)/lib -l$(ANNLIB) -lstdc++ -lm 

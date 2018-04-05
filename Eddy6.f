@@ -1,30 +1,29 @@
-C Check
 C
 C-----------------------------------------------------------------------
-C                 ***************************                         
-C                 *         E D D Y         *                        
-C                 ***************************                       
-C----------------------------------------------------------------------- 
-C                                                                       
+C                 ***************************
+C                 *         E D D Y         *
+C                 ***************************
+C-----------------------------------------------------------------------
+C
 C     THREEDIMENSIONAL INCOMPRESSIBLE NAVIER-STOKES SOLVER
-C     (LARGE EDDY SIMULATION)                                            
+C     (LARGE EDDY SIMULATION)
 C     ----------------------------
-C                                                                       
-C     PURPOSE:            - TIME ACCURATE NAVIER-STOKES SOLVER FOR 
+C
+C     PURPOSE:            - TIME ACCURATE NAVIER-STOKES SOLVER FOR
 C                           TURBULENT FLOW FIELDS
 C                         - FINITE DIFFERENCE SCHEMES
-C                                                                       
+C
 C     SUBGRID MODELS:     - SMAGORINSKI
 C                         - DYNAMIC MODEL
-C                                                                        
-C                                                                       
-C     GRID:               - CARTESIAN RECTANGULAR GRID (SINGLE BLOCK)    
+C
+C
+C     GRID:               - CARTESIAN RECTANGULAR GRID (SINGLE BLOCK)
 C
 C     SCHEMES:            - ADAMS-BASHFORTH (FRACTIONAL STEP)
 C                         - DIRECT POISSON SOLVER
 C                         - MULTIGRID POISSON SOLVER
 C
-C     NON-DIMENSIONAL:    - BOUNDARY LAYER: 
+C     NON-DIMENSIONAL:    - BOUNDARY LAYER:
 C                           U_INFTY, DISPLACEMENT THICKNESS
 C                           DENSITY = 1.
 C                         - CHANNEL:
@@ -37,14 +36,14 @@ C
 C     INPUT:              - <dir>:    ../calc/
 C                         - <dir>:    ../init/
 C                         - NAMELIST
-C                                                                       
+C
 C     OUTPUT:             - <dir>:    ../calc/
 C                         - RESTART-FILE
 C                         - STATISTICS
 C                         - INST. FLOW FIELD
 C
 C
-C     COMPUTING TIME:     - in a typical run the single steps take 
+C     COMPUTING TIME:     - in a typical run the single steps take
 C                           the following comp. time (Adams Bashforth):
 C
 C                         - RHS                  1.707024       22.2 %
@@ -61,21 +60,21 @@ C                         - turvis (Smagor.)     1.554768       20.2 %
 C                         - space time average   0.4792160       6.4 %
 C                         - screen info          0.7446880       9.8 %
 C                         - total (sec)          7.7426078
-C                                                                       
+C
 C-----------------------------------------------------------------------
-C                                                                       
+C
 C     (C) I. BALARAS
 C         JIANMING YANG
-C                                                                       
-C         DATE OF CREATION :  20/10/1993                                
+C
+C         DATE OF CREATION :  20/10/1993
 C         LAST UPDATE      :  05/10/2000
-C                                                                       
+C
 C-----------------------------------------------------------------------
-C     
+C
       PROGRAM EDDY
-C     
+C
 C-----------------------------------------------------------------------
-C 
+C
       INCLUDE 'common.h'
       INCLUDE 'mpif.h'
 !!!!!!
@@ -90,7 +89,7 @@ c.....parameters for the immersed boundary ..............................
       include 'immersed.h'
 C
 C-----------------------------------------------------------------------
-C                                                           declarations 
+C                                                           declarations
 C-----------------------------------------------------------------------
 C
       INTEGER STATUS(MPI_STATUS_SIZE)
@@ -148,7 +147,7 @@ C
       real clocktemp,clocktemp1,tclock
       real, dimension(:), allocatable :: CLOCK,CLOCKG,CLOCKGMIN,CLOCKGMAX
 c
-c.....immersed boundary 
+c.....immersed boundary
       INTEGER nbd,nfacet,nfacetmax,nfacetot,ibd,mbd,m,l,im,jm,km,jys,kzs,mbdn    !!!!!!!
       INTEGER nvtx,nvtxtot,nvtxmax
       REAL    dsbmax
@@ -167,7 +166,7 @@ c.....immersed boundary
       integer, dimension(:,:), allocatable  :: limuvtx,limvvtx,limwvtx
      &                                        ,mimuvtx,mimvvtx,mimwvtx
 
-      real, dimension(:), allocatable :: 
+      real, dimension(:), allocatable ::
      &     uim,xnu,ynu,znu,nxu,nyu,nzu,
      &     vim,xnv,ynv,znv,nxv,nyv,nzv,
      &     wim,xnw,ynw,znw,nxw,nyw,nzw,
@@ -213,7 +212,7 @@ C
       Integer, dimension(:,:,:,:), allocatable :: flaguo,flagvo,flagwo,flagpo,flagpbd,flagtv
 
       Integer, dimension(:,:,:), allocatable :: flag
-c    
+c
       REAL, DIMENSION(:), ALLOCATABLE :: dpdnn,drhodnn
 
 c.... Cf probes
@@ -281,7 +280,7 @@ c.... Time average sampling of prime variables
       integer, dimension(:), allocatable :: nsmpltmavg
       integer, dimension(:,:), allocatable :: iindtmavg
       real, dimension(:,:), allocatable :: regtmavg
-      real, dimension(:,:,:), allocatable :: utmavg,vtmavg,wtmavg,ptmvavg      
+      real, dimension(:,:,:), allocatable :: utmavg,vtmavg,wtmavg,ptmvavg
       real*4, dimension(:,:,:,:), allocatable :: vartmavg
 c
 c.... Variables for writing VPfield
@@ -351,7 +350,7 @@ c
       CALL INPALL(nx,ny,nz,nzg)
 
       hspdir = './'
-      IF(MYRANK.EQ.0) write(6,'(A)') 'hspdir='//trim(hspdir) 
+      IF(MYRANK.EQ.0) write(6,'(A)') 'hspdir='//trim(hspdir)
 
       CALL MPI_SETUP(nx,ny,nz,nzg,ierr)
       MYLEFT  = MYRANK-1
@@ -412,11 +411,11 @@ c
         if(mod(ny ,id)==ny ) goto 100
       enddo
  100  continue
-c       
+c
       id=id*jd
 c
 C     ALLOCATE ARRAYS
-c      
+c
       clock(1) = tclock()
 
       ALLOCATE(XU(NX),YV(NY),ZW(NZ),ZWG(NZG))
@@ -442,12 +441,12 @@ C
         ALLOCATE(CLESP(NX,NY,NZ),CLESN(NX,NY,NZ))
         ALLOCATE(NILMP(NX,NY,NZ),NILMN(NX,NY,NZ))
       ENDIF
-	ALLOCATE(RHA(NX,NY,NZ),RHB(NX,NY,NZ),RS(NX,NY,NZ))
-      ALLOCATE(DENS(NX,NY,NZ))
-	
+        ALLOCATE(RHA(NX,NY,NZ),RHB(NX,NY,NZ),RS(NX,NY,NZ))
+        ALLOCATE(DENS(NX,NY,NZ))
+
 !       IF(IDENS.EQ.1)
 !      %ALLOCATE(DENS(NX,NY,NZ),RHA(NX,NY,NZ),RHB(NX,NY,NZ))     !,DENSO(NX,NY,NZ))
-     	
+
       clock(1) = tclock() - clock(1)
 c
 c...grid and matrix coefficients
@@ -484,7 +483,7 @@ c           rp(i) = 1.0
           yv_car(i,j) = yv(j)
         enddo
         enddo
-      endif        
+      endif
 
       clock(2) = tclock() - clock(2)
 
@@ -532,7 +531,7 @@ c
 
 c
 c.....initialize field
-c   
+c
       clock(4) = tclock()
 
       time = 0.
@@ -542,7 +541,7 @@ c
       WO = 0.
       US = 0.
       VS = 0.
-      WS = 0.      
+      WS = 0.
       P  = 0.
       TV = 0.
 c
@@ -600,7 +599,7 @@ C-----------------------------------------------------------------------
 !	CALL SPONGE_SETUP(UO,VO,WO,DENS,P,NX,NY,NZ,XC,IERR)
 
         CALL SPONGE_SETUP(NX,NY,NZ,NZG,XC,XU,ZWG,ZCG,IERR)
-	
+
 !         if(idens.eq.1) then
 !           do i=1,nx
 !             dens(i,:,:) = drdx*xc(i)
@@ -620,7 +619,7 @@ c            p(i,j,k)  = pres_taylor_green((xc(i)-xmin),(yc(j)-zmin),0.0,ru1)
 c          enddo
 c          enddo
 c          enddo
-c          
+c
 c        endif
 c
 c.... Parabolic
@@ -671,7 +670,7 @@ c          neta = ceiling(max(eta1,eta2)/deta)+2
 c          allocate(eta(neta),f1eta(neta),f2eta(neta))
 c          eta = 0.0
 c          do i=2,neta
-c            eta(i) = deta*real(i-1)            
+c            eta(i) = deta*real(i-1)
 c          enddo
 c          call falkner_skan(eta,f1eta,f2eta,neta,dummyfp1,dummyfp2)
 c
@@ -697,10 +696,10 @@ c
 c        endif
 c
 C-----------------------------------------------------------------------
-C.....refresh block interfaces (and periodic boundary in z direction) 
+C.....refresh block interfaces (and periodic boundary in z direction)
 C-----------------------------------------------------------------------
 c.....boundary conditions
-        
+
 c
 c.....information transfer to ghost layers
 c
@@ -774,7 +773,7 @@ c        CALL IOMPI_3DSCALAR(trim(hspdir)//'res.ini.w',WO,NX,NY,NZ,IDIR)
         CALL IOSCALAR(ICfile,P ,DP,NX,NY,NZ,IDIR,TIME,DTM1,nstep)
 c        CALL IOMPI_3DSCALAR(trim(hspdir)//'res.ini.p',P,NX,NY,NZ,IDIR)
 !         CALL HDF5_MPI_3DREAL(trim(hspdir)//'res.ini.p',P,NX,NY,NZ,IDIR)
-       
+
         IF(IDENS.EQ.1) then
         write(ICfile,'(a,i8.8,a)')trim(hspdir)//"dens_",resstep,".res"
         CALL IOSCALAR(ICfile,DENS ,DP,NX,NY,NZ,IDIR,TIME,DTM1,nstep)
@@ -819,7 +818,7 @@ C$$$! **************************************************************************
         CALL REFRESHBC(DENS,NX*NY,NZ)
 !------------------------------------------------
         TSTEP=DTM1
-        
+
 c        do i=1,nx
 c          dp(i,1,2) = sum(wo(i,:,:)/real(ny-2)/real(nz-2))
 c        enddo
@@ -869,8 +868,8 @@ c            CALL IOSCALAR('res.ini.wa',WA,DP,NX,NY,NZ,IDIR,TIME)
 
               CALL REFRESHBC(RHA,NX*NY,NZ)
               CALL REFRESHBC(RHB,NX*NY,NZ)
-              CALL REFRESHBC(RS,NX*NY,NZ)       
-! ----------------------------------------------       
+              CALL REFRESHBC(RS,NX*NY,NZ)
+! ----------------------------------------------
 
 !             ENDIF
           ENDIF
@@ -897,7 +896,7 @@ c          CALL IOSCALAR('res.ini.imm',IMM,DP,NX,NY,NZ,IDIR,TIME)
 !         IF(IFIELD>1) THEN
 !           open(unit=10,file='res.time',form='formatted')
 !           read(10,*) time
-!           close(10)          
+!           close(10)
 !         ELSE
 !           TIME = TINI
 !         ENDIF
@@ -990,7 +989,7 @@ c
 !c
 !c N.B. The moving boundaries have to be provided after the stationary ones
 !c From 1 to mbd-1 there are the stationary boundaries; from mbd to nbd the
-!c moving ones 
+!c moving ones
 !c
 !!!!!!        mbd = nbd+1
 !!!!!!        do ibd=1,nbd
@@ -1032,7 +1031,7 @@ c
             exit
           endif
         enddo
-        
+
         clock(5) = tclock()-clock(5)
 
 c
@@ -1077,7 +1076,7 @@ c
      &            ,dwdxb(n),dwdyb(n),dwdzb(n),cf_aux(n,6))
           ENDIF
         ENDIF
-        ALLOCATE(areaf(nfacet),trino(nfacet))        
+        ALLOCATE(areaf(nfacet),trino(nfacet))
 
         ALLOCATE(dsb(NBD,NX),mbg(nbd))
 
@@ -1093,7 +1092,7 @@ c
         ALLOCATE(flag(nx,nyl,nzl))
         IF(isgs>0) ALLOCATE(flagtv(nx,nyl,nzl,nbd))
         IF(itcalf>0 .OR. itbdy>0) ALLOCATE(flagpbd(nx,nyl,nzl,nbd))
-c     
+c
         ALLOCATE(iu(nfcmax),ju(nfcmax),ku(nfcmax))
         ALLOCATE(iv(nfcmax),jv(nfcmax),kv(nfcmax))
         ALLOCATE(iw(nfcmax),jw(nfcmax),kw(nfcmax))
@@ -1127,12 +1126,12 @@ c
      &       ,   nxw(nfcmax),nyw(nfcmax),nzw(nfcmax),wim(nfcmax))
         ALLOCATE(xnp(nfcmax),ynp(nfcmax),znp(nfcmax),pim(nfcmax),rhoim(nfcmax))
         ALLOCATE(nxp(nfcmax),nyp(nfcmax),nzp(nfcmax))
-c       
+c
         ALLOCATE(umtrx(nsp,nsp,nfcmax),vmtrx(nsp,nsp,nfcmax)
      &       ,   wmtrx(nsp,nsp,nfcmax),pmtrx(nsp,nsp,nfcmax))
         ALLOCATE(uindx(nsp,nfcmax),vindx(nsp,nfcmax)
      &       ,   windx(nsp,nfcmax),pindx(nsp,nfcmax))
-c     
+c
         ALLOCATE(dpdnn(nfcmax),drhodnn(nfcmax))
         ALLOCATE(nflumax(nbd),nflvmax(nbd),nflwmax(nbd),nflpmax(nbd),nflpbdmax(nbd)
      &,nfltvmax(nbd))
@@ -1145,7 +1144,7 @@ c
 c
         clock(6) = tclock() - clock(6)
 c.... parametric description of immersed object
-c     
+c
         clock(7) = tclock()
 
         mbg(1:nbd) = mb(1:nbd)
@@ -1166,14 +1165,14 @@ c        CALL IOMPI_IMB(UNVECT,VERTEX,VERTEXC,AREAF,TRINO,NFACET,ZC,NZ,NBD,MBD,M
 
         erb = 0.
         rrb = 0.
-        arb = 0.        
+        arb = 0.
         iflag_psb = 0
         iflag_ptr = 0
         iflag_pnd = 0
 
-c          
+c
 c.... obstacle location on the grid
-c         
+c
         NIMU = 0
         NIMV = 0
         NIMW = 0
@@ -1346,11 +1345,11 @@ c
 
           IF(ISGS>0) THEN
             clocktemp = tclock()
-!!!!!!            call 
+!!!!!!            call
 !!!!!!     &geom(xc,yc(jys),xc_car(:,jys),yc_car(:,jys),zcg(kzs),vertex,vertexc,unvect
 !!!!!!     &,limtv(ibd,:),mimtv(ibd,:),itv,jtv,ktv,nimtv,xntv,yntv,zntv,nxtv,nytv,nztv
 !!!!!!     &,mrktv,dirtv,fp,flag,flagtv,nx,nyl,nzl,nbd,nfacet,ibd,icom,nflu,nfltvmax,5,icycle,tlevel)
-            call 
+            call
 ccc     &geom(xc,yc(jys),xc_car(:,jys),yc_car(:,jys),zcg(kzs),
      &geom_mod(xc,yc(jys),xc_car(:,jys),yc_car(:,jys),zcg(kzs),
      &vertex(:,:,ilb:ile),vertexc(:,ilb:ile),unvect(:,ilb:ile),
@@ -1365,7 +1364,7 @@ ccc     &geom(xc,yc(jys),xc_car(:,jys),yc_car(:,jys),zcg(kzs),
           ENDIF
 
           clock(17) = tclock()
-c....Definition of the pressure exterior (flagpo=0), 
+c....Definition of the pressure exterior (flagpo=0),
 c....interface (flagpo=-ibd) and interior (flagpo=ibd) points
           call flagp(flagpo,flaguo,flagvo,flagwo,nx,nyl,nzl,nbd,ibd)
 c          call flagp1(flagpo,flaguo,flagvo,flagwo,nx,nyl,nzl,nbd,iu,ju,ku,iv,jv,kv,iw,jw,kw
@@ -1393,7 +1392,7 @@ ccc          call geom
           call mtrx(xc,yc(jys),zcg(kzs),limp(ibd,1),sum(mimp(ibd,:)),mrkp
      &         ,ip,jp,kp,xnp,ynp,znp,nxp,nyp,nzp,pmtrx,pindx,nx,nyl,nzl,nbd,ibd,0)
           clock(34) = tclock() - clock(34)
-          
+
         enddo
 
 c        stop
@@ -1425,7 +1424,7 @@ c in the case the matrices of the tagging are not large enough
           call mpi_finalize(ierr)
           stop
         endif
- 
+
         clock(35) = tclock()
 c
 c...Set surface boundary velocity for non-moving bodies
@@ -1459,7 +1458,7 @@ c...MBD is the index of the first variable moving body
 c
 c...Set surface boundary velocity for moving bodies
 c...Input: Cartesian coordinates of the immersed-boundary points
-c...Output: velocities in Cartesian or cylindrical coordinates 
+c...Output: velocities in Cartesian or cylindrical coordinates
 c...The angular velocity is AMP in EDDY.INPUT
 c...A modification allows to take into account the moving bodies
 c...whose geometry is constant
@@ -1467,10 +1466,10 @@ c...whose geometry is constant
         do ibd=mbdn,nbd
           do im=limu(ibd,1)+1,limu(ibd,1)+sum(mimu(ibd,:))
             uim(im) = ubd(xnu(im),ynu(im),znu(im),tlevel,ibd)
-          enddo          
+          enddo
           do jm=limv(ibd,1)+1,limv(ibd,1)+sum(mimv(ibd,:))
             vim(jm) = vbd(xnv(jm),ynv(jm),znv(jm),tlevel,ibd)
-          enddo          
+          enddo
           do km=limw(ibd,1)+1,limw(ibd,1)+sum(mimw(ibd,:))
             wim(km) = wbd(xnw(km),ynw(km),znw(km),tlevel,ibd)
           enddo
@@ -1640,12 +1639,12 @@ c
 c        call calcfrc(uo,vo,wo,p,flaguo(1,1,1,ibd),flagvo(1,1,1,ibd),flagwo(1,1,1,ibd)
 c     &       ,nx,ny,nz,xu,yv,zw,xc,yc,zc,fb,tstep,0,time,'force',cvlim1)
       ENDIF
-c      
+c
       IF(MYRANK==0) THEN
         write(6,'(A,E18.6)') '*..starting time=',TIME
         write(6,'(A)') '*..Initial field: '
-      ENDIF      
-          
+      ENDIF
+
       open(49,file='time.out',position='append',form='formatted')
 
 !      open(121,file='time_averaged_values_vmod_vr_vt_vz_pr_prtot_tv.txt',
@@ -1708,15 +1707,15 @@ c....Evaluation of the filter size and the coefficients of the test
 c....filter for each direction (WHX,WHY,WHZ)
           CALL filtersize(dxdydz,nx,ny,nz)
           CALL weights
-c     
+c
           IF(IFIELD>=0) THEN
-c....Evaluation of the eddy viscosity 
+c....Evaluation of the eddy viscosity
             CALL TURVIS(UO,VO,WO,TV,G,DP,SXX,SYY,SZZ,SXY,SYZ,SXZ,
      &         US,VS,WS,UB,VB,WB,ILM,IMM,LM,MM,UC,VC,WC,
      &         DXDYDZ,CLES,CLESP,CLESN,NILMP,NILMN,XC,YC,ZC,TSTEP,ICYCLE,NX,NY,NZ)
           ENDIF
         ENDIF
-c                  
+c
         if(ibm/=0) then
 
 ccc          do ibd=1,nbd
@@ -1745,7 +1744,7 @@ c......Set turbulent viscosity inside bodies
 
       ENDIF
 c....The minimum and maximum values of the velocities, pressure,
-c....divergence and eddy viscosity are found and written on screen           
+c....divergence and eddy viscosity are found and written on screen
       CALL SCRINFO(UO,VO,WO,P,DP,TV,DENS,TSTEP,TIME,ICYCLE,ID,JD,KD,NX,NY,NZ)
 c
 c.... Time-average top velocity (use to calc. Kappa acceleration parameter)
@@ -1773,11 +1772,12 @@ c.... Read cf location for shear stress
           allocate(cfprb(njcf,nkcf,ncfprb),tcf(ncfprb))
           filecfprb = trim(hspdir)//'cfprb.bin'
           call setup_cf_probes(filecfprb,jcf,kcf,njcf,nkcf,nkcfmax,nkcfprev,xc,yc,zw,nx,ny,nz,icfprb)
-        endif        
+        endif
       endif
 c
 c...  Read time probe location
       if(itmprb>=1) then
+
 c.....Number of time probes
         call read_no_tprobes(ntprb)
         allocate(itprb(ntprb),jtprb(ntprb),ktprb(ntprb))
@@ -1929,7 +1929,7 @@ c.... Instantaneous region files
 c
 c.... CFL input file
       icflave = 0
-      INQUIRE(FILE='cflave.input', EXIST=cfl_input_exists)      
+      INQUIRE(FILE='cflave.input', EXIST=cfl_input_exists)
       IF(cfl_input_exists .eqv. .true.) THEN
         open(unit=10,file='cflave.input',form='formatted')
         read(10,'(A)')
@@ -1962,7 +1962,7 @@ c if istat1D>0 the 1D statistics are evaluated
         nstat1D = 0
         nstat1Dave = 0
 c if istat1D=2 there is a file of statistics based on a previous run
-        IF(istat1D==2) call read_stat1D_ave(stat1Dave,nx,nvarstat1D,nstat1Dave) 
+        IF(istat1D==2) call read_stat1D_ave(stat1Dave,nx,nvarstat1D,nstat1Dave)
       ENDIF
 c
 c.... Bulk velocity for calculating dpdz
@@ -1994,7 +1994,7 @@ c ITUTAU defines the step of the evaluation of the skin-friction velocity
         ALLOCATE(utau(ntutau,utaudim))
         itu = 0
       ENDIF
-      
+
 ! Some set up for the subroutine NOISE
 !      call noise(nx,ny,nz,jy1,jy2,kz1,kz2,uo,vo,wo,myrank,0)
 c
@@ -2007,7 +2007,7 @@ c.....Periodic boundary conditions along the Z direction
       NSTAR=0
 c
 C---- Write time stats to file
-      IF(IOCLOCK>0) THEN 
+      IF(IOCLOCK>0) THEN
         clock(99) = sum(clock)
         clock(50) = clock(1) + clock(6) !Allocate arrays
         clock(51) = clock(10) + clock(12) + clock(14) + clock(16) !Tag 3D
@@ -2025,7 +2025,7 @@ C        WRITE(16,*) 'Task/Time'
 C        CLOSE(16)
           OPEN(UNIT=16,FILE='clock.dat',FORM='FORMATTED',
      &POSITION='APPEND')
-          WRITE(16,'(2A)') ' Task/Time  ',           
+          WRITE(16,'(2A)') ' Task/Time  ',
      &                  '      Ave.     Max.     Min.'
           WRITE(16,'(A,3(1x,F8.4))') 'Total                  :',CLOCKG(99),CLOCKGMAX(99),CLOCKGMIN(99)
           WRITE(16,'(A,3(1x,F8.4))') 'Allocate arrays        :',CLOCKG(50),CLOCKGMAX(50),CLOCKGMIN(50)
@@ -2073,12 +2073,12 @@ c          call add_random_noise_2(wo(:,:,:),nx,ny,nz,1,xc,26.0)
 c$$$      call PERIODIC_2D_AVERAGE_RMS_1CPU(NX,NY,NZ,NZG,NBD,ICYCLE,time,DTM1,XC,XU,YC,YV,ZCG,ZWG,xc_car,
 c$$$     &                              yc_car,xu_car,yu_car,xv_car,yv_car,P,VO,UO,WO,DENS)
 c$$$      if(myrank==0) write(*,*) "DONE PERIODIC_2D_AVERAGE_RS"
-      
+
 c
 C-----------------------------------------------------------------------
 C     begin main loop
 C-----------------------------------------------------------------------
-C    
+C
       do icycle=1+nstep,itmax+nstep
 c
       if(mod(icycle-1,itscr)==0) clock=0.0
@@ -2088,7 +2088,7 @@ c
 c.....time step
 c
       clocktemp = tclock()
-      
+
       if(icfl==1) then
 c
 c.....courant number calculation for running at cfl=constant
@@ -2120,9 +2120,9 @@ c     setup external forcing
 c-----------------------------------------------------------------------
 c
 c.....time advancement: ischm=1, Adams-Bashforth; ischm=3, Runge-Kutta
-c   
+c
       if(idens.eq.1)CALL GRAVITY(time)
-        
+
       do is=1,ischm
 
         ALFXDT=ALF(IS)*DTM1
@@ -2134,16 +2134,16 @@ c
 !        CALL FORTERM(WO(:,:,1),0.0,UBOLD,ALFXDT,NX,NY)
 C-----------------------------------------------------------------------
 C                                               predictor-corrector step
-C----------------------------------------------------------------------- 
+C-----------------------------------------------------------------------
 c
         clocktemp1 = tclock()
-        
+
 
         IF(IBM>1) THEN
 c
 c...Rotate body
 c...The angular velocity is defined by the function rotspeed
-c...Currently a rotation around Z is considered !!!!!!         
+c...Currently a rotation around Z is considered !!!!!!
           clocktemp = tclock()
           call rbm(unvect,vertex,vertexc,nfacet,mbd,nbd,alfxdt,tlevel)
           IF(ITBDY>0 .AND. IVRTX==1) call rbm_nodes(trvtx,vtxnrm,nvtx,mbd,nbd,alfxdt,tlevel)
@@ -2260,7 +2260,7 @@ ccc            call geom
      &,limu(ibd,:),mimu(ibd,:),iu,ju,ku,nimu,xnu,ynu,znu,nxu,nyu,nzu
      &,mrku,diru,fpu,flag,flaguo,nx,nyl,nzl,nbd,mb(ibd),ibd,icom,nflu,nflumax(ibd),1,icycle,tlevel)
             clock(26) = clock(26) + tclock() - clocktemp
- 
+
             clocktemp = tclock()
             call mtrx(xu,yc(jys),zcg(kzs),limu(ibd,1),sum(mimu(ibd,:)),mrku
      &           ,iu,ju,ku,xnu,ynu,znu,nxu,nyu,nzu,umtrx,uindx,nx,nyl,nzl,nbd,ibd,1)
@@ -2363,11 +2363,11 @@ c...UIM,VIM,WIM can be Cartesian or cylindrical
             DO im=limu(ibd,1)+1,limu(ibd,1)+sum(mimu(ibd,:))
               uim(im) = ubd(xnu(im),ynu(im),znu(im),tlevel,ibd)
             ENDDO
-C          
+C
             DO jm=limv(ibd,1)+1,limv(ibd,1)+sum(mimv(ibd,:))
               vim(jm) = vbd(xnv(jm),ynv(jm),znv(jm),tlevel,ibd)
             ENDDO
-          
+
             DO km=limw(ibd,1)+1,limw(ibd,1)+sum(mimw(ibd,:))
               wim(km) = wbd(xnw(km),ynw(km),znw(km),tlevel,ibd)
             ENDDO
@@ -2381,7 +2381,7 @@ C
 
           clock(56) = clock(56) + tclock() - clocktemp
 
-c....The subroutines FLAG2INT, IMB_DOMY2Z and INTIND_DOMY2z are used to 
+c....The subroutines FLAG2INT, IMB_DOMY2Z and INTIND_DOMY2z are used to
 c....convert the tagging variables from the decomposition along Y to the
 c....one along Z
           IF(idomy==1 .AND. mysize>1) THEN
@@ -2421,33 +2421,33 @@ c....one along Z
             call intind_domy2z(ipint,jpint,kpint,limpint,mimpint,nbd,nyl,nz)
 
           endif
-       
+
         ENDIF
         clock(2) = clock(2) + tclock() - clocktemp1
 
 ! A noise is added in a particular area of the computational domain
 !        call noise(nx,ny,nz,jy1,jy2,kz1,kz2,uo,vo,wo,myrank,1)
-        
+
         clocktemp = tclock()
         CALL RHS(UO,VO,WO,DENS,US,VS,WS,TV,UB,VB,WB,DP,NX,NY,NZ,XC,XU,YC,YV,TIME)
         clock(3) = clock(3) + tclock() - clocktemp
-        
+
         clocktemp = tclock()
         CALL REFRESHBC(US,NX*NY,NZ)
         CALL REFRESHBC(VS,NX*NY,NZ)
-        CALL REFRESHBC(WS,NX*NY,NZ) 
+        CALL REFRESHBC(WS,NX*NY,NZ)
         CALL REFRESHBC(UA,NX*NY,NZ)
         CALL REFRESHBC(VA,NX*NY,NZ)
-        CALL REFRESHBC(WA,NX*NY,NZ) 
+        CALL REFRESHBC(WA,NX*NY,NZ)
         CALL REFRESHBC(UB,NX*NY,NZ)
         CALL REFRESHBC(VB,NX*NY,NZ)
         CALL REFRESHBC(WB,NX*NY,NZ)
 c N.B. UA,VA,WA are the values of RHS at the time level L-2,
-c whereas UB,VB,WB are the values at the time level L-1 
+c whereas UB,VB,WB are the values at the time level L-1
         clock(8) = clock(8) + tclock() - clocktemp
-C 
-C.....Predictor step + boundary conditions for us 
-        clocktemp = tclock()    
+C
+C.....Predictor step + boundary conditions for us
+        clocktemp = tclock()
 !         IF(IDENS.EQ.0) THEN
 !           CALL PREDICTOR(UO,VO,WO,P,UA,VA,WA,UB,VB,WB,US,VS,WS,
 !      &       ALFXDT,GAMXDT,RHOXDT,NX,NY,NZ,clock(40),9)
@@ -2465,7 +2465,7 @@ C.....Predictor step + boundary conditions for us
 !         ENDIF
 c RHS at the time level L-1 in UA,VA,WA
 c implicit terms in UB,VB,WB
-c provisional solution in US,VS,WS  
+c provisional solution in US,VS,WS
         clock(4) = clock(4) + tclock() - clocktemp
 
 c.....compute forcing in momentum
@@ -2473,7 +2473,7 @@ c.....compute forcing in momentum
         IF(ibm/=0.and.(implx/=0.or.imply/=0)) THEN
 c
 c.....predicted velocity from explicit step
-c     
+c
           UB = US+0.5*ALFXDT*UB
           VB = VS+0.5*ALFXDT*VB
           WB = WS+0.5*ALFXDT*WB
@@ -2484,18 +2484,18 @@ c
           CALL BOUNDARY(UB,VB,WB,XU,XC,YV,YC,ZW,ZC,NX,NY,NZ,TLEVEL)
 c
 C-----------------------------------------------------------------------
-C.....refresh block interfaces (and periodic boundary in z direction) 
+C.....refresh block interfaces (and periodic boundary in z direction)
 C-----------------------------------------------------------------------
           CALL REFRESHBC(UB,NX*NY,NZ)
           CALL REFRESHBC(VB,NX*NY,NZ)
-          CALL REFRESHBC(WB,NX*NY,NZ) 
+          CALL REFRESHBC(WB,NX*NY,NZ)
 c
 c.....inlet and outlet boundary conditions
 c
           CALL BOUNDINOUT(UB,VB,WB,UO,VO,WO,XU,XC,YC,ZW,ZC,ALFXDT,TLEVEL,NX,NY,NZ,1)
 
 C-----momentum forcing from an explicit step
-C-----------------------------------------------------------------------  
+C-----------------------------------------------------------------------
 
 c.....compute forcing in x momentum
           call momforc_mod2(us,ub,xu,yc,zc,nx,ny,nz,iu,ju,ku,umtrx,uindx
@@ -2549,7 +2549,7 @@ c.....Set velocity inside moving bodies
 
       ENDIF
       clock(5) = clock(5) + tclock() - clocktemp1
-        
+
 c
 c.....solve tridiagonal symstems in y and/or x directions
 c
@@ -2590,11 +2590,11 @@ c
           CALL BOUNDARY(US,VS,WS,XU,XC,YV,YC,ZW,ZC,NX,NY,NZ,TLEVEL)
 c
 C-----------------------------------------------------------------------
-C.....refresh block interfaces (and periodic boundary in z direction) 
+C.....refresh block interfaces (and periodic boundary in z direction)
 C-----------------------------------------------------------------------
           CALL REFRESHBC(US,NX*NY,NZ)
           CALL REFRESHBC(VS,NX*NY,NZ)
-          CALL REFRESHBC(WS,NX*NY,NZ) 
+          CALL REFRESHBC(WS,NX*NY,NZ)
 
 c.....inlet and outlet boundary conditions
           CALL BOUNDINOUT(US,VS,WS,UO,VO,WO,XU,XC,YC,ZW,ZC,ALFXDT,TLEVEL,NX,NY,NZ,1)
@@ -2620,7 +2620,7 @@ c...Set velocity inside moving bodies
      &(us,vs,ws,ub,vb,wb,iuint,juint,kuint,ivint,jvint,kvint
      &,iwint,jwint,kwint,xu,yv,zw,xc,yc,zc,nx,ny,nz
      &,limuint(ibd),mimuint(ibd),limvint(ibd),mimvint(ibd),limwint(ibd),mimwint(ibd)
-     &,tlevel,ibd,1,0)            
+     &,tlevel,ibd,1,0)
             ENDDO
           ELSE
 !!!!!!            DO ibd=mbd,nbd
@@ -2652,26 +2652,26 @@ c            call obstacle(us,vs,ws,p,nx,ny,nz,0)
           ENDIF
 
         ENDIF
-        clock(7) = clock(7) + tclock() - clocktemp1        
+        clock(7) = clock(7) + tclock() - clocktemp1
 c
 c.....other boundary conditions
         clocktemp = tclock()
         CALL BOUNDARY(US,VS,WS,XU,XC,YV,YC,ZW,ZC,NX,NY,NZ,TLEVEL)
 c
 C-----------------------------------------------------------------------
-C.....refresh block interfaces (and periodic boundary in z direction) 
+C.....refresh block interfaces (and periodic boundary in z direction)
 C-----------------------------------------------------------------------
         CALL REFRESHBC(US,NX*NY,NZ)
         CALL REFRESHBC(VS,NX*NY,NZ)
-        CALL REFRESHBC(WS,NX*NY,NZ) 
+        CALL REFRESHBC(WS,NX*NY,NZ)
         CALL REFRESHBC(UB,NX*NY,NZ)
         CALL REFRESHBC(VB,NX*NY,NZ)
-        CALL REFRESHBC(WB,NX*NY,NZ) 
+        CALL REFRESHBC(WB,NX*NY,NZ)
 c
 c.....inlet and outlet boundary conditions
         CALL BOUNDINOUT(US,VS,WS,UO,VO,WO,XU,XC,YC,ZW,ZC,ALFXDT,TLEVEL,NX,NY,NZ,1)
         clock(8) = clock(8) + tclock() - clocktemp
-c     
+c
 C-----------------------------------------------------------------------
 c .....divergence
 C-----------------------------------------------------------------------
@@ -2683,7 +2683,7 @@ C-----------------------------------------------------------------------
 C
 C-----------------------------------------------------------------------
 C.....Poisson equation
-C-----------------------------------------------------------------------        
+C-----------------------------------------------------------------------
 
         clocktemp = tclock()
         CALL DIRECT(DP,UB,VB,DELYSQ,DELZSQ,AP,AU,CPG,CWG,RP,RU,NX,NY,NZ,
@@ -2692,7 +2692,7 @@ C-----------------------------------------------------------------------
 
 c
 C-----------------------------------------------------------------------
-C.....refresh block interfaces (and periodic boundary in z direction) 
+C.....refresh block interfaces (and periodic boundary in z direction)
 C-----------------------------------------------------------------------
         CALL REFRESHBC(DP,NX*NY,NZ)
 c
@@ -2713,7 +2713,7 @@ c.....other boundary conditions
         CALL BOUNDARY(UO,VO,WO,XU,XC,YV,YC,ZW,ZC,NX,NY,NZ,TLEVEL)
 c
 C-----------------------------------------------------------------------
-C.....refresh block interfaces (and periodic boundary in z direction) 
+C.....refresh block interfaces (and periodic boundary in z direction)
 C-----------------------------------------------------------------------
         CALL REFRESHBC(UO,NX*NY,NZ)
         CALL REFRESHBC(VO,NX*NY,NZ)
@@ -2722,7 +2722,7 @@ c
 c.....inlet and outlet boundary conditions
         CALL BOUNDINOUT(UO,VO,WO,US,VS,WS,XU,XC,YC,ZW,ZC,ALFXDT,TLEVEL,NX,NY,NZ,0)
         clock(8) = clock(8) + tclock() - clocktemp
-c        
+c
 C-----------------------------------------------------------------------
 C     Update pressure field
 C-----------------------------------------------------------------------
@@ -2804,13 +2804,13 @@ C-----------------------------------------------------------------------
         IF(ITYPE(6)/=0.AND.ITYPE(6)/=500) P(:,:,NZ) = P(:,:,KZ2)
 ! 	CALL BOUNDARY_P(P,XC,NX,NY,NZ)
 C-----------------------------------------------------------------------
-C.....refresh block interfaces (and periodic boundary in z direction) 
+C.....refresh block interfaces (and periodic boundary in z direction)
 C-----------------------------------------------------------------------
         CALL REFRESHBC(P,NX*NY,NZ)
 C
 C-----------------------------------------------------------------------
 c     boundary pressure and interior points
-C-----------------------------------------------------------------------        
+C-----------------------------------------------------------------------
         clock(12) = clock(12) + tclock()-clocktemp
 
         clocktemp = tclock()
@@ -2818,7 +2818,7 @@ C-----------------------------------------------------------------------
         IF(ibm>=1) then
 c
 c.....field extension --- pressure
-c           
+c
 c
 ccc          do ibd=1,nbd
 c the pressure at the interface points is corrected using the normal
@@ -2842,7 +2842,7 @@ ccc     &,tlevel,alfxdt,ibd,mbd)
 !      &,xnp,ynp,znp,dirp,mrkp,pindx,dpdnn,unvect,fp,nfacet
 !      &,xc_car,yc_car,xc,yc,zc,limp,mimp,nflpmax
 !      &,tlevel,alfxdt,mbd,nbd,sum(mimp))
-c the pressure at the body points is set equal to 0 
+c the pressure at the body points is set equal to 0
           do ibd=1,nbd
             if(idomy==1 .AND. mysize>1) then
               call presinterior1(p,nx,ny,nz,ipint,jpint,kpint,limpint(ibd),mimpint(ibd))
@@ -2858,7 +2858,7 @@ c              call obstacle(us,vs,ws,p,nx,ny,nz,1)
         clock(13) = clock(13) + tclock() - clocktemp
 C
 C-----------------------------------------------------------------------
-C.....refresh block interfaces (and periodic boundary in z direction) 
+C.....refresh block interfaces (and periodic boundary in z direction)
 C-----------------------------------------------------------------------
         clocktemp = tclock()
         CALL REFRESHBC(P,NX*NY,NZ)
@@ -2916,7 +2916,7 @@ C
 	  CALL BOUNDARY_DENS(DENS,XC,YC,NX,NY,NZ)
 !           CALL BOUNDINOUTD(DENS,WO,ZCG,ALFXDT,NX,NY,NZ,NZG)
           CALL REFRESHBC(DENS,NX*NY,NZ)
-	  
+
           IF(ibm>=1) then
           call correctdens_mod2(dens,nx,ny,nz,ip,jp,kp,pmtrx,rhoim,nxp,nyp,nzp
      &,xnp,ynp,znp,dirp,mrkp,pindx,drhodnn,unvect,fp,nfacet
@@ -2946,10 +2946,10 @@ c
 c-----------------------------------------------------------------------
 c                                            compute turbulent viscosity
 c-----------------------------------------------------------------------
-c            
+c
       clocktemp = tclock()
       IF(ISGS/=0) THEN
-c          
+c
         IF(ISGS==5) THEN
           CALL STRUCTUREFUNCTION(UO,VO,WO,TV,DP,NX,NY,NZ)
         ELSEIF(ISGS==6) THEN
@@ -2958,7 +2958,7 @@ c
           CALL TURVIS(UO,VO,WO,TV,G,DP,SXX,SYY,SZZ,SXY,SYZ,SXZ,
      &         US,VS,WS,UB,VB,WB,ILM,IMM,LM,MM,UC,VC,WC,
      &         DXDYDZ,CLES,CLESP,CLESN,NILMP,NILMN,XC,YC,ZC,DTM1,ICYCLE,NX,NY,NZ)
-               
+
 
         ENDIF
 
@@ -2983,9 +2983,9 @@ c......Set turbulent viscosity inside bodies
               call tvinterior(tv,flagtv,nx,ny,nz,nbd,ibd)
             ENDIF
           enddo
-          
+
         endif
-          
+
       ENDIF
       clock(14) = clock(14) + tclock() - clocktemp
 C
@@ -3084,7 +3084,7 @@ ccc            call geom(xc,yc(jys),xc_car(:,jys),yc_car(:,jys),zcg(kzs)
         call correctpres_mod2(dp,nx,ny,nz,ip,jp,kp,pmtrx,pim,nxp,nyp,nzp
      &,xnp,ynp,znp,dirp,mrkp,pindx,dpdnn,unvect,fp,nfacet
      &,xc_car,yc_car,xc,yc,zc,limpbd,mimpbd,nflpbdmax
-     &,tlevel,alfxdt,mbd,nbd,sum(mimpbd))         
+     &,tlevel,alfxdt,mbd,nbd,sum(mimpbd))
 
 c the pressure in the points found by the TAGPBD2 is corrected using the
 c normal gradient
@@ -3092,11 +3092,11 @@ c normal gradient
 !!!!!!            call correctpres(dp,nx,ny,nz,ip,jp,kp,pmtrx,pim,nxp,nyp,nzp
 !!!!!!     &,xnp,ynp,znp,dirp,mrkp,pindx,dpdnn,unvect,fp,nfacet
 !!!!!!     &,xc_car,yc_car,xc,yc,zc,limpbd(ibd,1),mimpbd(ibd,1),nflpbdmax
-!!!!!!     &,tlevel,alfxdt,ibd,mbd)          
+!!!!!!     &,tlevel,alfxdt,ibd,mbd)
 ccc            call correctpres(dp,nx,ny,nz,ip,jp,kp,pmtrx,pim,nxp,nyp,nzp
 ccc     &,xnp,ynp,znp,dirp,mrkp,pindx,dpdnn,unvect(:,ilb:ile),fp,mb(ibd)
 ccc     &,xc_car,yc_car,xc,yc,zc,limpbd(ibd,:),mimpbd(ibd,:),nflpbdmax(ibd)
-ccc     &,tlevel,alfxdt,ibd,mbd)         
+ccc     &,tlevel,alfxdt,ibd,mbd)
 c PRESS_BODY3 interpolates the pressure at the center of the triangles
 c using the surrounding grid nodes
 c output:PBD,MRKPB
@@ -3151,7 +3151,7 @@ c established by MOMFORC
 c output: components along X,Y,Z of the normal derivatives of U,V,W
 c (DUDXB,DUDYB,DUDZB,DVDXB,DVDYB,DVDZB,DWDXB,DWDYB,DWDZB)
 
-  
+
 
 
 
@@ -3225,10 +3225,10 @@ c$$$     &         ,dwdxb,dwdyb,dwdzb,mrkpb,mrksb,nfacet,nfacetot,ilb,ile)
 !        if(myrank.eq.0) then
 !           open(unit=10,file='time.imb',form='formatted',position
 !     $          ='append')
-!           write(10,*) nwritebdy,tlevel 
+!           write(10,*) nwritebdy,tlevel
 !           close(10)
 !        endif
-                 
+
 c        call calc_cf(dudxb,dudyb,dudzb,dvdxb,dvdyb,dvdzb,dwdxb,dwdyb,dwdzb
 c     &     ,mrksb,cf,mrkcf,unvect,nfacet)
 !        if(myrank==0) write(*,*)'******CALCULATE Cf******'
@@ -3267,7 +3267,7 @@ c        endif
 !
 !        deallocate(cfg,cf)
       ENDIF
- 
+
       clock(15) = clock(15) + tclock() - clocktemp
 C
 C-----------------------------------------------------------------------
@@ -3282,37 +3282,36 @@ C
 !      ttotal=ttotal+dtm1
       clocktemp = tclock()
 
-      IF(MOD(ICYCLE,100)==0.OR.MOD(ICYCLE,100)==1) THEN
-      nstep=icycle
-      IFIELD = 2
-      IDIR  = 1  ! IOMPI_3DSCALAR works in writing mode
+      IF(MOD(ICYCLE,ITPOST)==0.OR.MOD(ICYCLE,ITPOST)==1) THEN
+        if(it5p == 1) then
+          nstep=icycle
+          IFIELD = 2
+          IDIR  = 1  ! IOMPI_3DSCALAR works in writing mode
 
-c$$$        write(ICfile,'(a,i8.8,a)')trim(hspdir)//"up_",icycle,".res"
-c$$$        CALL IOSCALAR_POST_5P(ICfile,UO,DP,NX,NY,NZ,IDIR,TIME,DTM1,nstep)
-c$$$        if(myrank==0) write(6,*) "up.res done"
-c$$$
-c$$$        write(ICfile,'(a,i8.8,a)')trim(hspdir)//"vp_",icycle,".res"
-c$$$        CALL IOSCALAR_POST_5P(ICfile,VO,DP,NX,NY,NZ,IDIR,TIME,DTM1,nstep)
-c$$$        if(myrank==0) write(6,*) "vp.res done"
-c$$$
-c$$$        write(ICfile,'(a,i8.8,a)')trim(hspdir)//"wp_",icycle,".res"
-c$$$        CALL IOSCALAR_POST_5P(ICfile,WO,DP,NX,NY,NZ,IDIR,TIME,DTM1,nstep)
-c$$$        if(myrank==0) write(6,*) "wp.res done"
-c$$$
-c$$$        write(ICfile,'(a,i8.8,a)')trim(hspdir)//"pp_",icycle,".res"
-c$$$        CALL IOSCALAR_POST_5P(ICfile,P ,DP,NX,NY,NZ,IDIR,TIME,DTM1,nstep)
-c$$$        if(myrank==0) write(6,*) "pp.res done"
-c$$$
-c$$$        IF(IDENS.EQ.1) then
-c$$$        write(ICfile,'(a,i8.8,a)')trim(hspdir)//"densp_",icycle,".res"
-c$$$        CALL IOSCALAR_POST_5P(ICfile,DENS,DP,NX,NY,NZ,IDIR,TIME,DTM1,nstep)
-c$$$        if(myrank==0) write(6,*) "densp.res done"
-c$$$        endif
+          write(ICfile,'(a,i8.8,a)')trim(hspdir)//"up_",icycle,".5p"
+          CALL IOSCALAR_POST_5P(ICfile,UO,DP,NX,NY,NZ,IDIR,TIME,DTM1,nstep)
+          if(myrank==0) write(6,*) "up.5p done"
 
+          write(ICfile,'(a,i8.8,a)')trim(hspdir)//"vp_",icycle,".5p"
+          CALL IOSCALAR_POST_5P(ICfile,VO,DP,NX,NY,NZ,IDIR,TIME,DTM1,nstep)
+          if(myrank==0) write(6,*) "vp.5p done"
+
+          write(ICfile,'(a,i8.8,a)')trim(hspdir)//"wp_",icycle,".5p"
+          CALL IOSCALAR_POST_5P(ICfile,WO,DP,NX,NY,NZ,IDIR,TIME,DTM1,nstep)
+          if(myrank==0) write(6,*) "wp.5p done"
+
+          write(ICfile,'(a,i8.8,a)')trim(hspdir)//"pp_",icycle,".5p"
+          CALL IOSCALAR_POST_5P(ICfile,P ,DP,NX,NY,NZ,IDIR,TIME,DTM1,nstep)
+          if(myrank==0) write(6,*) "pp.5p done"
+
+          IF(IDENS.EQ.1) then
+          write(ICfile,'(a,i8.8,a)')trim(hspdir)//"densp_",icycle,".5p"
+          CALL IOSCALAR_POST_5P(ICfile,DENS,DP,NX,NY,NZ,IDIR,TIME,DTM1,nstep)
+          if(myrank==0) write(6,*) "densp.5p done"
+          endif
+        endif
       ENDIF
 
-
-      
       IF(ITRES/=0.AND.MOD(ICYCLE,ITRES)==0) THEN
 
         IF(MYRANK==0) THEN
@@ -3328,7 +3327,7 @@ c        CALL IOMPI_3DSCALAR(trim(hspdir)//'u.res',UO,NX,NY,NZ,IDIR)
 c        CALL IOMPI_3DSCALAR(trim(hspdir)//'v.res',VO,NX,NY,NZ,IDIR)
 c        CALL IOMPI_3DSCALAR(trim(hspdir)//'w.res',WO,NX,NY,NZ,IDIR)
 c        CALL IOMPI_3DSCALAR(trim(hspdir)//'p.res', P,NX,NY,NZ,IDIR)
-        
+
         write(ICfile,'(a,i8.8,a)')trim(hspdir)//"u_",icycle,".res"
         CALL IOSCALAR(ICfile,UO,DP,NX,NY,NZ,IDIR,TIME,DTM1,nstep)
 !         CALL HDF5_MPI_3DREAL(ICfile,UO,NX,NY,NZ,IDIR)
@@ -3341,10 +3340,10 @@ c        CALL IOMPI_3DSCALAR(trim(hspdir)//'p.res', P,NX,NY,NZ,IDIR)
         write(ICfile,'(a,i8.8,a)')trim(hspdir)//"p_",icycle,".res"
         CALL IOSCALAR(ICfile,P ,DP,NX,NY,NZ,IDIR,TIME,DTM1,nstep)
 !         CALL HDF5_MPI_3DREAL(ICfile, P,NX,NY,NZ,IDIR)
-        
-        
-        
-        
+
+
+
+
         IF(IDENS.EQ.1) then
         write(ICfile,'(a,i8.8,a)')trim(hspdir)//"dens_",icycle,".res"
         CALL IOSCALAR(ICfile,DENS,DP,NX,NY,NZ,IDIR,TIME,DTM1,nstep)
@@ -3379,8 +3378,8 @@ c          CALL IOSCALAR('wa.res',WA,DP,NX,NY,NZ,IDIR,TIME)
           IF(ISGS==4) THEN !if a Lagrangian model is used
 c            CALL IOMPI_3DSCALAR(trim(hspdir)//'ilm.res',ILM,NX,NY,NZ,IDIR)
 c            CALL IOMPI_3DSCALAR(trim(hspdir)//'imm.res',IMM,NX,NY,NZ,IDIR)
-            CALL HDF5_MPI_3DREAL(trim(hspdir)//'ilm.res',ILM,NX,NY,NZ,IDIR)
-            CALL HDF5_MPI_3DREAL(trim(hspdir)//'imm.res',IMM,NX,NY,NZ,IDIR)
+            !CALL HDF5_MPI_3DREAL(trim(hspdir)//'ilm.res',ILM,NX,NY,NZ,IDIR)
+            !CALL HDF5_MPI_3DREAL(trim(hspdir)//'imm.res',IMM,NX,NY,NZ,IDIR)
 c            CALL IOSCALAR('ilm.res',ILM,DP,NX,NY,NZ,IDIR,TIME)
 c            CALL IOSCALAR('imm.res',IMM,DP,NX,NY,NZ,IDIR,TIME)
           ENDIF
@@ -3398,7 +3397,7 @@ c            call imb2plt('mbd.'//index(ibd)//'.plt.res',vertex,nfacet,ibd)
         endif
 
         if(myrank==0) write(6,*) ' End write restarting file'
-c     
+c
       ENDIF
 
       !Flat surface dimple, shear stress
@@ -3508,7 +3507,7 @@ c          call correctpres_mod2(dp,nx,ny,nz,ip,jp,kp,pmtrx,pim,nxp,nyp,nzp
 ccc            clock(61) = clock(61) + tclock()-clocktemp
           ENDDO
           clock(61) = clock(61) + tclock()-clocktemp
-        
+
           ub = uo
           vb = vo
           wb = wo
@@ -3527,7 +3526,7 @@ c.....compute forcing in z momentum
 !          call momforc_mod2(wb,wb,xc,yc,zw,nx,ny,nz,iw,jw,kw,wmtrx,windx
           call momforc_mod3(wb,wb,xc,yc,zw,nx,ny,nz,iw,jw,kw,wmtrx,windx
      &           ,wim,mrkw,dirw,nxw,nyw,nzw,nflwmax,limw,mimw,0,3,nbd,sum(mimw))
- 
+
           ub(:,1,:) = ub(:,ny-1,:)
           ub(:,ny,:) = ub(:,2,:)
           vb(:,1,:) = vb(:,ny-1,:)
@@ -3536,7 +3535,7 @@ c.....compute forcing in z momentum
           wb(:,ny,:) = wb(:,2,:)
 
           clock(62) = clock(62) + tclock()-clocktemp
- 
+
           clocktemp = tclock()
 
 
@@ -3616,7 +3615,7 @@ c the azimuthal spectra are evaluated
            if(icycle==itysamp) then
              call compute_esd(uo,vo,wo,p,nx,ny,nz,iyprb,kyprb,nyprb,nyprbmax,esd,nyesdvar,0)
            else
-             call compute_esd(uo,vo,wo,p,nx,ny,nz,iyprb,kyprb,nyprb,nyprbmax,esd,nyesdvar,1)             
+             call compute_esd(uo,vo,wo,p,nx,ny,nz,iyprb,kyprb,nyprb,nyprbmax,esd,nyesdvar,1)
            endif
         endif
 
@@ -3703,7 +3702,7 @@ c the averaged values are written on a file
 
 c
 C-----------------------------------------------------------------------
-C     Write files for VP region 
+C     Write files for VP region
 C-----------------------------------------------------------------------
       if(VPreg_freq>0 .AND. mod(icycle,VPreg_freq)==0) then
         fileVPreg = trim(hspdir)//'VPreg.'//index(iVPreg)//'.bin'
@@ -3774,7 +3773,7 @@ c
 C-----------------------------------------------------------------------
 C     create time series about mean flow
 C-----------------------------------------------------------------------
-C    
+C
 
       IF(ICYCLE>=ITINI) THEN
 
@@ -3796,7 +3795,7 @@ c        IF(ICFL==0.AND.ISTAT/=0.AND.MOD(ICYCLE,ISTAT)==0) GOTO 9999
 
 c NWRITE can vary between 0 and 100    !!!!!!
           IF(NWRITE>100) NWRITE = NWRITE-100
-c     
+c
           IF(MYRANK==0) write(6,*) ' Begin write field ...',icycle,time,nwrite
 
 c Tecplot files of the moving immersed-boundaries are written
@@ -3804,10 +3803,10 @@ c Tecplot files of the moving immersed-boundaries are written
 !            call imb2plt('mbd.'//index(ibd)//'.'//index(nwrite)//'.plt',vertex,nfacet,ibd)
 !          enddo
 
-c STAT1D evaluates the one-dimensional statistics along X          
+c STAT1D evaluates the one-dimensional statistics along X
 c        CALL STAT1D(UO,VO,WO,P,TV,'stat1d.'//INDEX(NWRITE),NX,NY,NZ,TIME)
 c STAT2D evaluates the two-dimensional statistics on XZ surfaces
-c        CALL STAT2D(UO,VO,WO,P,TV,'stat2d.'//INDEX(NWRITE),NX,NY,NZ,TIME)       
+c        CALL STAT2D(UO,VO,WO,P,TV,'stat2d.'//INDEX(NWRITE),NX,NY,NZ,TIME)
           IF(MYRANK==0) write(6,*) ' End write field'
 
  8888     CONTINUE
@@ -3819,7 +3818,7 @@ C        ENDIF
 !      if((time-timep).gt.((periodo)*(iplant8+1))) then
 !         clocktemp = tclock()
 c
-c        Evaluation of the vorticity values for the subroutine 
+c        Evaluation of the vorticity values for the subroutine
 c        mediestaggavg
 c
 !         call vort1staggavg(uo,vo,wo,nx,ny,nz,xc,xu,zc)
@@ -3833,7 +3832,7 @@ c
 c
 !         if(myrank.eq.0)write(6,*)'output1',tempo
 !         clock(50) = clock(50) + tclock() - clocktemp
-!      endif 
+!      endif
 c
 !      if(mod(icycle,10000000).eq.0) then
 !         clocktemp = tclock()
@@ -3852,7 +3851,7 @@ c
 !      endif
 c
 !      if((time-timep).gt.((periodo5)*(iplant9+1))) then
-         if(mod(icycle,5).eq.0) then
+         if(mod(icycle,itpln).eq.0) then
          clocktemp = tclock()
          iplant9=iplant9+1
 c
@@ -3864,7 +3863,7 @@ c
 !         call plotinststagg_xyz(iplant9c,iplant9d,iplant9p,
 !     %nx,ny,nz,nzg,nbd,icycle,xc,xu,yc,yv,zcg,zwg,p,vo,uo,wo)
 !     %,flaguo,flagvo,flagwo)
-        call WRITE_PLANES(NX,NY,NZ,NZG,NBD,ICYCLE,time,DTM1,XC,XU,YC,YV,ZCG,ZWG,xc_car,
+        call WRITE_PLANES(NX,NY,NZ,NZG,NBD,ICYCLE,time,DTM1,XC,XU,YC,YV,ZC,ZCG,ZWG,xc_car,
      &                  yc_car,xu_car,yu_car,xv_car,yv_car,P,VO,UO,WO,DENS)
 
 !         call plotinststaggcart(iplant9c,iplant9d,iplant9p,
@@ -3883,14 +3882,14 @@ c
 !           call plotinststagg_xyz_d(iplant9c,iplant9d,iplant9p,
 !     %nx,ny,nz,nzg,nbd,icycle,xc,xu,yc,yv,zcg,zwg,p,vo,uo,wo)
 !     %,flaguo,flagvo,flagwo)
- 	  call WRITE_PLANES(NX,NY,NZ,NZG,NBD,ICYCLE,time,DTM1,XC,XU,YC,YV,ZCG,ZWG,xc_car,
+ 	  call WRITE_PLANES(NX,NY,NZ,NZG,NBD,ICYCLE,time,DTM1,XC,XU,YC,YV,ZC,ZCG,ZWG,xc_car,
      &                  yc_car,xu_car,yu_car,xv_car,yv_car,P,VO,UO,WO,DENS)
 !           call vort2stagg_xyz(nx,ny,nz,xc,xu,zc,uo,vo,wo)
 !           call plotvortstagg_xyz_d(iplant9c,iplant9d,iplant9p,
 !     %nx,ny,nz,nzg,nbd,icycle,dens,uo,vo,wo,tv,xc,xu)
 !      %,flaguo,flagvo,flagwo)
-          
-       
+
+
          endif
 c
          clock(49) = clock(49) + tclock() - clocktemp
@@ -3901,7 +3900,7 @@ c$$$          call PERIODIC_1D_AVERAGE_RMS(NX,NY,NZ,NZG,NBD,ICYCLE,time,DTM1,XC,
 c$$$     &                              yc_car,xu_car,yu_car,xv_car,yv_car,P,VO,UO,WO,DENS)
 c$$$          endif
 
-         
+
 C           if(mod(icycle,100).eq.0) then
 C           call PERIODIC_2D_AVERAGE_RMS_NCPU(NX,NY,NZ,NZG,NBD,ICYCLE,time,DTM1,XC,XU,YC,YV,ZCG,ZWG,xc_car,
 C      &                              yc_car,xu_car,yu_car,xv_car,yv_car,P,VO,UO,WO,DENS,TV)
@@ -3938,7 +3937,7 @@ c
 !         if(myrank.eq.0)write(6,*)'output2',tempo3
 !         clock(55) = clock(55) + tclock() - clocktemp
 !      endif
-c 
+c
       clocktemp = tclock()
       call sondestagg(nx,ny,nz,nbd,time,dtm1,vo,uo,wo,p)    !,flagpo)
 !      call sondestaggcart(nx,ny,nz,nbd,time,dtm1,yv,vo,uo,wo,p,flagpo)
@@ -3955,7 +3954,7 @@ C
 C-----------------------------------------------------------------------
 C     end main loop
 C-----------------------------------------------------------------------
-C     
+C
       TIME_ITERATION = tclock() - TIME_ITERATION
       TIME_LAST_ITERATION = TIME_ITERATION
       clock(99) = TIME_LAST_ITERATION
@@ -3970,7 +3969,7 @@ C-----------------------------------------------------------------------
         CALL SCRINFO(UO,VO,WO,P,DP,TV,DENS,DTM1,TIME,ICYCLE,ID,JD,KD,NX,NY,NZ)
 
 c        TIME_ITERATIONS = (tclock() - TIME_ITERATIONS)/REAL(ITSCR)
-c        CLOCK(100) = TIME_ITERATIONS 
+c        CLOCK(100) = TIME_ITERATIONS
 
         CLOCK(91) = CLOCK(24)+CLOCK(28)+CLOCK(32) !TAG3D
         CLOCK(92) = CLOCK(25)+CLOCK(29)+CLOCK(33) !TAGU
@@ -3988,7 +3987,7 @@ c        CLOCK(100) = TIME_ITERATIONS
 c the statistics on the computational times are written
           OPEN(UNIT=16,FILE='clock.dat',FORM='FORMATTED'
      &        ,POSITION='APPEND')
-c global time statistics 
+c global time statistics
           WRITE(16,'(2(A,1x,I6))') 'Cycles=',icycle-itscr,'-',icycle
           WRITE(16,'(2A)') ' Task/Time          '
      &         ,'        Ave.(sec/%)     Max.(sec/%)     Min.(sec/%)'
@@ -3996,15 +3995,15 @@ c global time statistics
 c time statistics for single sections of the code
           i=1
           WRITE(16,102) 'Calc. CFL              :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'   
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
           IF(IBM.GT.0) THEN
             i=2
             WRITE(16,102) 'Moving Boundary Tasks  :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
 !!!!!!          i=21
             i=51
             WRITE(16,102) '  - RBM                :'
@@ -4060,18 +4059,18 @@ c time statistics for single sections of the code
             WRITE(16,102) '  - Set surface vel.   :'
      &         ,clockg(i),'(',100*clockg(i)/clockg(2),'%)'
      &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(2),'%)'
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(2),'%)'         
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(2),'%)'
           ENDIF
           i=3
           WRITE(16,102) 'Calc. RHS              :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
      &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
           i=4
           WRITE(16,102) 'Predictor              :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
           i=40
           WRITE(16,102) '  - U loop             :'
      &         ,clockg(i),'(',100*clockg(i)/clockg(4),'%)'
@@ -4094,12 +4093,12 @@ c time statistics for single sections of the code
      &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(4),'%)'
           i=44
           WRITE(16,102) '    - 1st part         :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(43),'%)'   
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(43),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(43),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(43),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(43),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(43),'%)'
           i=45
           WRITE(16,102) '    - 2nd part         :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(43),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(43),'%)'
      &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(43),'%)'
      &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(43),'%)'
           i=46
@@ -4109,154 +4108,154 @@ c time statistics for single sections of the code
      &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(4),'%)'
           i=47
           WRITE(16,102) '    - 1st part         :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(46),'%)'   
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(46),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(46),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(46),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(46),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(46),'%)'
           i=48
           WRITE(16,102) '    - 2nd part         :'
      &         ,clockg(i),'(',100*clockg(i)/clockg(46),'%)'
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(46),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(46),'%)' 
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(46),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(46),'%)'
           IF (implx/=0.OR.imply/=0) THEN
             i=5
             WRITE(16,102) 'Mom. Forcing (Implicit):'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
             i=6
             WRITE(16,102) 'Inverse LHS (Implicit) :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
           ELSE
             i=7
             WRITE(16,102) 'MoM. Forcing (Explicit):'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
           ENDIF
           i=8
           WRITE(16,102) 'Boundary               :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
           i=9
           WRITE(16,102) 'Divergence             :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
           i=10
           WRITE(16,102) 'Pressure Direct        :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
           i=11
           WRITE(16,102) 'Corrector              :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
           i=12
           WRITE(16,102) 'Update/Refresh Pressure:'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
           i=13
           WRITE(16,102) 'Press. Field Extension :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
           IF (ISGS/=0) THEN
             i=14
             WRITE(16,102) 'Turbulent viscosity    :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
           ENDIF
           i=15
           WRITE(16,102) 'Shear stress on body   :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
           i=16
           WRITE(16,102) 'Input/Output (restart) :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
           i=17
           WRITE(16,102) 'Drag and Lift          :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
           i=61
           WRITE(16,102) '  - Correct+Press_body :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
           i=62
           WRITE(16,102) '  - Momforc            :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
           i=63
           WRITE(16,102) '  - Shear_body         :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
           i=64
           WRITE(16,102) '  - Calcforce          :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
           i=18
           WRITE(16,102) 'Time probes            :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
           i=19
           WRITE(16,102) 'Y correlations         :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
      &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
           i=20
           WRITE(16,102) 'VPfield files          :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
           i=21
           WRITE(16,102) 'Time averaged files    :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
           i=50
           WRITE(16,102) 'Medie                  :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
           i=49
           WRITE(16,102) 'Instantaneous fields   :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
           i=55
           WRITE(16,102) 'Time-averaged fields   :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
           i=57
           WRITE(16,102) 'Sonde                  :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
           i=58
           WRITE(16,102) 'Continua               :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
           i=59
           WRITE(16,102) '3D fields              :'
-     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)' 
-     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)' 
-     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)' 
+     &         ,clockg(i),'(',100*clockg(i)/clockg(100),'%)'
+     &         ,clockgmax(i),'(',100*clockgmax(i)/clockgmax(100),'%)'
+     &         ,clockgmin(i),'(',100*clockgmin(i)/clockgmin(100),'%)'
           WRITE(16,'(A,I4,A,3(1x,F8.4))') 'Time per ',ITSCR,' iters:',CLOCKG(100),CLOCKGMAX(100),CLOCKGMIN(100)
           CLOSE(16)
         ENDIF
@@ -4271,7 +4270,7 @@ c time statistics on the last iteration
 c time statistics on another file
 C        IF(MYRANK.EQ.0 .AND. IOCLOCK>0) THEN
 C          OPEN(UNIT=16,FILE='clock.csv',FORM='FORMATTED'
-C     &         ,POSITION='APPEND') 
+C     &         ,POSITION='APPEND')
 C          WRITE(16,'(2(A,1x,I6))') 'Cycles=',icycle-itscr,'-',icycle
 C          WRITE(16,'(2A)') ' Task/Time          '
 C     &         ,'        Ave.(sec/%)     Max.(sec/%)     Min.(sec/%)'
@@ -4325,7 +4324,7 @@ c
 !        ii=prbindx2+(i-1)
 !        close(700+ii)
 !        close(800+ii)
-!      enddo      
+!      enddo
 !!!!!!
       IF(MYRANK==0) THEN
          WRITE(6,'(A)') '*.........................'
@@ -4333,7 +4332,7 @@ c
       ENDIF
 
       CALL MPI_FINALIZE(IERR)
-C         
+C
       STOP
 101   FORMAT(A,3(I4,1x),E15.8)
 102   FORMAT(A,3(1x,F8.4,A,F4.1,A))

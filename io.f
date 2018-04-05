@@ -514,8 +514,8 @@ c      REAL*4 P1(NX,NY,NZ)
       REAL,ALLOCATABLE,DIMENSION(:,:,:) :: TMPF,TEMP
 C
       INTEGER I,J,K,KS,JP,STATUS(MPI_STATUS_SIZE)
-      INTEGER KX,KXX0,KXX1,KXX2,KXX3,KXX4,MK,NKR,COUNTER,KMIN,KMAX,NK,NKRR
-
+!      INTEGER KX,KXX0,KXX1,KXX2,KXX3,KXX4,MK,NKR,COUNTER,KMIN,KMAX,NK,NKRR
+      INTEGER KX,KXX0,KXX1,KXX2,KXX3,KXX4,MK,NKR,COUNTER,NK,NKRR
 C     IF DIR = -1 READ ELSE WRITE
 
       NZG = MYSIZE*(NZ-2)+2
@@ -544,8 +544,8 @@ C     IF DIR = -1 READ ELSE WRITE
       ELSEIF(DIR==1) THEN
 c     note that all files read the input, but only root writes to output
         IF(MYRANK==0) THEN
-        KMAX=1114;KMIN=151;
-        NKRR = KMAX-KMIN+1+5*(FLOOR((NZG-2-KMAX)/20.0))
+        !KMAX=1114;KMIN=151;
+        NKRR = KMAX5P-KMIN5P+1+5*(FLOOR((NZG-2-KMAX5P)/20.0))
         ALLOCATE (TMPF(NX,NY,NZG),TEMP(NX-10,NY,NKRR))
           OPEN(19,FILE=NAME,STATUS='UNKNOWN',FORM='UNFORMATTED')
           WRITE(19) NX,NY,MYSIZE*(NZ-2)+2,1
@@ -589,8 +589,8 @@ c
 C            
           ENDIF
             
-            DO K=KMIN,KMAX
-            KX = K-(KMIN-1)
+            DO K=KMIN5P,KMAX5P
+            KX = K-(KMIN5P-1)
              DO I=1,NX-10
               DO J=1,NY
 !               if(K.gt.KMIN.or.K.lt.KMAX) then
@@ -602,13 +602,13 @@ C
 
 !           write(*,*) 'ALREADY HERE1'
            MK = KX;COUNTER = 1;NK = 1;
-           DO NKR=1,FLOOR((NZG-2-KMAX)/20.0)
+           DO NKR=1,FLOOR((NZG-2-KMAX5P)/20.0)
             MK = MK+1
-            KXX0 = KMAX+NK*20-2
-            KXX1 = KMAX+NK*20-1
-            KXX2 = KMAX+NK*20
-            KXX3 = KMAX+NK*20+1
-            KXX4 = KMAX+NK*20+2
+            KXX0 = KMAX5P+NK*20-2
+            KXX1 = KMAX5P+NK*20-1
+            KXX2 = KMAX5P+NK*20
+            KXX3 = KMAX5P+NK*20+1
+            KXX4 = KMAX5P+NK*20+2
 !            write(*,*) 'MK',MK,'KXX1',KXX1,'KXX2',KXX2,'KXX3',KXX3
              DO I=1,NX-10
               DO J=1,NY
