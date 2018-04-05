@@ -139,7 +139,7 @@
 * dpdz
 *
 &FLOPRM
-      ru1 = 0.005,
+      ru1 = 0.001,
       css = 0.1,
       eps = 1.e-16,
       dpdx = 0.,
