@@ -750,8 +750,12 @@ c
       ELSE
 !**************************************************************************************************
 ! Original
+<<<<<<< HEAD
 
     	call add_density(xc,yc,nx,ny,nz,dens,ierr)
+=======
+	call add_density(xc,yc,nx,ny,nz,dens,ierr)
+>>>>>>> 5b588383f25931df60a9b92e8cd307edb59365e4
         CALL SPONGE_SETUP(NX,NY,NZ,NZG,XC,XU,ZWG,ZCG,IERR)
         IDIR  = -1 ! IOMPI_3DSCALAR reads restart files
         IF(MYRANK.EQ.0) write(6,*) 'Reading u restart file ...'
