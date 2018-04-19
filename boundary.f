@@ -438,12 +438,12 @@ c      CASE (2)
 
       CASE (3)
         ubc(:,jb1,:) = ubc(:,jy2,:)
-        vbc(:,jb1,:) = vbc(:,jy2,:)
+        vbc(:,jb1,:) = vbc(:,jy2,:)   !! jb1 = 1, jy2 = ny-1
         wbc(:,jb1,:) = wbc(:,jy2,:)      
          
 c      CASE (4)
         ubc(:,jb2,:) = ubc(:,jy1,:)
-        vbc(:,jb2,:) = vbc(:,jy1,:)
+        vbc(:,jb2,:) = vbc(:,jy1,:)  !! jb2 = ny, jy1 = 2
         wbc(:,jb2,:) = wbc(:,jy1,:)              
         
       CASE (5)
@@ -691,7 +691,8 @@ c... Add noise
 
 c.....uniform inlet
       CASE (305)
-
+        !write(*,*), "boundary.f Line 694 KB1 KZ1", KB1, KZ1 KB1 = 1,
+        !KZ1 = 2
         UBC(:,:,KB1) =  -UBC(:,:,KZ1)    !!!!!!
         VBC(:,:,KB1) =  -VBC(:,:,KZ1)    !!!!!!
         WBC(:,:,KB1) = 1.0               !!!!!!
@@ -934,11 +935,20 @@ c.....extrapolation from the interior
 
 c.....convective boundary condition
         CASE (730)
-
+          write(*,*), "Line 957", WOF(nx-1,1,nz-1), WOF(nx-1,ny-1,nz-1)
+          write(*,*), "Line 957", WOF(nx-1,2,nz-1), WOF(nx-1,ny,nz-1)
+          write(*,*), "Line 957", WBC(nx-1,1,nz-1), WBC(nx-1,ny-1,nz-1)
+          write(*,*), "Line 957", WBC(nx-1,2,nz-1), WBC(nx-1,ny,nz-1)     
           UBC(:,:,NZ ) = UOF(:,:,NZ )
           VBC(:,:,NZ ) = VOF(:,:,NZ )
-          WBC(:,:,KZ2) = WOF(:,:,KZ2)
+  
+          ! one possible solution
 
+          WBC(:,2:ny-1,KZ2) = WOF(:,2:ny-1,KZ2)
+          write(*,*), "Line 958", WOF(nx-1,1,nz-1), WOF(nx-1,ny-1,nz-1)
+          write(*,*), "Line 958", WOF(nx-1,2,nz-1), WOF(nx-1,ny,nz-1)
+          write(*,*), "Line 958", WBC(nx-1,1,nz-1), WBC(nx-1,ny-1,nz-1)
+          write(*,*), "Line 958", WBC(nx-1,2,nz-1), WBC(nx-1,ny,nz-1)
 c.....convective boundary condition
         CASE (731)
 
@@ -955,9 +965,16 @@ c.....convective boundary condition
         SELECT CASE(ITYPE(2))
 
         CASE(82)
-
+          write(*,*), "Line 959", UOF(nx-1,1,nz-1), UOF(nx-1,ny-1,nz-1)
+          write(*,*), "Line 959", UOF(nx-1,2,nz-1), UOF(nx-1,ny,nz-1)
+          write(*,*), "Line 959", UBC(nx-1,1,nz-1), UBC(nx-1,ny-1,nz-1)
+          write(*,*), "Line 959", UBC(nx-1,2,nz-1), UBC(nx-1,ny,nz-1)     
           UBC(IB1,:,:) = UOF(IX1,:,:)
           UBC(IX2,:,:) = UOF(IX2-1,:,:)
+          write(*,*), "Line 960", UOF(nx-1,1,nz-1), UOF(nx-1,ny-1,nz-1)
+          write(*,*), "Line 960", UOF(nx-1,2,nz-1), UOF(nx-1,ny,nz-1)
+          write(*,*), "Line 960", UBC(nx-1,1,nz-1), UBC(nx-1,ny-1,nz-1)
+          write(*,*), "Line 960", UBC(nx-1,2,nz-1), UBC(nx-1,ny,nz-1)
  
         END SELECT    
 
@@ -966,8 +983,6 @@ c.....convective boundary condition
 c
       RETURN
       END
-
-
 
 
 C---- function u_taylor_green--------------N. Beratlis-9 Dec. 2009 ---
@@ -2225,14 +2240,15 @@ c
       INTEGER IBND
       INTEGER STATUS(MPI_STATUS_SIZE)
       
+      write(*,*) "The rank of processor", myrank
       IF(ITYPE(5)==305) THEN
       dens(:,:,KB1)=dens(:,:,KZ1)
       ENDIF
 
       IF(ITYPE(6)==730) THEN
-      dens(:,:,KZ2) = dens(:,:,KZ2-1)
-      dens(:,:,NZ) = dens(:,:,KZ2) 
-!       WRITE(*,*)"****************=",KZ2,NZ
+!      dens(:,:,KZ2) = dens(:,:,KZ2-1)
+!      dens(:,:,NZ) = dens(:,:,KZ2) 
+       WRITE(*,*)"****************=",KZ2,NZ
 !         AREA = 0.0
 !         UCONVT = 0.0
 ! !       IF(ez+1.eq.NZG) THEN
@@ -2251,12 +2267,12 @@ c
 ! !      &         CALL MPI_RECV(QIN,2,MTYPE,0,0,MPI_COMM_EDDY,STATUS,IERR)
 ! 
 !        COEFF = QIN(2)*ALFXDT*CP(KZ2)
-!         DO J=JY1,JY2
-!         DO I=IX1,IX2
-!         dens(I,J,KZ2)=dens(I,J,KZ2)-0.50*(WO(I,J,KZ2)+WO(I-1,J,KZ2))*ALFXDT*(dens(I,J,KZ2)-dens(I,J,KZ2-1))/(ZCG(KZ2)-ZCG(KZ2-1))
-!         dens(I,J,NZ)=dens(I,J,NZ)-0.50*(WO(I,J,NZ)+WO(I-1,J,NZ))*ALFXDT*(dens(I,J,NZ)-dens(I,J,KZ2))/(ZCG(NZ)-ZCG(KZ2))
-!         ENDDO
-!         ENDDO
+         DO J=JY1,JY2
+         DO I=IX1,IX2
+         dens(I,J,KZ2)=dens(I,J,KZ2)-0.50*(WO(I,J,KZ2)+WO(I-1,J,KZ2))*ALFXDT*(dens(I,J,KZ2)-dens(I,J,KZ2-1))/(ZCG(KZ2)-ZCG(KZ2-1))
+         dens(I,J,NZ)=dens(I,J,NZ)-0.50*(WO(I,J,NZ)+WO(I-1,J,NZ))*ALFXDT*(dens(I,J,NZ)-dens(I,J,KZ2))/(ZCG(NZ)-ZCG(KZ2))
+         ENDDO
+         ENDDO
 !       ENDIF
       ENDIF
       

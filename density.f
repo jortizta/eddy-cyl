@@ -3,6 +3,8 @@ C -------------------------------------- A. Posa - 03/11/2014 ----
 C
       SUBROUTINE DENSITY(DENS,UO,VO,RHA,RHB,RS,XC,YC,ALFXDT,GAMXDT,RHOXDT,IM,JM,KM)
 c
+      USE SPNGE
+      USE density_bg
       INCLUDE 'common.h'
       INCLUDE 'mpif.h'
 c
@@ -39,14 +41,27 @@ c
 c Karu adds ----------------------
         RHB(I,J,K) = RS(I,J,K)
 c -------------------------------        
-	RS(I,J,K)  = DENS(I,J,K)
+	     RS(I,J,K)  = DENS(I,J,K)
 	
 c	DENS(I,J,K) = RS(I,J,K)
+
 c the RHS at the time level L-1 is stored in RHA
       ENDDO
       ENDDO
       ENDDO
 c Karu adds----------------------------------------------      
+
+c Sheel adds-----------------------------------------------
+c Sponging density to background
+      DO I=IX1,IX2
+      DO J=JY1,JY2
+      DO K=KZ1,KZ2
+        RS(I,J,K) = RS(I,J,K) +
+     &  dfxpl(K)*5.0d0*(dens_bg(I,J)-RS(I,J,K))*ALFXDT*1.0d0
+      ENDDO
+      ENDDO
+      ENDDO
+c--------------------------------------------------------
 
       RHB = RS+0.5*ALFXDT*RHB
       

@@ -15,13 +15,13 @@ rm -rf *.out
 #rm -rf *.xyz 
 #rm -rf vtkfiles/*.vtk
 #rm -rf vtkfiles/*.plt
-export LD_LIBRARY_PATH=/usr/local/hdf5/lib/:$LD_LIBRARY_PATH
+#export LD_LIBRARY_PATH=/usr/local/hdf5/lib/:$LD_LIBRARY_PATH
 # scp -r /Work3/anikesh/code_May14/run/Eddy.x  
-
-
-
+export LD_LIBRARY_PATH=/opt/hdf5-1.8.15-patch1/lib:$LD_LIBRARY_PATH
+ 
 # mpirun -mca btl ^openib -np 4 ./Eddy.x   
 
- /opt/mpich-3.2_intel/bin/mpirun  -np 8 ./Eddy.x
-
+#/opt/mpich-3.2_intel/bin/mpirun  -np 4 ./Eddy.x
+/opt/openmpi/bin/mpirun  -np 4 ./Eddy.x
+ 
 #./Eddy.x

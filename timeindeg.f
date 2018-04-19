@@ -1182,6 +1182,7 @@ c         df=cf1*real(ieu-i)**2.+cf2*real(ieu-i)+cf3
 !        write(*,*),dfxul(2), myrank
 
 !        if(myrank.eq.0) then
+       write(*,*) "IBU IEU", IBU, IEU
        DO I=IBU,IEU
        DO J=JY1,JY2
        DO K=KZ1,KZ2
@@ -1228,7 +1229,7 @@ C
       ENDDO
       ENDDO
 c
-
+      write(*,*) "JBV, JEV", JBV, JEV
  	var=2 !u=Flow(:,:,:,5)
 !  	do dir=1,3
 !  	do face=1,2
@@ -1255,12 +1256,11 @@ c     &     (kz2-kz1+1)*(jev-jbv+1)*(ix2-ix1+1)
 c------------------------------------------------------------------
 c                                                    compute wstar
 c------------------------------------------------------------------
+      write(*,*), "KBW, KEW, WO(40,2,nz-1)", KBW, KEW, WO(40,2,513)
       clocktemp1 = tclock()
       DO K=KBW,KEW
       DO J=JY1,JY2
       DO I=IX1,IX2
-        WSTAR = WO(I,J,K)
-     &       +GAMXDT*WB(I,J,K)
      &       +RHOXDT*WA(I,J,K)
      &       -ALFXDT*CW(K)*(P(I,J,K+1)-P(I,J,K))
      &       +COEF*WS(I,J,K)
@@ -1274,7 +1274,8 @@ C
       ENDDO
       ENDDO
 c
- 	var=3 !u=Flow(:,:,:,5)
+      write(*,*), "KBW, KEW, WS(40,2,nz-1)", KBW, KEW, WS(40,2,513)
+ 	  var=3 !u=Flow(:,:,:,5)
 !  	do dir=1,3
 !  	do face=1,2
 !      	 call Sponge(WS,WO,var,IM,JM,KM,dir,face,err)

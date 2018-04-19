@@ -80,7 +80,8 @@ c-------------------------------------------------------- A. Posa - Oct 2011 ---
          integer,dimension(1:2):: x1spng 
          real, dimension(:,:), allocatable :: PhiX1
          real, dimension(:,:,:,:), allocatable :: X1inf
-         real, dimension(:), allocatable ::dfxug,dfxwg,dfxul,dfxwl,dfxu,dfxw
+         real, dimension(:), allocatable :: dfxug,dfxwg,dfxul,dfxwl,dfxu
+     &                                      ,dfxw,dfxpg,dfxpl
       end module spnge
 
       module density_bg

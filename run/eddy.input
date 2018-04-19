@@ -97,7 +97,7 @@
 
 
 &SOLPRM 
-        ischm=3, ibm=1, isgs=0, ipres=1, ifield=0, idens=0, inoise=0
+        ischm=3, ibm=1, isgs=0, ipres=1, ifield=0, idens=1, inoise=0
 &END
 *
 *
@@ -130,7 +130,7 @@
 *
 &ITRPRM 
         ITMAX=1000000, ITINI=10000000, ITSCR=1, ISTAT=2000000, ITSER=0,
-        ITRES=50, ITPOST=5, IT5P=0, KMIN5P=670, KMAX5P=680, ITPLN=1, 
+        ITRES=50, ITPOST=5, IT5P=0, KMIN5P=670, KMAX5P=680, ITPLN=5000, 
         IVRTX=0, ITBDY=100, 
         ITCALF=10, IT2D=0,
         ITVPFIELD=0, NWRITE=0, NWRITE2D=0, NWRITEBDY=0,
@@ -152,7 +152,7 @@
 * g_orig - final value of the gravity
 
 &FLOPRM
-      ru1 = 0.005,
+      ru1 = 0.05,
       css = 0.1,
       eps = 1.e-16,
       dpdx = 0.,
@@ -163,8 +163,8 @@
       denP1 = -0.0
       rho_0 = 1.0
       gt1 = 0.0
-      gt2 = 0.05
-      g_orig = 64.0
+      gt2 = 0.0
+      g_orig = 1.0
 &END
 *
 *******************************************************************

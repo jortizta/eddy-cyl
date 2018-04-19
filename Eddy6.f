@@ -558,7 +558,7 @@ c
 !         wo = 20.0
 	call add_mean(uo,vo,wo,xc,yc,nx,ny,nz,ierr)
 	call add_density(xc,yc,nx,ny,nz,dens,ierr)
-	CALL BOUNDARY(UO,VO,WO,XU,XC,YV,YC,ZW,ZC,NX,NY,NZ,TIME)
+	CALL BOUNDARY(UO,VO,WO,XU,XC,YV,YC,ZW,ZC,NX,NY,NZ,TIME)  
 	CALL BOUNDARY_DENS(DENS,XC,YC,NX,NY,NZ)
 ! 	CALL BOUNDARY_P(P,XC,NX,NY,NZ)
 
@@ -725,7 +725,7 @@ c
 c.....definition of the inflow and outflow conditions
 c
         CALL BOUNDINOUT(UO,VO,WO,UO,VO,WO,XU,XC,YC,ZW,ZC,ALFXDT,TIME,NX,NY,NZ,1)
-        CALL BOUNDINOUTD(DENS,WO,ZCG,ALFXDT,NX,NY,NZ,NZG)
+	    CALL BOUNDINOUTD(DENS,WO,ZCG,ALFXDT,NX,NY,NZ,NZG)
         IF(ISCHM==1) THEN
           CALL RHS(UO,VO,WO,DENS,US,VS,WS,TV,UB,VB,WB,DP,NX,NY,NZ,XC,XU,YC,YV,TIME)
 c
@@ -750,6 +750,8 @@ c
       ELSE
 !**************************************************************************************************
 ! Original
+
+    	call add_density(xc,yc,nx,ny,nz,dens,ierr)
         CALL SPONGE_SETUP(NX,NY,NZ,NZG,XC,XU,ZWG,ZCG,IERR)
         IDIR  = -1 ! IOMPI_3DSCALAR reads restart files
         IF(MYRANK.EQ.0) write(6,*) 'Reading u restart file ...'
@@ -2458,10 +2460,19 @@ C.....Predictor step + boundary conditions for us
 !          CALL BOUNDARY_DENS(DENS,XC,NX,NY,NZ)
 !          CALL REFRESHBC(DENS,NX*NY,NZ)
 !          CALL PREDICTORD(UO,VO,WO,P,UA,VA,WA,UB,VB,WB,US,VS,WS,DENSO,XU,
-
+             !write(*,*) "Line 2467", WS(nx-15,5,40), WS(nx-15,8,40)
+             !write(*,*) "Line 2467", WS(nx-1,1,40), WS(nx-1,ny-1,40)
+             !write(*,*) "Line 2467", WS(nx-1,2,40), WS(nx-1,ny,40)
              CALL PREDICTORD(UO,VO,WO,P,UA,VA,WA,UB,VB,WB,US,VS,WS,DENS,XU,XC,YC,YV,
      &       ZWG,ZCG,ALFXDT,GAMXDT,RHOXDT,NX,NY,NZ,NZG,TIME,clock(40),9)
-!         ENDIF
+             !! Sheel and Jose addition to ensure proper BC and
+             !periodicity
+             !CALL BOUNDINOUT(US,VS,WS,US,VS,WS,XU,XC,YC,ZW,ZC,ALFXDT,TLEVEL,NX,NY,NZ,1)
+             CALL BOUNDARY(US,VS,WS,XU,XC,YV,YC,ZW,ZC,NX,NY,NZ,TIME)
+             !write(*,*) "Line 2468", WS(nx-15,5,40), WS(nx-15,8,40)
+             !write(*,*) "Line 2468", WS(nx-1,1,40), WS(nx-1,ny-1,40)
+             !write(*,*) "Line 2468", WS(nx-1,2,40), WS(nx-1,ny,40)
+ !         ENDIF
 c RHS at the time level L-1 in UA,VA,WA
 c implicit terms in UB,VB,WB
 c provisional solution in US,VS,WS
@@ -2481,6 +2492,8 @@ c
 c.....other boundary conditions
 c
           CALL BOUNDARY(UB,VB,WB,XU,XC,YV,YC,ZW,ZC,NX,NY,NZ,TLEVEL)
+c        write(*,*), "Eddy6.f u(nx-1,1,nz-1)
+c     &  u(nx-1,ny-1,nz-1) 2491",WO(nx-1,1,nz-1), WO(nx-1,ny-1,nz-1)  
 c
 C-----------------------------------------------------------------------
 C.....refresh block interfaces (and periodic boundary in z direction)
@@ -2561,6 +2574,9 @@ c
           WB(IX1,:,:) = WS(IX1,:,:)+0.5*ALFXDT*WB(IX1,:,:)
           WB(IX2,:,:) = WS(IX2,:,:)+0.5*ALFXDT*WB(IX2,:,:)
           CALL BOUNDARY(UB,VB,WB,XU,XC,YV,YC,ZW,ZC,NX,NY,NZ,TLEVEL)
+         CALL BOUNDARY(UB,VB,WB,XU,XC,YV,YC,ZW,ZC,NX,NY,NZ,TLEVEL)
+c        write(*,*), "Eddy6.f u(nx-1,1,nz-1)
+c       &  u(nx-1,ny-1,nz-1) 2574",WO(nx-1,1,nz-1), WO(nx-1,ny-1,nz-1)  
         ENDIF
         clock(8) = clock(8) + tclock() - clocktemp
 
@@ -2710,18 +2726,32 @@ C-----------------------------------------------------------------------
 c.....other boundary conditions
         clocktemp = tclock()
         CALL BOUNDARY(UO,VO,WO,XU,XC,YV,YC,ZW,ZC,NX,NY,NZ,TLEVEL)
-c
+c        !write(*,*), "Eddy6.f WO(nx-1,1,nz-1)
+c     !&  WO(nx-1,ny-1,nz-1) 2725",WO(nx-1,1,nz-1), WO(nx-1,ny-1,nz-1)  
+cc
 C-----------------------------------------------------------------------
 C.....refresh block interfaces (and periodic boundary in z direction)
 C-----------------------------------------------------------------------
         CALL REFRESHBC(UO,NX*NY,NZ)
         CALL REFRESHBC(VO,NX*NY,NZ)
         CALL REFRESHBC(WO,NX*NY,NZ)
-c
+        
+        !write(*,*) "Line 2739", WO(nx-15,5,40), WO(nx-15,8,40)
+        !write(*,*) "Line 2739", WO(nx-1,1,40), WO(nx-1,ny-1,40)
+        !write(*,*) "Line 2739", WO(nx-1,2,40), WO(nx-1,ny,40)
+ 
+
+cc
 c.....inlet and outlet boundary conditions
         CALL BOUNDINOUT(UO,VO,WO,US,VS,WS,XU,XC,YC,ZW,ZC,ALFXDT,TLEVEL,NX,NY,NZ,0)
         clock(8) = clock(8) + tclock() - clocktemp
-c
+        
+        !write(*,*) "Line 2749", WO(nx-15,5,40), WO(nx-15,8,40)
+        !write(*,*) "Line 2749", WO(nx-1,1,40), WO(nx-1,ny-1,40)
+        !write(*,*) "Line 2749", WO(nx-1,2,40), WO(nx-1,ny,40)
+ 
+
+cc
 C-----------------------------------------------------------------------
 C     Update pressure field
 C-----------------------------------------------------------------------
@@ -2763,7 +2793,9 @@ c All processors scale the pressure value using PREF
         CALL MPI_BCAST(PREF,1,MTYPE,0,MPI_COMM_EDDY,IERR)
 
         P = P-PREF
-
+c        write(*,*), "Eddy6.f u(nx-1,1,nz-1)
+c     &  u(nx-1,ny-1,nz-1) 2782",WO(nx-1,1,nz-1), WO(nx-1,ny-1,nz-1)  
+c
 C
 C-----------------------------------------------------------------------
 c     Cyclic b.c. in x direction
@@ -2791,7 +2823,9 @@ C-----------------------------------------------------------------------
           P(:,1 ,:) = P(:,JY1,:)
           P(:,NY,:) = P(:,JY2,:)
         ENDIF
-C-----------------------------------------------------------------------
+c        write(*,*), "Eddy6.f u(nx-1,1,nz-1)
+c     &  u(nx-1,ny-1,nz-1) 2808",WO(nx-1,1,nz-1), WO(nx-1,ny-1,nz-1)  
+cC-----------------------------------------------------------------------
 c     Neumann b.c. in z direction
 c N.B. ITYPE(5)/=0 only for the process 0
 c N.B. ITYPE(6)/=0 only for the process MYSIZE-1
@@ -2806,6 +2840,7 @@ C-----------------------------------------------------------------------
 C.....refresh block interfaces (and periodic boundary in z direction)
 C-----------------------------------------------------------------------
         CALL REFRESHBC(P,NX*NY,NZ)
+
 C
 C-----------------------------------------------------------------------
 c     boundary pressure and interior points
@@ -2855,7 +2890,9 @@ c              call obstacle(us,vs,ws,p,nx,ny,nz,1)
 
         ENDIF
         clock(13) = clock(13) + tclock() - clocktemp
-C
+c        write(*,*), "Eddy6.f u(nx-1,1,nz-1)
+c     &  u(nx-1,ny-1,nz-1) 2873",WO(nx-1,1,nz-1), WO(nx-1,ny-1,nz-1)  
+cC
 C-----------------------------------------------------------------------
 C.....refresh block interfaces (and periodic boundary in z direction)
 C-----------------------------------------------------------------------
@@ -2941,7 +2978,10 @@ C-----------------------------------------------------------------------
 c
       TIME = TLEVEL
       write(49,'(2E25.12)')time,dtm1
-c
+c        write(*,*), "Eddy6.f u(nx-1,1,nz-1)
+c     &  u(nx-1,ny-1,nz-1) 2958",WO(nx-1,1,nz-1), WO(nx-1,ny-1,nz-1)  
+
+cc
 c-----------------------------------------------------------------------
 c                                            compute turbulent viscosity
 c-----------------------------------------------------------------------
@@ -3881,6 +3921,9 @@ c
 !           call plotinststagg_xyz_d(iplant9c,iplant9d,iplant9p,
 !     %nx,ny,nz,nzg,nbd,icycle,xc,xu,yc,yv,zcg,zwg,p,vo,uo,wo)
 !     %,flaguo,flagvo,flagwo)
+c        write(*,*), "Eddy6.f u(nx-1,1,nz-1)
+c     &  u(nx-1,ny-1,nz-1) 3898",WO(nx-1,1,nz-1), WO(nx-1,ny-1,nz-1)  
+c
  	  call WRITE_PLANES(NX,NY,NZ,NZG,NBD,ICYCLE,time,DTM1,XC,XU,YC,YV,ZC,ZCG,ZWG,xc_car,
      &                  yc_car,xu_car,yu_car,xv_car,yv_car,P,VO,UO,WO,DENS)
 !           call vort2stagg_xyz(nx,ny,nz,xc,xu,zc,uo,vo,wo)
