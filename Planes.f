@@ -436,6 +436,8 @@
 	
        elseif (dir.EQ.2) then 
 
+       Ucen=Uin
+
 ! centering not required      
 
        elseif (dir.EQ.3) then 
