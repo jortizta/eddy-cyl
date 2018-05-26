@@ -129,7 +129,7 @@ c
       return
       end
 
-      subroutine rec_timeprobes_all(uo,vo,wo,p,nx,ny,nz,time)
+      subroutine rec_timeprobes_all(uo,vo,wo,p,nx,ny,nz,icycle,time)
 c
       use points
       include 'common.h'
@@ -139,7 +139,7 @@ c
 c
  
 c.... Input/Output array
-      integer nx,ny,nz,flag,ii,iid,iiu
+      integer nx,ny,nz,flag,ii,iid,iiu,icycle
 !       integer iprb(nprobe2),jprb(nprobe2),kprb(nprobe2)
       real    uo(nx,ny,nz),vo(nx,ny,nz),wo(nx,ny,nz),p(nx,ny,nz)
       real    uprb,vprb,wprb,pprb,time
@@ -154,13 +154,13 @@ c the centered values of velocity and pressure are evaluated
          ii=prbindx2+(i-1)
          iid=ii/10
          iiu=mod(ii,10)
-         open(750+ii,file='probes_'//char(48+iid)//char(48+iiu)//'.out',position='append')
+
+!! Sheel adds May 12, 2018
+          open(750+ii,file='probes_'//char(48+iid)//char(48+iiu)//'.out',position='append')
 !         write(*,*) i,iprb(i),jprb(i),kprb(i)
-        uprb = uo(iprb2(i)  ,jprb2(i)  ,kprb2(i))
-
-        vprb = vo(iprb2(i)  ,jprb2(i)  ,kprb2(i))
-
-        wprb = wo(iprb2(i)  ,jprb2(i)  ,kprb2(i))
+          uprb = uo(iprb2(i)  ,jprb2(i)  ,kprb2(i))
+          vprb = vo(iprb2(i)  ,jprb2(i)  ,kprb2(i))
+          wprb = wo(iprb2(i)  ,jprb2(i)  ,kprb2(i))
 !         uprb = 0.5*(uo(iprb2(i)  ,jprb2(i)  ,kprb2(i)  )
 !      &                     + uo(iprb2(i)-1,jprb2(i)  ,kprb2(i)  ) )
 ! 
@@ -169,11 +169,20 @@ c the centered values of velocity and pressure are evaluated
 ! 
 !         wprb = 0.5*(wo(iprb2(i)  ,jprb2(i)  ,kprb2(i)  )
 !      &                     + wo(iprb2(i)  ,jprb2(i)  ,kprb2(i)-1) )
-
-        pprb = p(iprb2(i)  ,jprb2(i)  ,kprb2(i))
-         write(750+ii,'(5(4x,e15.8),i6,i6,i6)') time,uprb,vprb,wprb,pprb,iprb2(i),jprb2(i),kprb2(i)+myrank*(nz-2)
+          pprb = p(iprb2(i)  ,jprb2(i)  ,kprb2(i))
+          write(750+ii,'(5(4x,e15.8),i6,i6,i6)') time,uprb,vprb,wprb,pprb,iprb2(i),jprb2(i),kprb2(i)+myrank*(nz-2)
 !         write(*,*) "WRITING PROBE DATA"
-         close(750+ii)
+          close(750+ii)
+!         write(*,*) i,iprb(i),jprb(i),kprb(i)
+!         uprb = 0.5*(uo(iprb2(i)  ,jprb2(i)  ,kprb2(i)  )
+!      &                     + uo(iprb2(i)-1,jprb2(i)  ,kprb2(i)  ) )
+! 
+!         vprb = 0.5*(vo(iprb2(i)  ,jprb2(i)  ,kprb2(i)  )
+!      &                     + vo(iprb2(i)  ,jprb2(i)-1,kprb2(i)  ) )
+! 
+!         wprb = 0.5*(wo(iprb2(i)  ,jprb2(i)  ,kprb2(i)  )
+!      &                     + wo(iprb2(i)  ,jprb2(i)  ,kprb2(i)-1) )
+!         write(*,*) "WRITING PROBE DATA
 !         write(*,*) time,uprb,vprb,wprb,pprb,iprb2(i),jprb2(i),kprb2(i)
       enddo
 

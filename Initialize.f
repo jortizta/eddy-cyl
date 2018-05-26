@@ -3,13 +3,13 @@
 	INCLUDE 'common.h'
 	INCLUDE 'mpif.h'
 	integer	:: nx,ny,nz
- 	integer,intent(out)    :: stat 
+ 	integer,intent(out)    :: stat
 	real		       :: uo(nx,ny,nz),vo(nx,ny,nz),wo(nx,ny,nz)
 	real 		       :: xc(nx),yc(ny),xx,yy,r
 
- !Local Variables
+!Local Variables
  	integer                :: i,err1,j,ok1
-	
+
 	err1=0
 	uo=0.0d0
 	vo=0.0d0
@@ -23,37 +23,37 @@
 !      	r   = dsqrt( yy**2.d0 + xx**2.d0 )
 !      	wo(i,j,:) = wo(i,j,:) +  0.110d0*dexp(-xx**2.d0/(2.d0*2.0d0**2.d0))
 !   	wo(i,:,:) = wo(i,:,:) +  0.110d0*dexp(-xx**2.d0/(2.d0*0.5d0**2.d0))
-    	enddo 
+        enddo
 !    	enddo
 ! 	enddo
 
 ! 	call sponge_setup(uo,vo,wo,nx,ny,nz,xc,ok1)
-	
+
 	stat=max(0,err1)
 	return
 	end
-	
+
 	subroutine add_density(xc,yc,nx,ny,nz,dens,stat)
 !@h
 !   Comments:
-!     Options are linear, two-layer, and Jdeep. 
+!     Options are linear, two-layer, and Jdeep.
 !@q
-	use density_bg
+	use  density_bg
 	include 'common.h'
 	include 'mpif.h'
-	
- !Passed Variables
+
+!Passed Variables
 	integer	:: nx,ny,nz
- 	integer,intent(out)    :: stat 
-	reaL		       :: dens(nx,ny,nz),xc(nx),yc(ny)
- !Local Variables
+ 	integer,intent(out)    :: stat
+	real		       :: dens(nx,ny,nz),xc(nx),yc(ny)
+!Local Variables
  	integer                :: i,err1,j
 !  	real(r8)               :: zz
 	ALLOCATE(dens_bg(nx,ny))
- !Linear      denP1=d(rho)/dx_3   denP2=(unused)            denP3=(unused)
- !TwoLayer    denP1=Delta_rho     denP2=delta_omega         denP3=(unused)
- !Jdeep       denP1=Jm            denP2=Jd                  denP3=z0
- !Pycnocline  denP1=d(rho)/dx_3   denP2= # transition pts   denP3=(unused)
+!Linear      denP1=d(rho)/dx_3   denP2=(unused)            denP3=(unused)
+!TwoLayer    denP1=Delta_rho     denP2=delta_omega         denP3=(unused)
+!Jdeep       denP1=Jm            denP2=Jd                  denP3=z0
+!Pycnocline  denP1=d(rho)/dx_3   denP2= # transition pts   denP3=(unused)
  	err1=0
 	dens=0.0d0
 
@@ -62,11 +62,11 @@
 !   	case('Linear')
    	do i=1,nx
 	do j=1,ny
-!      	zz = zc(k)-DX3c 
+!      	zz = zc(k)-DX3c
 !     	dens(i,:,:) = dens(i,:,:) + denP1*(xc(i))
         if(idens.eq.1) then
-	dens(i,j,:)   =  dens(i,j,:)+ denP1*(rp(i))*sin(yc(j)) 
-    	dens_bg(i,j)  =  denP1*(rp(i))*sin(yc(j))
+	        dens(i,j,:)   =  dens(i,j,:)+ denP1*(rp(i))*sin(yc(j))
+    	    dens_bg(i,j)  =  denP1*(rp(i))*sin(yc(j))
 
 c	dens(i,j,:)   =  dens(i,j,:) + denP1*(xc(i)-1.0)
 c	dens_bg(i,j)  =  denP1*(xc(i)-1.0)
@@ -75,7 +75,7 @@ c	dens_bg(i,j)  =  denP1*(xc(i)-1.0)
         dens(i,j,:)=0.0
         dens_bg(i,j)=0.0
         endif
-	enddo 
+	enddo
 	enddo
 
 !   	case('TwoLayer')
@@ -84,7 +84,7 @@ c	dens_bg(i,j)  =  denP1*(xc(i)-1.0)
 !     	rho(:,:,k) = rho(:,:,k) + rho_0 - (denP1*0.5d0)*dtanh(2.d0*zz/denP2)
 !     	rho_bg(k)  =              rho_0 - (denP1*0.5d0)*dtanh(2.d0*zz/denP2)
 !    	enddo
-! 
+!
 !   case('Jdeep')
 !    do k=sz-1,ez+1
 !    zz = zc(k)-DX3c
@@ -93,44 +93,45 @@ c	dens_bg(i,j)  =  denP1*(xc(i)-1.0)
 !    rho_bg(k)  =           + rho_0 - 1.d0/g*( (denP1+denP2)/2.d0*zz + &
 !                 (denP1-denP2)/2.d0*dlog(dabs(dcosh((zz-denP3))/dcosh(denP3)) ))
 !    enddo
-! 
+!
 !   case('Pycnocline')
 !    do k=ez+1,sz-1,-1
 !      zz = zc(k)-DX3c
 !      if     (zz .ge. 0.d0) then   ! constant density
-!        rho(:,:,k) = rho(:,:,k) + rho_0 
-!        rho_bg(k)  = rho_0 
+!        rho(:,:,k) = rho(:,:,k) + rho_0
+!        rho_bg(k)  = rho_0
 !      else                         ! constant stretching
-!        rho(:,:,k) = rho(:,:,k) + rho_0 + denP1*(zz) 
-!        rho_bg(k)  = rho_0 + denP1*(zz) 
+!        rho(:,:,k) = rho(:,:,k) + rho_0 + denP1*(zz)
+!        rho_bg(k)  = rho_0 + denP1*(zz)
 !      endif
-!    enddo 
-! 
-!   case DEFAULT 
+!    enddo
+!
+!   case DEFAULT
 !    write(IOUT,'(a)') "ABORTING DENSITY PROFILE "//trim(density_profile)//" NOT IMPLEMENTED"
 !    stat=1
 !    return
 !   end select
-! 
-         if (MYRANK==0) then
-	    write(*,'(a,3(1x,f12.6))') "    ADDED DENSITY PROFILE:with parameters 1-1=",denP1
-	 endif
+!
+       if (MYRANK==0) then
+	     write(*,'(a,3(1x,f12.6))')
+     &  "ADDED DENSITY PROFILE:with parameters 1-1=",denP1
+	   endif
 
 	 CALL BOUNDARY_DENS(DENS,XC,YC,NX,NY,NZ)
 	 CALL REFRESHBC(DENS,NX*NY,NZ)
 
-	    
+
 	stat=max(0,err1)
  	return
 	end subroutine add_density
 
 
-    	SUBROUTINE SPONGE_SETUP(NX,NY,NZ,NZG,XC,XU,ZWG,ZCG,stat)
-	
+       SUBROUTINE SPONGE_SETUP(NX,NY,NZ,NZG,XC,XU,ZWG,ZCG,stat)
+
         USE SPNGE
         INCLUDE 'common.h'
         INCLUDE 'mpif.h'
-	
+
         INTEGER stat
         INTEGER NX,NY,NZ,NZG
         REAL ZWG(NZG),ZCG(NZG),XC(NX),XU(NX)
@@ -138,135 +139,123 @@ c	dens_bg(i,j)  =  denP1*(xc(i)-1.0)
 	ALLOCATE(PHIX1(NX,2))
         ALLOCATE(dfxug(NZG),dfxwg(NZG),dfxul(NZ),dfxwl(NZ),dfxu(NX),dfxw(NX))
 	ALLOCATE(X1inf(NX,NY,2,5))
-	x1spng(1)=10 !sponge thickness in the inlet
-        x1spng(2)=10 !sponge thickness in the radial direction
+        ALLOCATE(dfxpg(NZG),dfxpl(NZ))
+	x1spng(1)=10
+        x1spng(2)=20
+      !        IF(MYRANK.eq.0) then
 
-
-        !IF(MYRANK.eq.0) then
-        !write(*,*) "myrank,IBU,IEU,IX1,IX2 = ", myrank, IBU,IEU,IX1,IX2
-
-
-       ! Sponge in the radial direction
+c	write(*,*) "myrank,IBU,IEU,IX1,IX2 = ", myrank, IBU,IEU,IX1,IX2
+c   !! Sponge in the radial direction
 
        DO I=IBU,IEU
-	  dfxu(i)=0.0
-	  if (i.GE.IEU-x1spng(2).AND.x1spng(2).GT.0) then
-	     dfxu(i)=5.0*((xu(i)-xu(IEU-x1spng(2)))/(xu(IEU)-xu(IEU-x1spng(2))))**2.d0
-	  endif
+	     dfxu(i)=0.0
+	     if (i.GE.IEU-x1spng(2).AND.x1spng(2).GT.0) then
+	      dfxu(i)=25.0*((xu(i)-xu(IEU-x1spng(2)))/(xu(IEU)-xu(IEU-x1spng(2))))**2.d0
+	     endif
        ENDDO
- 
-       ! Sponge in the radial direction
 
        DO I=IX1,IX2
-	  dfxw(i)=0.0
-	  if (i.GE.IX2-x1spng(2).AND.x1spng(2).GT.0) then
-	     dfxw(i)=5.0*((xu(i)-xu(IX2-x1spng(2)))/(xu(IX2)-xu(IX2-x1spng(2))))**2.d0
-	  endif
+	     dfxw(i)=0.0
+	     if (i.GE.IX2-x1spng(2).AND.x1spng(2).GT.0) then
+	      dfxw(i)=25.0*((xu(i)-xu(IX2-x1spng(2)))/(xu(IX2)-xu(IX2-x1spng(2))))**2.d0
+	     endif
        ENDDO
+c    !! Sponge in the radial direction done
 
 
-       ! Sponge in the inlet
+c    !! Sponge in the outlet
 
-        DO K=NZG,1,-1
+      dfxpg=0.0
+      DO K=NZG/2,NZG,+1
+        if (K.GE.NZG-(120+1).AND.x1spng(1).GT.0) then
+           dfxpg(K) = 25.0d0*((zcg(k)-zcg(NZG-(120+1)))/
+     &     (zcg(NZG-1)-zcg(NZG-(120+1))))**2.d0 
+       endif
+      ENDDO
+
+      DO K=KZ1,KZ2
+        dfxpl(k)=dfxpg((KZ2-1)*(myrank)+K)
+      ENDDO
+
+c     !! End Sponge in the outlet
+
+
+c    !! Sponge in the inlet direction
+       DO K=NZG,1,-1
          dfxug(K)=0.0
          if (K.LE.x1spng(1)+1.AND.x1spng(1).GT.0) then
-         dfxug(K)=20.0*((zcg(k)-zcg(x1spng(1)+1))/(zcg(2)-zcg(x1spng(1)+1)))**2.d0
-         IF(MYRANK.eq.0)write(*,*)"GLOBAL",dfxug(K),K
+          dfxug(K)=50.0*((zcg(k)-zcg(x1spng(1)+1))/(zcg(2)-zcg(x1spng(1)+1)))**2.d0
+          IF(MYRANK.eq.0)write(*,*)"GLOBAL",dfxug(K),K
          endif
-        ENDDO
-        
-        write(*,*) "myrank,KZ1,KZ2= ", myrank,KZ1,KZ2
-         
-         DO K=KZ1,KZ2
+       ENDDO
+!        CALL MPI_BCAST(dfxug ,1,MTYPE,0,MPI_COMM_EDDY,IERR)
+!        ENDIF
+
+	   write(*,*) "myrank,KZ1,KZ2= ", myrank,KZ1,KZ2
+
+       DO K=KZ1,KZ2
          dfxul(K)=dfxug((KZ2-1)*(myrank)+K)
-         ENDDO
+c$$$          if(myrank.eq.0)write(*,*)dfxul(K),K,myrank
+c$$$          if(myrank.eq.1)write(*,*)dfxul(K),K,myrank
+c$$$          if(myrank.eq.2)write(*,*)dfxul(K),K,myrank
+c$$$          if(myrank.eq.3)write(*,*)dfxul(K),K,myrank
+c$$$          if(myrank.eq.4)write(*,*)dfxul(K),K,myrank
+       ENDDO
 
-      
+c	 write(*,*) "myrank, mysize = ", myrank, mysize
 
-       ! Sponge in the inlet
+
+!       write(*,*),dfxul(2), myrank
 
        DO K=NZG,1,-1
          dfxwg(K)=0.0
-         if (K.LE.x1spng(1)+1.AND.x1spng(1).GT.0) then
-         dfxwg(K)=20.0*((zwg(k)-zwg(x1spng(1)+1))/(zwg(2)-zwg(x1spng(1)+1)))**2.d0
-         IF(MYRANK.eq.0)write(*,*)"GLOBAL",dfxwg(K),K
+          if (K.LE.x1spng(1)+1.AND.x1spng(1).GT.0) then
+           dfxwg(K)=20.0*((zwg(k)-zwg(x1spng(1)+1))/(zwg(2)-zwg(x1spng(1)+1)))**2.d0
+           IF(MYRANK.eq.0)write(*,*)"GLOBAL",dfxwg(K),K
          endif
        ENDDO
-         DO K=KZ1,KZ2
+       
+       DO K=KZ1,KZ2
 
+c$$$	    if(myrank==1) then
+c$$$	       write(6,*) "((KZ2-1)*(mysize+1)+K) =  ", ((KZ2-1)*(mysize+1)+K)
+c$$$	       write(6,*) "KZ2 = ", KZ2
+c$$$	       write(6,*) "mysize = ", mysize
+c$$$	    endif
+
+c         dfxwl(K)=dfxwg((KZ2-1)*(mysize+1)+K)
          dfxwl(K)=dfxwg((KZ2-1)*(myrank)+K)
 
        ENDDO
+c      !! Sponge in the outlet domain
+       
+     
 
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-      ! Sponge in the outlet with 4 real points and the ghost to increase dt
-
-!       DO K = NZG/2,NZG,+1
-!       
-!       if ( K.GE.NZG-5 .and. x1spng(1).gt.0 ) then 
-!
-!         dfxug(K) = 200.0*((zcg(k) - zcg( NZG - 5))/(zcg(NZG-1)-zcg( NZG - 5 )))
-!
-!         if (myrank.eq.0) write(*,*)"GLOBAL",dfxug(K),K
-!       
-!       endif
-!
-!       ENDDO
-!
-!       DO K = KZ1,KZ2
-!         dfxul(K) = dfxul((KZ2-1)*myrank+K)
-!       ENDDO
-!
-!
-!
-!       DO K = NZG/2,NZG,+1
-!       
-!       if ( K.GE.NZG-5 .and. x1spng(1).gt.0 ) then 
-!
-!         dfxwg(K) = 200.0*((zwg(k) - zwg( NZG - 5))/(zwg(NZG-1)-zwg( NZG - 5 )))
-!
-!       ! if (myrank.eq.0) write(*,*)"GLOBAL",dfxwg(K),K
-!       
-!        endif
-!
-!       ENDDO
-!
-!      DO K = KZ1,KZ2
-!         dfxwl(K) = dfxwl((KZ2-1)*myrank+K)
-!      ENDDO
-!
-
-
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	stat=0
+        stat=0
 	if (MYRANK==0) write(*,'(a)') "SPONGE SETUP COMPLETED"
 ! 	WRITE(*,*), UO(:,:,:)
        RETURN
-       END	
+       END
 
 
 
 
 !     	SUBROUTINE SPONGE_SETUP(UO,VO,WO,DENS,P,NX,NY,NZ,XC,stat)
-!	
+!
 !	USE SPNGE
 !        INCLUDE 'common.h'
 !        INCLUDE 'mpif.h'
-!	
-!	
+!
+!
 !	INTEGER I,J,K
 !	INTEGER stat
 !	INTEGER IBND,NX,NY,NZ
 !	REAL UO(NX,NY,NZ),VO(NX,NY,NZ),WO(NX,NY,NZ),XC(NX),DENS(NX,NY,NZ),P(NX,NY,NZ)
-!	
+!
 !	ALLOCATE(PHIX1(NX,2))
 !	ALLOCATE(X1inf(NX,NY,2,5))
 
-	
+
 !
 !	x1spng(1)=10
 !	x1spng(2)=10
@@ -278,11 +267,11 @@ c	dens_bg(i,j)  =  denP1*(xc(i)-1.0)
 !	WO(ib1,:,:)=0.0d0
 !	DO J=1,NY
 !	DO K=1,NZ
-!	X1inf(J,K,1,1) = uo(1,J,K) 
-!        X1inf(J,K,1,2) = vo(1,J,K) 
-!        X1inf(J,K,1,3) = wo(1,J,K) 
-!        X1inf(J,K,1,4) = p(1,J,K) 
-!        X1inf(J,K,1,5) = dens(1,J,K) 
+!	X1inf(J,K,1,1) = uo(1,J,K)
+!        X1inf(J,K,1,2) = vo(1,J,K)
+!        X1inf(J,K,1,3) = wo(1,J,K)
+!        X1inf(J,K,1,4) = p(1,J,K)
+!        X1inf(J,K,1,5) = dens(1,J,K)
 !	ENDDO
 !	ENDDO
 ! 	WRITE(*,*), MAXVAL(X1inf(:,:,1,1)),MAXVAL(X1inf(:,:,1,2)),MAXVAL(X1inf(:,:,1,3))
@@ -292,11 +281,11 @@ c	dens_bg(i,j)  =  denP1*(xc(i)-1.0)
 !	WO(ib2,:,:)=0.0d0
 !	DO J=1,NY
 !	DO K=1,NZ
-!	X1inf(J,K,2,1) = uo(NX,J,K) 
-!        X1inf(J,K,2,2) = vo(NX,J,K) 
-!        X1inf(J,K,2,3) = wo(NX,J,K) 
-!        X1inf(J,K,2,4) = p(NX,J,K) 
-!        X1inf(J,K,2,5) = dens(NX,J,K) 
+!	X1inf(J,K,2,1) = uo(NX,J,K)
+!        X1inf(J,K,2,2) = vo(NX,J,K)
+!        X1inf(J,K,2,3) = wo(NX,J,K)
+!        X1inf(J,K,2,4) = p(NX,J,K)
+!        X1inf(J,K,2,5) = dens(NX,J,K)
 !	ENDDO
 !	ENDDO
 ! 	WRITE(*,*), MAXVAL(X1inf(:,:,2,1)),MAXVAL(X1inf(:,:,2,2)),MAXVAL(X1inf(:,:,2,3))
@@ -324,7 +313,7 @@ c	dens_bg(i,j)  =  denP1*(xc(i)-1.0)
 !	if (MYRANK==0) write(*,'(a)') "SPONGE SETUP COMPLETED"
 ! 	WRITE(*,*), UO(:,:,:)
 !       RETURN
-!       END	
+!       END
 
 
 	SUBROUTINE SPONGE(VAR_NEW,VAR_OLD,VAR,NX,NY,NZ,err)
@@ -332,14 +321,14 @@ c	dens_bg(i,j)  =  denP1*(xc(i)-1.0)
 	USE SPNGE
         INCLUDE 'common.h'
         INCLUDE 'mpif.h'
-	
-	
+
+
 	REAL VAR_OLD(NX,NY,NZ),VAR_NEW(NX,NY,NZ)
 	INTEGER IBND,I,J,K,NX,NY,NZ,FACE,err,VAR
-	
+
 !	DO IBND=1,6
 ! 	IF(ITYPE(IBND)==500.or.ITYPE(IBND)==300.or.ITYPE(IBND)==305.or.ITYPE(IBND)==730) RETURN
-        
+
 !	IF(ITYPE(1)==82) then
 !	 do k=2,nz
 !    	 do j=2,ny
@@ -349,7 +338,7 @@ c	dens_bg(i,j)  =  denP1*(xc(i)-1.0)
 !         enddo
 !         enddo
 !         enddo
-!  	IF(VAR==5)write(*,*),MAXVAL(VAR_NEW(:,:,:)) 
+!  	IF(VAR==5)write(*,*),MAXVAL(VAR_NEW(:,:,:))
 !	 ELSEIF(ITYPE(2)==82) then
 !	 do k=2,nz
 !    	 do j=2,ny
@@ -359,17 +348,17 @@ c	dens_bg(i,j)  =  denP1*(xc(i)-1.0)
 !	 enddo
 !         enddo
 !         enddo
-! 	 IF(VAR==5)write(*,*),MAXVAL(VAR_NEW(:,:,:)) 
+! 	 IF(VAR==5)write(*,*),MAXVAL(VAR_NEW(:,:,:))
 !	 ENDIF
 !	 ENDDO
-	
-	
+
+
 	err=0
 	RETURN
 	END
 
 	SUBROUTINE add_turbo(uo,vo,wo,nx,ny,nz,xc,err)
-	
+
 	INCLUDE 'common.h'
         INCLUDE 'mpif.h'
 	INTEGER I,J,K
@@ -381,15 +370,15 @@ c	dens_bg(i,j)  =  denP1*(xc(i)-1.0)
 	      call add_random_noise(uo(:,:,:),nx,ny,nz,1.0)
               call add_random_noise(vo(:,:,:),nx,ny,nz,1.0)
               call add_random_noise(wo(:,:,:),nx,ny,nz,1.0)
-	
-	      call crop(uo,vo,wo,nx,ny,nz,xc,cropP1,cropP2,ok1)	
-	
+
+	      call crop(uo,vo,wo,nx,ny,nz,xc,cropP1,cropP2,ok1)
+
 	err=0
 	RETURN
 	END
 
 	SUBROUTINE crop(uo,vo,wo,nx,ny,nz,xc,cropP1,cropP2,ok1)
-	
+
 	INCLUDE 'common.h'
         INCLUDE 'mpif.h'
 	INTEGER I,J,K
@@ -398,8 +387,8 @@ c	dens_bg(i,j)  =  denP1*(xc(i)-1.0)
 	REAL UO(NX,NY,NZ),VO(NX,NY,NZ),WO(NX,NY,NZ),XC(NX)
 	REAL cropP1,cropP2,xx,func
 	real    wrk1d(nx),uprms(nx),vprms(nx),wprms(nx),umean,vmean,wmean
-	
-	cropP1=0.055	
+
+	cropP1=0.055
 	cropP2=0.5
 c.... Compute rms of noise
  	  uprms = 0.0
@@ -425,7 +414,7 @@ c.... Compute rms of noise
           wrk1D = wprms/real(mysize)
           CALL MPI_ALLREDUCE(wrk1D,wprms,nx,mtype,mpi_sum,mpi_comm_eddy,ierr)
           wprms = sqrt(wprms)
-	
+
 	  do i=1,nx
           xx = xc(i)
           func = (1.d0+(xx/cropP2)**2)  * ( dexp(-(xx)**2/(2.d0*cropP2**2) ) )
@@ -435,7 +424,7 @@ c.... Compute rms of noise
 	  func = (1.d0+(xx/cropP2)**2)  * ( dexp(-(xx)**2/(2.d0*cropP2**2) ) )
           wo(i,:,:)   = func*(cropP1/wprms(i))*(wo(i,:,:))
           enddo
-	
+
 	ok1=0
 	RETURN
 	END
@@ -459,12 +448,12 @@ c.... Compute rms of noise
 !    	enddo
 !   	enddo
 !  	enddo
-! 	
+!
 ! 	outm = rsum/Volume
 ! 	size3dpoint = 1
-!  	CALL MPI_ALLREDUCE(outm,temp,size3dPoint,realtype,MPI_SUM,commX1X2X3,ierr)  
+!  	CALL MPI_ALLREDUCE(outm,temp,size3dPoint,realtype,MPI_SUM,commX1X2X3,ierr)
 !  	outm = temp/dble(sizeX1X2X3)
-! 
+!
 ! 	rsum=0.0d0
 !  	do k=sz-1,ez+1
 !   	do j=sy-1,ey+1
@@ -473,10 +462,10 @@ c.... Compute rms of noise
 !    	enddo
 !   	enddo
 !  	enddo
-! 
-! 	CALL MPI_ALLREDUCE(outp,temp,size3dPoint,realtype,MPI_SUM,commX1X2X3,ierr)  
+!
+! 	CALL MPI_ALLREDUCE(outp,temp,size3dPoint,realtype,MPI_SUM,commX1X2X3,ierr)
 !         outp = dsqrt(temp/dble(sizeX1X2X3))
-! 
+!
 !         outp  = rsum/Volume
-! 	return      
+! 	return
 !         end subroutine avgX1X2X3

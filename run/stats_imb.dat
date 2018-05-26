@@ -82,3 +82,278 @@ Cycle no=     0, time=  0.00000000E+00 Pressure forcing points       672, forced
 No. of forc. pts., ave:        168.00 ,max:      656, min:        0, Max no. of loops:        7
 No. nrm. intrs calls=      824,no grd intrs calls=      382
 No. nrm. intrs rechecks=     1190,no grd intrs rechecks=       42
+TAG3D: No. INSIDE=          864/       638976, (~  0.14/100)
+TAG3D: No. INSIDE=         1024/       638976, (~  0.16/100)
+TAG3D: No. INSIDE=          928/       638976, (~  0.15/100)
+Cycle no=     0, time=  0.00000000E+00 Pressure forcing points       768, forced along normal:       480 ( 62.50%), forced along grid points:      95 ( 12.37%)
+No. of forc. pts., ave:        192.00 ,max:      704, min:        0, Max no. of loops:        3
+No. nrm. intrs calls=      961,no grd intrs calls=      332
+No. nrm. intrs rechecks=      358,no grd intrs rechecks=       24
+TAG3D: No. INSIDE=         1760/      1536000, (~  0.11/100)
+TAG3D: No. INSIDE=         2048/      1536000, (~  0.13/100)
+TAG3D: No. INSIDE=         1952/      1536000, (~  0.13/100)
+Cycle no=     0, time=  0.00000000E+00 Pressure forcing points      1088, forced along normal:       768 ( 70.59%), forced along grid points:     120 ( 11.03%)
+No. of forc. pts., ave:        272.00 ,max:      992, min:        0, Max no. of loops:        2
+No. nrm. intrs calls=     1288,no grd intrs calls=      324
+No. nrm. intrs rechecks=      412,no grd intrs rechecks=       62
+TAG3D: No. INSIDE=         1760/      1536000, (~  0.11/100)
+TAG3D: No. INSIDE=         2048/      1536000, (~  0.13/100)
+TAG3D: No. INSIDE=         1952/      1536000, (~  0.13/100)
+Cycle no=     0, time=  0.00000000E+00 Pressure forcing points      1088, forced along normal:       768 ( 70.59%), forced along grid points:     120 ( 11.03%)
+No. of forc. pts., ave:        272.00 ,max:      992, min:        0, Max no. of loops:        2
+No. nrm. intrs calls=     1288,no grd intrs calls=      324
+No. nrm. intrs rechecks=      412,no grd intrs rechecks=       62
+TAG3D: No. INSIDE=         1760/      1536000, (~  0.11/100)
+TAG3D: No. INSIDE=         2048/      1536000, (~  0.13/100)
+TAG3D: No. INSIDE=         1952/      1536000, (~  0.13/100)
+Cycle no=     0, time=  0.00000000E+00 Pressure forcing points      1088, forced along normal:       768 ( 70.59%), forced along grid points:     120 ( 11.03%)
+No. of forc. pts., ave:        136.00 ,max:      992, min:        0, Max no. of loops:        2
+No. nrm. intrs calls=     1288,no grd intrs calls=      324
+No. nrm. intrs rechecks=      412,no grd intrs rechecks=       62
+TAG3D: No. INSIDE=         1760/      1536000, (~  0.11/100)
+TAG3D: No. INSIDE=         2048/      1536000, (~  0.13/100)
+TAG3D: No. INSIDE=         1952/      1536000, (~  0.13/100)
+Cycle no=     0, time=  0.00000000E+00 Pressure forcing points      1088, forced along normal:       768 ( 70.59%), forced along grid points:     120 ( 11.03%)
+No. of forc. pts., ave:        136.00 ,max:      992, min:        0, Max no. of loops:        2
+No. nrm. intrs calls=     1288,no grd intrs calls=      324
+No. nrm. intrs rechecks=      412,no grd intrs rechecks=       62
+TAG3D: No. INSIDE=         1760/      1536000, (~  0.11/100)
+TAG3D: No. INSIDE=         2048/      1536000, (~  0.13/100)
+TAG3D: No. INSIDE=         1952/      1536000, (~  0.13/100)
+Cycle no=     0, time=  0.00000000E+00 Pressure forcing points      1088, forced along normal:       768 ( 70.59%), forced along grid points:     120 ( 11.03%)
+No. of forc. pts., ave:        136.00 ,max:      992, min:        0, Max no. of loops:        2
+No. nrm. intrs calls=     1288,no grd intrs calls=      324
+No. nrm. intrs rechecks=      412,no grd intrs rechecks=       62
+TAG3D: No. INSIDE=         1760/      1536000, (~  0.11/100)
+TAG3D: No. INSIDE=         2048/      1536000, (~  0.13/100)
+TAG3D: No. INSIDE=         1952/      1536000, (~  0.13/100)
+Cycle no=     0, time=  0.00000000E+00 Pressure forcing points      1088, forced along normal:       768 ( 70.59%), forced along grid points:     120 ( 11.03%)
+No. of forc. pts., ave:        136.00 ,max:      992, min:        0, Max no. of loops:        2
+No. nrm. intrs calls=     1288,no grd intrs calls=      324
+No. nrm. intrs rechecks=      412,no grd intrs rechecks=       62
+TAG3D: No. INSIDE=         1760/      1536000, (~  0.11/100)
+TAG3D: No. INSIDE=         2048/      1536000, (~  0.13/100)
+TAG3D: No. INSIDE=         1952/      1536000, (~  0.13/100)
+Cycle no=     0, time=  0.00000000E+00 Pressure forcing points      1088, forced along normal:       768 ( 70.59%), forced along grid points:     120 ( 11.03%)
+No. of forc. pts., ave:        136.00 ,max:      992, min:        0, Max no. of loops:        2
+No. nrm. intrs calls=     1288,no grd intrs calls=      324
+No. nrm. intrs rechecks=      412,no grd intrs rechecks=       62
+TAG3D: No. INSIDE=         1760/      1536000, (~  0.11/100)
+TAG3D: No. INSIDE=         2048/      1536000, (~  0.13/100)
+TAG3D: No. INSIDE=         1952/      1536000, (~  0.13/100)
+Cycle no=     0, time=  0.00000000E+00 Pressure forcing points      1088, forced along normal:       768 ( 70.59%), forced along grid points:     120 ( 11.03%)
+No. of forc. pts., ave:        136.00 ,max:      992, min:        0, Max no. of loops:        2
+No. nrm. intrs calls=     1288,no grd intrs calls=      324
+No. nrm. intrs rechecks=      412,no grd intrs rechecks=       62
+TAG3D: No. INSIDE=         1760/      1536000, (~  0.11/100)
+TAG3D: No. INSIDE=         2048/      1536000, (~  0.13/100)
+TAG3D: No. INSIDE=         1952/      1536000, (~  0.13/100)
+Cycle no=     0, time=  0.00000000E+00 Pressure forcing points      1088, forced along normal:       768 ( 70.59%), forced along grid points:     120 ( 11.03%)
+No. of forc. pts., ave:        136.00 ,max:      992, min:        0, Max no. of loops:        2
+No. nrm. intrs calls=     1288,no grd intrs calls=      324
+No. nrm. intrs rechecks=      412,no grd intrs rechecks=       62
+TAG3D: No. INSIDE=         1760/      1536000, (~  0.11/100)
+TAG3D: No. INSIDE=         2048/      1536000, (~  0.13/100)
+TAG3D: No. INSIDE=         1952/      1536000, (~  0.13/100)
+Cycle no=     0, time=  0.00000000E+00 Pressure forcing points      1088, forced along normal:       768 ( 70.59%), forced along grid points:     120 ( 11.03%)
+No. of forc. pts., ave:        136.00 ,max:      992, min:        0, Max no. of loops:        2
+No. nrm. intrs calls=     1288,no grd intrs calls=      324
+No. nrm. intrs rechecks=      412,no grd intrs rechecks=       62
+Cycle no=    10, time=  0.33007813E+00 Pressure forcing points       130, forced along normal:       128 ( 98.46%), forced along grid points:       0 (  0.00%)
+No. of forc. pts., ave:         16.25 ,max:      130, min:        0, Max no. of loops:        1
+No. nrm. intrs calls=      132,no grd intrs calls=        2
+No. nrm. intrs rechecks=        0,no grd intrs rechecks=        0
+ Number of triangles=      197580
+ U-velocity:
+ Number of tri. within domain      197580
+ Number of dudn points extrap.      197580
+ V-velocity:
+ Number of tri. within domain      197580
+ Number of dvdn points extrap.      197580
+ W-velocity:
+ Number of tri. within domain      197580
+ Number of dwdn points extrap.      197580
+ immersed-boundary no.=           1
+ no. of triangles within ymin-ymax      197580
+ area=   3.14146254244010        3.14146254244013     
+ nf=      197580      197580
+ X: min= -0.499984502792358      -0.499984502792358      ,max=
+  0.499984502792358       0.499984502792358      ,Lx=  0.999969005584717     
+  0.999969005584717     
+ Y: min= -0.499975085258484      -0.499975085258484      ,max=
+  0.499987602233887       0.499987602233887      ,Ly=  0.999962687492371     
+  0.999962687492371     
+TAG3D: No. INSIDE=         1760/      1536000, (~  0.11/100)
+TAG3D: No. INSIDE=         2048/      1536000, (~  0.13/100)
+TAG3D: No. INSIDE=         1952/      1536000, (~  0.13/100)
+Cycle no=     0, time=  0.00000000E+00 Pressure forcing points      1088, forced along normal:       768 ( 70.59%), forced along grid points:     120 ( 11.03%)
+No. of forc. pts., ave:        136.00 ,max:      992, min:        0, Max no. of loops:        2
+No. nrm. intrs calls=     1288,no grd intrs calls=      324
+No. nrm. intrs rechecks=      412,no grd intrs rechecks=       62
+TAG3D: No. INSIDE=         1760/      1536000, (~  0.11/100)
+TAG3D: No. INSIDE=         2048/      1536000, (~  0.13/100)
+TAG3D: No. INSIDE=         1952/      1536000, (~  0.13/100)
+Cycle no=     0, time=  0.00000000E+00 Pressure forcing points      1088, forced along normal:       768 ( 70.59%), forced along grid points:     120 ( 11.03%)
+No. of forc. pts., ave:        136.00 ,max:      992, min:        0, Max no. of loops:        2
+No. nrm. intrs calls=     1288,no grd intrs calls=      324
+No. nrm. intrs rechecks=      412,no grd intrs rechecks=       62
+TAG3D: No. INSIDE=         1760/      1536000, (~  0.11/100)
+TAG3D: No. INSIDE=         2048/      1536000, (~  0.13/100)
+TAG3D: No. INSIDE=         1952/      1536000, (~  0.13/100)
+Cycle no=     0, time=  0.00000000E+00 Pressure forcing points      1088, forced along normal:       768 ( 70.59%), forced along grid points:     120 ( 11.03%)
+No. of forc. pts., ave:        136.00 ,max:      992, min:        0, Max no. of loops:        2
+No. nrm. intrs calls=     1288,no grd intrs calls=      324
+No. nrm. intrs rechecks=      412,no grd intrs rechecks=       62
+TAG3D: No. INSIDE=         1760/      1536000, (~  0.11/100)
+TAG3D: No. INSIDE=         2048/      1536000, (~  0.13/100)
+TAG3D: No. INSIDE=         1952/      1536000, (~  0.13/100)
+Cycle no=     0, time=  0.00000000E+00 Pressure forcing points      1088, forced along normal:       768 ( 70.59%), forced along grid points:     120 ( 11.03%)
+No. of forc. pts., ave:        136.00 ,max:      992, min:        0, Max no. of loops:        2
+No. nrm. intrs calls=     1288,no grd intrs calls=      324
+No. nrm. intrs rechecks=      412,no grd intrs rechecks=       62
+TAG3D: No. INSIDE=         1760/      1536000, (~  0.11/100)
+TAG3D: No. INSIDE=         2048/      1536000, (~  0.13/100)
+TAG3D: No. INSIDE=         1952/      1536000, (~  0.13/100)
+Cycle no=     0, time=  0.00000000E+00 Pressure forcing points      1088, forced along normal:       768 ( 70.59%), forced along grid points:     120 ( 11.03%)
+No. of forc. pts., ave:        136.00 ,max:      992, min:        0, Max no. of loops:        2
+No. nrm. intrs calls=     1288,no grd intrs calls=      324
+No. nrm. intrs rechecks=      412,no grd intrs rechecks=       62
+TAG3D: No. INSIDE=         1760/      1536000, (~  0.11/100)
+TAG3D: No. INSIDE=         2048/      1536000, (~  0.13/100)
+TAG3D: No. INSIDE=         1952/      1536000, (~  0.13/100)
+Cycle no=     0, time=  0.00000000E+00 Pressure forcing points      1088, forced along normal:       768 ( 70.59%), forced along grid points:     120 ( 11.03%)
+No. of forc. pts., ave:        136.00 ,max:      992, min:        0, Max no. of loops:        2
+No. nrm. intrs calls=     1288,no grd intrs calls=      324
+No. nrm. intrs rechecks=      412,no grd intrs rechecks=       62
+TAG3D: No. INSIDE=         1760/      1536000, (~  0.11/100)
+TAG3D: No. INSIDE=         2048/      1536000, (~  0.13/100)
+TAG3D: No. INSIDE=         1952/      1536000, (~  0.13/100)
+Cycle no=     0, time=  0.00000000E+00 Pressure forcing points      1088, forced along normal:       768 ( 70.59%), forced along grid points:     120 ( 11.03%)
+No. of forc. pts., ave:        136.00 ,max:      992, min:        0, Max no. of loops:        2
+No. nrm. intrs calls=     1288,no grd intrs calls=      324
+No. nrm. intrs rechecks=      412,no grd intrs rechecks=       62
+TAG3D: No. INSIDE=         1760/      1536000, (~  0.11/100)
+TAG3D: No. INSIDE=         2048/      1536000, (~  0.13/100)
+TAG3D: No. INSIDE=         1952/      1536000, (~  0.13/100)
+Cycle no=     0, time=  0.00000000E+00 Pressure forcing points      1088, forced along normal:       768 ( 70.59%), forced along grid points:     120 ( 11.03%)
+No. of forc. pts., ave:        136.00 ,max:      992, min:        0, Max no. of loops:        2
+No. nrm. intrs calls=     1288,no grd intrs calls=      324
+No. nrm. intrs rechecks=      412,no grd intrs rechecks=       62
+TAG3D: No. INSIDE=         1760/      1536000, (~  0.11/100)
+TAG3D: No. INSIDE=         2048/      1536000, (~  0.13/100)
+TAG3D: No. INSIDE=         1952/      1536000, (~  0.13/100)
+Cycle no=     0, time=  0.00000000E+00 Pressure forcing points      1088, forced along normal:       768 ( 70.59%), forced along grid points:     120 ( 11.03%)
+No. of forc. pts., ave:        136.00 ,max:      992, min:        0, Max no. of loops:        2
+No. nrm. intrs calls=     1288,no grd intrs calls=      324
+No. nrm. intrs rechecks=      412,no grd intrs rechecks=       62
+TAG3D: No. INSIDE=         1760/      1536000, (~  0.11/100)
+TAG3D: No. INSIDE=         2048/      1536000, (~  0.13/100)
+TAG3D: No. INSIDE=         1952/      1536000, (~  0.13/100)
+Cycle no=     0, time=  0.00000000E+00 Pressure forcing points      1088, forced along normal:       768 ( 70.59%), forced along grid points:     120 ( 11.03%)
+No. of forc. pts., ave:        136.00 ,max:      992, min:        0, Max no. of loops:        2
+No. nrm. intrs calls=     1288,no grd intrs calls=      324
+No. nrm. intrs rechecks=      412,no grd intrs rechecks=       62
+Cycle no=    10, time=  0.33007813E+00 Pressure forcing points       130, forced along normal:       128 ( 98.46%), forced along grid points:       0 (  0.00%)
+No. of forc. pts., ave:         16.25 ,max:      130, min:        0, Max no. of loops:        1
+No. nrm. intrs calls=      132,no grd intrs calls=        2
+No. nrm. intrs rechecks=        0,no grd intrs rechecks=        0
+ Number of triangles=      197580
+ U-velocity:
+ Number of tri. within domain      197580
+ Number of dudn points extrap.      197580
+ V-velocity:
+ Number of tri. within domain      197580
+ Number of dvdn points extrap.      197580
+ W-velocity:
+ Number of tri. within domain      197580
+ Number of dwdn points extrap.      197580
+ immersed-boundary no.=           1
+ no. of triangles within ymin-ymax      197580
+ area=   3.14146254244010        3.14146254244013     
+ nf=      197580      197580
+ X: min= -0.499984502792358      -0.499984502792358      ,max=
+  0.499984502792358       0.499984502792358      ,Lx=  0.999969005584717     
+  0.999969005584717     
+ Y: min= -0.499975085258484      -0.499975085258484      ,max=
+  0.499987602233887       0.499987602233887      ,Ly=  0.999962687492371     
+  0.999962687492371     
+TAG3D: No. INSIDE=         1760/      1536000, (~  0.11/100)
+TAG3D: No. INSIDE=         2048/      1536000, (~  0.13/100)
+TAG3D: No. INSIDE=         1952/      1536000, (~  0.13/100)
+Cycle no=     0, time=  0.33007813E+00 Pressure forcing points      1088, forced along normal:       768 ( 70.59%), forced along grid points:     120 ( 11.03%)
+No. of forc. pts., ave:        136.00 ,max:      992, min:        0, Max no. of loops:        2
+No. nrm. intrs calls=     1288,no grd intrs calls=      324
+No. nrm. intrs rechecks=      412,no grd intrs rechecks=       62
+Cycle no=    20, time=  0.66015625E+00 Pressure forcing points       130, forced along normal:       128 ( 98.46%), forced along grid points:       0 (  0.00%)
+No. of forc. pts., ave:         16.25 ,max:      130, min:        0, Max no. of loops:        1
+No. nrm. intrs calls=      132,no grd intrs calls=        2
+No. nrm. intrs rechecks=        0,no grd intrs rechecks=        0
+ Number of triangles=      197580
+ U-velocity:
+ Number of tri. within domain      197580
+ Number of dudn points extrap.      197580
+ V-velocity:
+ Number of tri. within domain      197580
+ Number of dvdn points extrap.      197580
+ W-velocity:
+ Number of tri. within domain      197580
+ Number of dwdn points extrap.      197580
+TAG3D: No. INSIDE=         1760/      1536000, (~  0.11/100)
+TAG3D: No. INSIDE=         2048/      1536000, (~  0.13/100)
+TAG3D: No. INSIDE=         1952/      1536000, (~  0.13/100)
+Cycle no=     0, time=  0.33007813E+00 Pressure forcing points      1088, forced along normal:       768 ( 70.59%), forced along grid points:     120 ( 11.03%)
+No. of forc. pts., ave:        136.00 ,max:      992, min:        0, Max no. of loops:        2
+No. nrm. intrs calls=     1288,no grd intrs calls=      324
+No. nrm. intrs rechecks=      412,no grd intrs rechecks=       62
+TAG3D: No. INSIDE=         1760/      1536000, (~  0.11/100)
+TAG3D: No. INSIDE=         2048/      1536000, (~  0.13/100)
+TAG3D: No. INSIDE=         1952/      1536000, (~  0.13/100)
+Cycle no=     0, time=  0.00000000E+00 Pressure forcing points      1088, forced along normal:       768 ( 70.59%), forced along grid points:     120 ( 11.03%)
+No. of forc. pts., ave:        136.00 ,max:      992, min:        0, Max no. of loops:        2
+No. nrm. intrs calls=     1288,no grd intrs calls=      324
+No. nrm. intrs rechecks=      412,no grd intrs rechecks=       62
+Cycle no=     1, time=  0.33007813E-01 Pressure forcing points       130, forced along normal:       128 ( 98.46%), forced along grid points:       0 (  0.00%)
+No. of forc. pts., ave:         16.25 ,max:      130, min:        0, Max no. of loops:        1
+No. nrm. intrs calls=      132,no grd intrs calls=        2
+No. nrm. intrs rechecks=        0,no grd intrs rechecks=        0
+ Number of triangles=      197580
+ U-velocity:
+ Number of tri. within domain      197580
+ Number of dudn points extrap.      197580
+ V-velocity:
+ Number of tri. within domain      197580
+ Number of dvdn points extrap.      197580
+ W-velocity:
+ Number of tri. within domain      197580
+ Number of dwdn points extrap.      197580
+ immersed-boundary no.=           1
+ no. of triangles within ymin-ymax      197580
+ area=   3.14146254244010        3.14146254244013     
+ nf=      197580      197580
+ X: min= -0.499984502792358      -0.499984502792358      ,max=
+  0.499984502792358       0.499984502792358      ,Lx=  0.999969005584717     
+  0.999969005584717     
+ Y: min= -0.499975085258484      -0.499975085258484      ,max=
+  0.499987602233887       0.499987602233887      ,Ly=  0.999962687492371     
+  0.999962687492371     
+TAG3D: No. INSIDE=         1760/      1536000, (~  0.11/100)
+TAG3D: No. INSIDE=         2048/      1536000, (~  0.13/100)
+TAG3D: No. INSIDE=         1952/      1536000, (~  0.13/100)
+Cycle no=     0, time=  0.16503906E+00 Pressure forcing points      1088, forced along normal:       768 ( 70.59%), forced along grid points:     120 ( 11.03%)
+No. of forc. pts., ave:        136.00 ,max:      992, min:        0, Max no. of loops:        2
+No. nrm. intrs calls=     1288,no grd intrs calls=      324
+No. nrm. intrs rechecks=      412,no grd intrs rechecks=       62
+Cycle no=     6, time=  0.19804688E+00 Pressure forcing points       130, forced along normal:       128 ( 98.46%), forced along grid points:       0 (  0.00%)
+No. of forc. pts., ave:         16.25 ,max:      130, min:        0, Max no. of loops:        1
+No. nrm. intrs calls=      132,no grd intrs calls=        2
+No. nrm. intrs rechecks=        0,no grd intrs rechecks=        0
+ Number of triangles=      197580
+ U-velocity:
+ Number of tri. within domain      197580
+ Number of dudn points extrap.      197580
+ V-velocity:
+ Number of tri. within domain      197580
+ Number of dvdn points extrap.      197580
+ W-velocity:
+ Number of tri. within domain      197580
+ Number of dwdn points extrap.      197580

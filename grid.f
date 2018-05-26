@@ -36,19 +36,19 @@ c
 c
           ix1=2
           OPEN(UNIT=1,FILE=STR1,STATUS='OLD',FORM='FORMATTED')
-          read(1,*) ix2
+          read(1,*) ix2                           !! ix2 = NX-1
           read(1,*) (j,xu(i),i=1,ix2)
           close(1)
 
           xlen=xu(ix2)-xu(1)
 
-          xu(nx) = 2.*xu(ix2)-xu(ix2-1)
+          xu(nx) = 2.*xu(ix2)-xu(ix2-1)           !! Ghost cell face center 
 c     
           xc(ix1:ix2) = .5*(xu(ix1-1:ix2-1)+xu(ix1:ix2))
-          xc(1 ) = 2.*xu(1  )-xc(2  )
-          xc(nx) = 2.*xu(ix2)-xc(ix2)
+          xc(1 ) = 2.*xu(1  )-xc(2  )             !! Ghost cell centers at i =1
+          xc(nx) = 2.*xu(ix2)-xc(ix2)             !! Ghost cell centers at i =NX+1
 c     
-          au(ix1:ix2) = 2./(xu(ix1+1:ix2+1)-xu(ix1-1:ix2-1))
+          au(ix1:ix2) = 2./(xu(ix1+1:ix2+1)-xu(ix1-1:ix2-1))   !! du/dx for u
           au(1  ) = 2./(-3.*xu(1  )+4.*xu(2    )-xu(3    ))
           au(ix2) = 2./( 3.*xu(ix2)-4.*xu(ix2-1)+xu(ix2-2))
           au(nx ) = au(ix2)
@@ -57,11 +57,11 @@ c
           ap(1 ) = ap(ix1)
           ap(nx) = ap(ix2)
 c
-          av(ix1:ix2) = 2./(xc(ix1+1:ix2+1)-xc(ix1-1:ix2-1))
+          av(ix1:ix2) = 2./(xc(ix1+1:ix2+1)-xc(ix1-1:ix2-1))   !! dv/dx for v
           av(1 ) = 2./(-3.*xc(1 )+4.*xc(2   )-xc(3   ))
           av(nx) = 2./( 3.*xc(nx)-4.*xc(nx-1)+xc(nx-2))
 c
-          aw = av
+          aw = av                                              !! dw/dx for w
 c
 c.....generate uniform x grid
 
@@ -78,7 +78,7 @@ c
           do i=1,nx
             xu(i)=real(i-1)*delx+xmin
             write(81,*)i,xu(i)
-            ap(i)=rdelx
+            ap(i)=rdelx            !! Denominator is dx for all 1st order derivative
             au(i)=rdelx
             av(i)=rdelx
             aw(i)=rdelx
@@ -611,7 +611,8 @@ C
 
         UC(1,:,:) = UC(2,:,:)
 
-        if(icyl==1) then
+        if(icyl==1) then            !! jsym contains the symmetrically
+                                    !! opposite cell center/edge in icyl=1
           do j=1,ny
             uc(1,j,:) = -uc(2,jsym(j),:)     ! Treatment of the pizza
 c                                            cell to ensure zero axis
@@ -629,8 +630,7 @@ c                                            velocity
         ENDDO
         ENDDO
 
-        UC(:,1,:) = UC(:,NY-1,:)             ! Periodicity
-
+        UC(:,1,:) = UC(:,NY-1,:)             ! Periodic                   
         if(icyl==1) then
           do j=1,ny
             uc(1,j,:) = -uc(2,jsym(j),:)     ! Same as u

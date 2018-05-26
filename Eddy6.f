@@ -1,3 +1,4 @@
+C---------------- Testing Version---------------------------------------
 C-----------------------------------------------------------------------
 C                 ***************************
 C                 *         E D D Y         *
@@ -750,8 +751,8 @@ c
       ELSE
 !**************************************************************************************************
 ! Original
+
     	call add_density(xc,yc,nx,ny,nz,dens,ierr)
-	call add_density(xc,yc,nx,ny,nz,dens,ierr)
         CALL SPONGE_SETUP(NX,NY,NZ,NZG,XC,XU,ZWG,ZCG,IERR)
         IDIR  = -1 ! IOMPI_3DSCALAR reads restart files
         IF(MYRANK.EQ.0) write(6,*) 'Reading u restart file ...'
@@ -3615,7 +3616,7 @@ C-----------------------------------------------------------------------
 C     Record velocity and pressure time signal  at probe locations
 C-----------------------------------------------------------------------
 C
-      call rec_timeprobes_all(uo,vo,wo,p,nx,ny,nz,TIME)
+      call rec_timeprobes_all(uo,vo,wo,p,nx,ny,nz,icycle,TIME)
       clocktemp = tclock()
 !      if(itmprb>0) then
 c the centered values of velocity and pressure are stored in

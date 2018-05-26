@@ -212,7 +212,7 @@ C
         READ (2,SOLPRM)
         WRITE(6,SOLPRM)
 C
-c.....second order Adams-Bashfort Scheme      
+c.....second order Adams-Bashforth Scheme      
         IF(ISCHM==1) THEN
           GAM(1) =  1.5
           GAM(2) =  0.0

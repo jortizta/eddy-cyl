@@ -97,7 +97,8 @@
                                                                         
                                                                         
 &SOLPRM                                                                 
-        ischm=3, ibm=1, isgs=0, ipres=1, ifield=0, idens=1, inoise=0    
+        ischm=3, ibm=1, isgs=0, ipres=1, ifield=1, idens=0, inoise=0    
+                                                                        
 &END                                                                    
 *                                                                       
 *                                                                       
@@ -130,9 +131,9 @@
 *                                                                       
 &ITRPRM                                                                 
         ITMAX=1000000, ITINI=10000000, ITSCR=1, ISTAT=2000000, ITSER=0, 
-        ITRES=50, ITPOST=5, IT5P=0, KMIN5P=670, KMAX5P=680, ITPLN=5000, 
+        ITRES=5, ITPOST=5, IT5P=0, KMIN5P=670, KMAX5P=680, ITPLN=50,    
         IVRTX=0, ITBDY=100,                                             
-        ITCALF=10, IT2D=0,                                              
+        ITCALF=1, IT2D=0,                                               
         ITVPFIELD=0, NWRITE=0, NWRITE2D=0, NWRITEBDY=0,                 
         IOLVL=1, IOCLOCK=1                                              
 &END                                                                    
@@ -309,7 +310,7 @@
 *ny     :  -                                                            
 *nz     :  -                                                            
 &GRIDDM                                                                 
-         nx=66,ny=18,nz=514,nxprocs=1,nyprocs=1,nzprocs=4               
+         nx=152,ny=34,nz=322,nxprocs=1,nyprocs=1,nzprocs=8              
 &END                                                                    
 *                                                                       
 *                                                                       
