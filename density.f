@@ -3,7 +3,7 @@ C -------------------------------------- A. Posa - 03/11/2014 ----
 C
       SUBROUTINE DENSITY(DENS,UO,VO,RHA,RHB,RS,XC,YC,ALFXDT,GAMXDT,RHOXDT,IM,JM,KM)
 c
-      USE SPNGE
+      USE spnge
       USE density_bg
       INCLUDE 'common.h'
       INCLUDE 'mpif.h'
@@ -49,19 +49,8 @@ c the RHS at the time level L-1 is stored in RHA
       ENDDO
       ENDDO
       ENDDO
-c Karu adds----------------------------------------------      
 
-c Sheel adds-----------------------------------------------
-c Sponging density to background
-      DO I=IX1,IX2
-      DO J=JY1,JY2
-      DO K=KZ1,KZ2
-        RS(I,J,K) = RS(I,J,K) +
-     &  dfxpl(K)*5.0d0*(dens_bg(I,J)-RS(I,J,K))*ALFXDT*1.0d0
-      ENDDO
-      ENDDO
-      ENDDO
-c--------------------------------------------------------
+c Karu adds----------------------------------------------      
 
       RHB = RS+0.5*ALFXDT*RHB
       
@@ -77,6 +66,45 @@ c--------------------------------------------------------
          CALL INVERSEXD(RS,RHB,ALFXDT,GAMXDT,RHOXDT,IM,JM,KM)
          DENS = RS
       ENDIF
+
+
+! Sponge density: inlet, outlet, radial
+
+       DO I=IX1,IX2
+       DO J=JY1,JY2
+       DO K=KZ2-dspngx3out,KZ2
+                  
+         DENS(I,J,K) = DENS(I,J,K) + dfxdl(K)*(DENS_BG(I,J) - DENS(I,J,K))*ALFXDT*1.0
+
+       ENDDO
+       ENDDO
+       ENDDO
+
+       DO I=IX1,IX2
+       DO J=JY1,JY2
+       DO K=KZ1,KZ1+dspngx3in
+                  
+         DENS(I,J,K) = DENS(I,J,K) + dfxdl(K)*(DENS_BG(I,J) - DENS(I,J,K))*ALFXDT*1.0
+
+       ENDDO
+       ENDDO
+       ENDDO
+
+
+       DO I=IX2-dspngx1,IX2
+       DO J=JY1,JY2
+       DO K=KZ1,KZ2
+                  
+         DENS(I,J,K) = DENS(I,J,K) + dfxdl(K)*(DENS_BG(I,J) - DENS(I,J,K))*ALFXDT*1.0
+
+       ENDDO
+       ENDDO
+       ENDDO
+
+
+
+
+
 
 c ----------------------------------------------      
 c ----------------------------------------------      

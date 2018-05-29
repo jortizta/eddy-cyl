@@ -1023,7 +1023,7 @@ C
       ENDDO
       ENDDO
       ENDDO
-c
+
       RETURN
       END
 
@@ -1041,9 +1041,9 @@ c
       SUBROUTINE PREDICTORD(UO,VO,WO,P,UA,VA,WA,UB,VB,WB,
      &     US,VS,WS,DENS,XU,XC,YC,YV,ZWG,ZCG,ALFXDT,GAMXDT,RHOXDT,IM,JM,KM,KMG,TLEVEL,
      &     CLOCK,NCLOCK)
-c
+
       use density_bg
-      use SPNGE
+      use spnge
       INCLUDE 'common.h'
       INCLUDE 'mpif.h'
 
@@ -1055,7 +1055,7 @@ c
      &     US(IM,JM,KM),VS(IM,JM,KM),WS(IM,JM,KM)
       REAL DENS(IM,JM,KM),XU(IM),XC(IM),YC(JM),YV(JM),ZWG(KM),ZCG(KM)
 !       REAL dfxug(KMG),dfxwg(KMG),dfxul(KM),dfxwl(KM)
-c
+
       INTEGER I,J,K
       REAL ALFXDT,GAMXDT,RHOXDT
       REAL USTAR,VSTAR,WSTAR
@@ -1063,13 +1063,13 @@ c
       REAL CF1,CF2,CF3,DF,DFC,DFD
       PARAMETER (DFC=2.,DFD=20.)
       INTEGER K1G,K2G,KMG,KL
-c
+
       integer nclock
       real clock(nclock)
       real clocktemp,clocktemp1
       real tclock
-*
-**** Compute provisional values for each momentum eq.
+
+!*** Compute provisional values for each momentum eq.
       
       
       COEF=0.5*ALFXDT
@@ -1077,9 +1077,9 @@ c
       CF1=DFC/(DFD**2.)
       CF2=-2.*DFD*CF1
       CF3=DFC
-c------------------------------------------------------------------
-c                                                    compute ustar
-c------------------------------------------------------------------
+!------------------------------------------------------------------
+!                                                    compute ustar
+!------------------------------------------------------------------
       clocktemp1 = tclock()
       DO K=KZ1,KZ2
       DO J=JY1,JY2
@@ -1102,104 +1102,58 @@ c------------------------------------------------------------------
 ! (dens(i+1,j,k)+dens(i,j,k))
 
         !if(myid==0) write(6,*) "grav = ", grav
-c	IF(IDENS.EQ.1) USTAR=USTAR-COEFD*0.50d0*grav*(DENS(I+1,J,K)+DENS(I,J,K))
+!	IF(IDENS.EQ.1) USTAR=USTAR-COEFD*0.50d0*grav*(DENS(I+1,J,K)+DENS(I,J,K))
 
-c UO is the velocity at the time level L-1
-c UB is the RHS (explicit part) at the time level L-1
-c UA is the RHS (explicit part) at the time level L-2
-c P is the pressure (for the pressure gradient) at the time level L-1
-c US is the semi-explicit part for the terms treated by C.N.
-C
+! UO is the velocity at the time level L-1
+! UB is the RHS (explicit part) at the time level L-1
+! UA is the RHS (explicit part) at the time level L-2
+! P is the pressure (for the pressure gradient) at the time level L-1
+! US is the semi-explicit part for the terms treated by C.N.
+
 	
         UA(I,J,K) = UB(I,J,K)
         UB(I,J,K) = US(I,J,K)
         US(I,J,K) = USTAR
-c the RHS at the time level L-1 is stored in UA
-c the C.N. terms are stored in UB
-c the provisional solution is stored in US
+! the RHS at the time level L-1 is stored in UA
+! the C.N. terms are stored in UB
+! the provisional solution is stored in US
       ENDDO
       ENDDO
       ENDDO
-c
- 
-!       K1G=KZ1+MYRANK*(KM-2)
-!       K2G=KZ2+MYRANK*(KM-2)
-!       DO K=KMG/2,KMG/2   !+1
-!       IF((K.GE.K1G).AND.(K.LE.K2G)) THEN
-!         KL=K-MYRANK*(KM-2)
-!         DO J=JM/2,JM/2   !+1
-!         I=IM/2
- 
-!      IF(myrank.eq.3) US(100,33,16) = US(100,33,16) + 0.1*cos(0.8*tlevel)
-!         ENDDO
-!       ENDIF
-!       ENDDO
 
- 	 var=1 !u=Flow(:,:,:,5)
-!  	do dir=1,3
-!  	do face=1,2
-!       	 call Sponge(US,UO,var,IM,JM,KM,dir,face,err)
-!  	enddo
-!  	enddo
-c	
+
+       var=1 
+	
 	      
 
        DO K=KZ1,KZ2
        DO J=JY1,JY2
-! !       DO I=IBU,IBU+20
-! !         df=cf1*real(i-ibu)**2.+cf2*real(i-ibu)+cf3
-! !         US(I,J,K) = US(I,J,K) + df*(0.-US(I,J,K))*ALFXDT
-! !       ENDDO
-       DO I=IEU-10,IEU
-!         df=5.0*((xu(i)-xu(IEU-10))/(xu(IEU)-xu(IEU-10)))**2.d0
-c         df=cf1*real(ieu-i)**2.+cf2*real(ieu-i)+cf3
+       DO I=IEU-vspngx1,IEU
+
          US(I,J,K) = US(I,J,K) + dfxu(i)*(0.-US(I,J,K))*ALFXDT*1.0
+
        ENDDO
        ENDDO
        ENDDO
-!       x1spng=20
 
 
-!        IF(TLEVEL == 0.0) THEN
-! !        IF(MYRANK.eq.0) then
-!        DO K=KMG,1,-1
-!          dfxug(K)=0.0
-!          if (K.LE.x1spng+1.AND.x1spng.GT.0) then
-!          dfxug(K)=10.0*((zcg(k)-zcg(x1spng+1))/(zcg(2)-zcg(x1spng+1)))**2.d0
-! !           IF(MYRANK.eq.0)write(*,*),"GLOBAL",dfxug(K),K
-!          endif
-!        ENDDO
-! !        CALL MPI_BCAST(dfxug ,1,MTYPE,0,MPI_COMM_EDDY,IERR)
-! !        ENDIF
-!          
-!          DO K=KZ1,KZ2
-!          dfxul(K)=dfxug((KZ2-1)*(myrank)+K)
-! !          if(myrank.eq.0)write(*,*),dfxul(K),K,myrank
-! !          if(myrank.eq.1)write(*,*),dfxul(K),K,myrank
-!          ENDDO
-!         ENDIF
-! 
-!        write(*,*),dfxul(2), myrank
-
-!        if(myrank.eq.0) then
-       write(*,*) "IBU IEU", IBU, IEU
-       DO I=IBU,IEU
+       DO K=KZ1,KZ1+vspngx3in
        DO J=JY1,JY2
-       DO K=KZ1,KZ2
-!          IF(K.eq.15.and.I.eq.100.and.J.eq.33) write(*,*)"SPONGED US",KMG
-         US(I,J,K) = US(I,J,K) + dfxul(K)*(0.-US(I,J,K))*ALFXDT*1.0
-       ENDDO
-       ENDDO
-       ENDDO
-!        endif
+       DO I=IBU,IEU
 
-c
+         US(I,J,K) = US(I,J,K) + dfxul(K)*(0.-US(I,J,K))*ALFXDT*1.0
+
+       ENDDO
+       ENDDO
+       ENDDO
+
+
       clocktemp1 = tclock() - clocktemp1
       clock(1) = clock(1) + clocktemp1
 
-c------------------------------------------------------------------
-c                                                    compute vstar
-c------------------------------------------------------------------
+!------------------------------------------------------------------
+!                                                    compute vstar
+!------------------------------------------------------------------
       clocktemp1 = tclock()
       DO K=KZ1,KZ2
       DO J=JBV,JEV
@@ -1216,47 +1170,43 @@ c------------------------------------------------------------------
      & ((DENS(I,J+1,K)-DENS_BG(I,J+1))+(DENS(I,J,K)-DENS_BG(I,J)))
        endif
 
-
-! -0.50d0*COEFD*grav*cos(yv(j))*(dens(i,j+1,k)+dens(i,j,k))
-
-
-! 	IF(IDENS.eq.1)VSTAR=VSTAR-COEFD*0.5*grav*cos(yv(j))*(DENS(I,J+1,K)+DENS(I,J,K))
-C
         VA(I,J,K) = VB(I,J,K)
         VB(I,J,K) = VS(I,J,K)
         VS(I,J,K) = VSTAR
+
       ENDDO
       ENDDO
       ENDDO
-c
-      write(*,*) "JBV, JEV", JBV, JEV
- 	var=2 !u=Flow(:,:,:,5)
-!  	do dir=1,3
-!  	do face=1,2
-!      	 call Sponge(VS,VO,var,IM,JM,KM,dir,face,err)
-!  	enddo
-!  	enddo
+
+       var=2 
+
        DO K=KZ1,KZ2
        DO J=JBV,JEV
-! !       DO I=IX1,IX1+20
-! !         df=cf1*real(i-ix1)**2.+cf2*real(i-ix1)+cf3
-! !         VS(I,J,K) = VS(I,J,K) + df*(0.-VS(I,J,K))*ALFXDT
-! !       ENDDO
-       DO I=IX2-10,IX2
-!         df=5.0*((xc(I)-xc(IX2-10))/(xc(IX2)-xc(IX2-10)))**2.d0
-c         df=cf1*real(ix2-i)**2.+cf2*real(ix2-i)+cf3
+       DO I=IX2-vspngx1,IX2
+
          VS(I,J,K) = VS(I,J,K) + dfxw(i)*(0.-VS(I,J,K))*ALFXDT*1.0
+
        ENDDO
        ENDDO
        ENDDO
-c
+
+
+       DO K=KZ1,KZ1+vspngx3in
+       DO J=JY1,JY2
+       DO I=IBU,IEU
+
+         VS(I,J,K) = VS(I,J,K) + dfxwl(K)*(0.-VS(I,J,K))*ALFXDT*1.0
+
+       ENDDO
+       ENDDO
+       ENDDO
+
+
       clock(4) = clock(4) + tclock()-clocktemp1
-c      write(6,*) myrank,'Vloop:',kz1,kz2,jbv,jev,ix1,ix2,
-c     &     (kz2-kz1+1)*(jev-jbv+1)*(ix2-ix1+1)
-c------------------------------------------------------------------
-c                                                    compute wstar
-c------------------------------------------------------------------
-      write(*,*), "KBW, KEW, WO(40,2,nz-1)", KBW, KEW, WO(40,2,513)
+
+!------------------------------------------------------------------
+!                                                    compute wstar
+!------------------------------------------------------------------
       clocktemp1 = tclock()
       DO K=KBW,KEW
       DO J=JY1,JY2
@@ -1266,60 +1216,39 @@ c------------------------------------------------------------------
      &       +COEF*WS(I,J,K)
      &       -ALFXDT*DPDZ
 
-C
+
         WA(I,J,K) = WB(I,J,K)
         WB(I,J,K) = WS(I,J,K)
         WS(I,J,K) = WSTAR
       ENDDO
       ENDDO
       ENDDO
-c
-      write(*,*), "KBW, KEW, WS(40,2,nz-1)", KBW, KEW, WS(40,2,513)
- 	  var=3 !u=Flow(:,:,:,5)
-!  	do dir=1,3
-!  	do face=1,2
-!      	 call Sponge(WS,WO,var,IM,JM,KM,dir,face,err)
-!  	enddo
-!  	enddo
+
+        var=3 
+
        DO K=KBW,KEW
        DO J=JY1,JY2
-! !       DO I=IX1,IX1+20
-! !         df=cf1*real(i-ix1)**2.+cf2*real(i-ix1)+cf3
-! !         WS(I,J,K) = WS(I,J,K) + df*(0.-WS(I,J,K))*ALFXDT
-! !       ENDDO
-       DO I=IX2-10,IX2
-!          df=5.0*((xc(I)-xc(IX2-10))/(xc(IX2)-xc(IX2-10)))**2.d0
-c         df=cf1*real(ix2-i)**2.+cf2*real(ix2-i)+cf3
+       DO I=IX2-vspngx1,IX2
+
          WS(I,J,K) = WS(I,J,K) + dfxw(i)*(1.-WS(I,J,K))*ALFXDT*1.0
+
        ENDDO
        ENDDO
        ENDDO
 
-!        IF(TLEVEL == 0.0) THEN
-!        DO K=KMG,1,-1
-!          dfxwg(K)=0.0
-!          if (K.LE.x1spng+1.AND.x1spng.GT.0) then
-!          dfxwg(K)=10.0*((zwg(k)-zwg(x1spng+1))/(zwg(2)-zwg(x1spng+1)))**2.d0
-!          endif
-!        ENDDO
-!          DO K=KBW,KEW
-!          dfxwl(K)=dfxwg((KEW-1)*(mysize+1)+K)
-!          ENDDO
-!         ENDIF
-!        IF(MYRANK.EQ.0) write(*,*),dfxul(:)
-       DO I=IX1,IX2
+
+       DO K=KBW,KBW+vspngx3in 
        DO J=JY1,JY2
-       DO K=KBW,KEW
-         WS(I,J,K) = WS(I,J,K) + dfxwl(k)*(1.-WS(I,J,K))*ALFXDT*1.0
+       DO I=IX1,IX2
+
+        WS(I,J,K) = WS(I,J,K) + dfxwl(k)*(1.-WS(I,J,K))*ALFXDT*1.0
+
        ENDDO
        ENDDO
        ENDDO
 
-
-c
       clock(7) = clock(7) + tclock()-clocktemp1
-c      write(6,*) myrank,'Wloop:',kbw,kew,jy1,jy2,ix1,ix2,
-c     &     (kew-kbw+1)*(jy2-jy1+1)*(ix2-ix1+1)
+
       RETURN
       END
 

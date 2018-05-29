@@ -77,11 +77,15 @@ c-------------------------------------------------------- A. Posa - Oct 2011 ---
       end module points
 
       module spnge
-         integer,dimension(1:2):: x1spng 
+         integer :: vspngx1,vspngx3in,vspngx3out 
+         integer :: dspngx1,dspngx3in,dspngx3out 
          real, dimension(:,:), allocatable :: PhiX1
          real, dimension(:,:,:,:), allocatable :: X1inf
          real, dimension(:), allocatable :: dfxug,dfxwg,dfxul,dfxwl,dfxu
      &                                      ,dfxw,dfxpg,dfxpl
+
+         real, dimension(:), allocatable :: dfxdg,dfxdl,dfxd
+
       end module spnge
 
       module density_bg
