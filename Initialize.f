@@ -3,17 +3,17 @@
 	INCLUDE 'common.h'
 	INCLUDE 'mpif.h'
 	integer	:: nx,ny,nz
- 	integer,intent(out)    :: stat 
+	integer,intent(out)    :: stat 
 	real		       :: uo(nx,ny,nz),vo(nx,ny,nz),wo(nx,ny,nz)
 	real 		       :: xc(nx),yc(ny),xx,yy,r
 
- !Local Variables
- 	integer                :: i,err1,j,ok1
+!Local Variables
+	integer                :: i,err1,j,ok1
 	
-	err1=0
-	uo=0.0d0
-	vo=0.0d0
-	wo=1.0d0
+        err1=0
+        uo=0.0d0
+        vo=0.0d0
+        wo=1.0d0
 ! 	call add_turbo(uo,vo,wo,nx,ny,nz,xc,err1)
 ! 	do k=1,nz
 ! 	do j=1,ny
@@ -23,7 +23,7 @@
 !      	r   = dsqrt( yy**2.d0 + xx**2.d0 )
 !      	wo(i,j,:) = wo(i,j,:) +  0.110d0*dexp(-xx**2.d0/(2.d0*2.0d0**2.d0))
 !   	wo(i,:,:) = wo(i,:,:) +  0.110d0*dexp(-xx**2.d0/(2.d0*0.5d0**2.d0))
-    	enddo 
+	enddo 
 !    	enddo
 ! 	enddo
 
@@ -42,31 +42,31 @@
 	include 'common.h'
 	include 'mpif.h'
 	
- !Passed Variables
+!Passed Variables
 	integer	:: nx,ny,nz
- 	integer,intent(out)    :: stat 
+	integer,intent(out)    :: stat 
 	reaL		       :: dens(nx,ny,nz),xc(nx),yc(ny)
- !Local Variables
- 	integer                :: i,err1,j
+!Local Variables
+	integer                :: i,err1,j
 !  	real(r8)               :: zz
 	ALLOCATE(dens_bg(nx,ny))
- !Linear      denP1=d(rho)/dx_3   denP2=(unused)            denP3=(unused)
- !TwoLayer    denP1=Delta_rho     denP2=delta_omega         denP3=(unused)
- !Jdeep       denP1=Jm            denP2=Jd                  denP3=z0
- !Pycnocline  denP1=d(rho)/dx_3   denP2= # transition pts   denP3=(unused)
- 	err1=0
+!Linear      denP1=d(rho)/dx_3   denP2=(unused)            denP3=(unused)
+!TwoLayer    denP1=Delta_rho     denP2=delta_omega         denP3=(unused)
+!Jdeep       denP1=Jm            denP2=Jd                  denP3=z0
+!Pycnocline  denP1=d(rho)/dx_3   denP2= # transition pts   denP3=(unused)
+        err1=0
 	dens=0.0d0
 
 !  	select case(density_profile)
 
 !   	case('Linear')
-   	do i=1,nx
+	do i=1,nx
 	do j=1,ny
 !      	zz = zc(k)-DX3c 
 !     	dens(i,:,:) = dens(i,:,:) + denP1*(xc(i))
         if(idens.eq.1) then
-	dens(i,j,:)   =  dens(i,j,:)+ denP1*(rp(i))*sin(yc(j)) 
-    	dens_bg(i,j)  =  denP1*(rp(i))*sin(yc(j))
+        dens(i,j,:)   =  dens(i,j,:)+ denP1*(rp(i))*sin(yc(j)) 
+        dens_bg(i,j)  =  denP1*(rp(i))*sin(yc(j))
 
 c	dens(i,j,:)   =  dens(i,j,:) + denP1*(xc(i)-1.0)
 c	dens_bg(i,j)  =  denP1*(xc(i)-1.0)
@@ -113,7 +113,8 @@ c	dens_bg(i,j)  =  denP1*(xc(i)-1.0)
 !   end select
 ! 
          if (MYRANK==0) then
-	    write(*,'(a,3(1x,f12.6))') "    ADDED DENSITY PROFILE:with parameters 1-1=",denP1
+	    write(*,'(a,3(1x,f12.6))') "    ADDED DENSITY PROFILE:with
+     &      parameters 1-1=",denP1
 	 endif
 
 	 CALL BOUNDARY_DENS(DENS,XC,YC,NX,NY,NZ)
@@ -121,11 +122,11 @@ c	dens_bg(i,j)  =  denP1*(xc(i)-1.0)
 
 	    
 	stat=max(0,err1)
- 	return
+	return
 	end subroutine add_density
 
 
-    	SUBROUTINE SPONGE_SETUP(NX,NY,NZ,NZG,XC,XU,ZWG,ZCG,stat)
+	SUBROUTINE SPONGE_SETUP(NX,NY,NZ,NZG,XC,XU,ZWG,ZCG,stat)
 	
         USE SPNGE
         INCLUDE 'common.h'
@@ -238,7 +239,6 @@ c	dens_bg(i,j)  =  denP1*(xc(i)-1.0)
 !         dfxwl(K) = dfxwl((KZ2-1)*myrank+K)
 !      ENDDO
 !
-
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

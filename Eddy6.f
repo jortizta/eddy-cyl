@@ -725,7 +725,9 @@ c
 c.....definition of the inflow and outflow conditions
 c
         CALL BOUNDINOUT(UO,VO,WO,UO,VO,WO,XU,XC,YC,ZW,ZC,ALFXDT,TIME,NX,NY,NZ,1)
-	    CALL BOUNDINOUTD(DENS,WO,ZCG,ALFXDT,NX,NY,NZ,NZG)
+	CALL BOUNDARY(UO,VO,WO,XU,XC,YV,YC,ZW,ZC,NX,NY,NZ,TIME)  	    
+        CALL BOUNDINOUTD(DENS,WO,ZCG,ALFXDT,NX,NY,NZ,NZG)
+
         IF(ISCHM==1) THEN
           CALL RHS(UO,VO,WO,DENS,US,VS,WS,TV,UB,VB,WB,DP,NX,NY,NZ,XC,XU,YC,YV,TIME)
 c
@@ -2460,19 +2462,11 @@ C.....Predictor step + boundary conditions for us
 !          CALL BOUNDARY_DENS(DENS,XC,NX,NY,NZ)
 !          CALL REFRESHBC(DENS,NX*NY,NZ)
 !          CALL PREDICTORD(UO,VO,WO,P,UA,VA,WA,UB,VB,WB,US,VS,WS,DENSO,XU,
-             !write(*,*) "Line 2467", WS(nx-15,5,40), WS(nx-15,8,40)
-             !write(*,*) "Line 2467", WS(nx-1,1,40), WS(nx-1,ny-1,40)
-             !write(*,*) "Line 2467", WS(nx-1,2,40), WS(nx-1,ny,40)
+
              CALL PREDICTORD(UO,VO,WO,P,UA,VA,WA,UB,VB,WB,US,VS,WS,DENS,XU,XC,YC,YV,
      &       ZWG,ZCG,ALFXDT,GAMXDT,RHOXDT,NX,NY,NZ,NZG,TIME,clock(40),9)
-             !! Sheel and Jose addition to ensure proper BC and
-             !periodicity
-             !CALL BOUNDINOUT(US,VS,WS,US,VS,WS,XU,XC,YC,ZW,ZC,ALFXDT,TLEVEL,NX,NY,NZ,1)
-             CALL BOUNDARY(US,VS,WS,XU,XC,YV,YC,ZW,ZC,NX,NY,NZ,TIME)
-             !write(*,*) "Line 2468", WS(nx-15,5,40), WS(nx-15,8,40)
-             !write(*,*) "Line 2468", WS(nx-1,1,40), WS(nx-1,ny-1,40)
-             !write(*,*) "Line 2468", WS(nx-1,2,40), WS(nx-1,ny,40)
- !         ENDIF
+
+!         ENDIF
 c RHS at the time level L-1 in UA,VA,WA
 c implicit terms in UB,VB,WB
 c provisional solution in US,VS,WS
@@ -2492,9 +2486,7 @@ c
 c.....other boundary conditions
 c
           CALL BOUNDARY(UB,VB,WB,XU,XC,YV,YC,ZW,ZC,NX,NY,NZ,TLEVEL)
-c        write(*,*), "Eddy6.f u(nx-1,1,nz-1)
-c     &  u(nx-1,ny-1,nz-1) 2491",WO(nx-1,1,nz-1), WO(nx-1,ny-1,nz-1)  
-c
+
 C-----------------------------------------------------------------------
 C.....refresh block interfaces (and periodic boundary in z direction)
 C-----------------------------------------------------------------------
@@ -2505,6 +2497,8 @@ c
 c.....inlet and outlet boundary conditions
 c
           CALL BOUNDINOUT(UB,VB,WB,UO,VO,WO,XU,XC,YC,ZW,ZC,ALFXDT,TLEVEL,NX,NY,NZ,1)
+	  CALL BOUNDARY(UB,VB,WB,XU,XC,YV,YC,ZW,ZC,NX,NY,NZ,TIME)  
+
 
 C-----momentum forcing from an explicit step
 C-----------------------------------------------------------------------
@@ -2613,7 +2607,8 @@ C-----------------------------------------------------------------------
 
 c.....inlet and outlet boundary conditions
           CALL BOUNDINOUT(US,VS,WS,UO,VO,WO,XU,XC,YC,ZW,ZC,ALFXDT,TLEVEL,NX,NY,NZ,1)
-c
+          CALL BOUNDARY(US,VS,WS,XU,XC,YV,YC,ZW,ZC,NX,NY,NZ,TIME)  
+
 c.....moving bodies
 
 c.....compute forcing in x momentum
@@ -2685,6 +2680,8 @@ C-----------------------------------------------------------------------
 c
 c.....inlet and outlet boundary conditions
         CALL BOUNDINOUT(US,VS,WS,UO,VO,WO,XU,XC,YC,ZW,ZC,ALFXDT,TLEVEL,NX,NY,NZ,1)
+	CALL BOUNDARY(US,VS,WS,XU,XC,YV,YC,ZW,ZC,NX,NY,NZ,TIME)  
+
         clock(8) = clock(8) + tclock() - clocktemp
 c
 C-----------------------------------------------------------------------
@@ -2736,33 +2733,25 @@ C-----------------------------------------------------------------------
         CALL REFRESHBC(VO,NX*NY,NZ)
         CALL REFRESHBC(WO,NX*NY,NZ)
         
-        !write(*,*) "Line 2739", WO(nx-15,5,40), WO(nx-15,8,40)
-        !write(*,*) "Line 2739", WO(nx-1,1,40), WO(nx-1,ny-1,40)
-        !write(*,*) "Line 2739", WO(nx-1,2,40), WO(nx-1,ny,40)
- 
 
-cc
 c.....inlet and outlet boundary conditions
         CALL BOUNDINOUT(UO,VO,WO,US,VS,WS,XU,XC,YC,ZW,ZC,ALFXDT,TLEVEL,NX,NY,NZ,0)
+	CALL BOUNDARY(UO,VO,WO,XU,XC,YV,YC,ZW,ZC,NX,NY,NZ,TIME)  
+
         clock(8) = clock(8) + tclock() - clocktemp
         
-        !write(*,*) "Line 2749", WO(nx-15,5,40), WO(nx-15,8,40)
-        !write(*,*) "Line 2749", WO(nx-1,1,40), WO(nx-1,ny-1,40)
-        !write(*,*) "Line 2749", WO(nx-1,2,40), WO(nx-1,ny,40)
- 
 
-cc
 C-----------------------------------------------------------------------
 C     Update pressure field
 C-----------------------------------------------------------------------
-C
+
         clocktemp = tclock()
 
         P = P+DP
-c
+
         !Assume u*=un + dt*dp/dx, v*=vn+dt*dp/dy, w*=wn+dt*dp/dz
         IF(IMPLY==1) THEN
-c
+
 c If there is an implicit treatment another correction on the pressure
 c field is necessary
           DO I=2,IX2
@@ -2770,11 +2759,11 @@ c field is necessary
      &           -0.5*ALFXDT*RU1/(DELY*RP(I))**2*
      &           (DP(I,1:NY-2,2:KZ2)-2.*DP(I,2:JY2,2:KZ2)+DP(I,3:NY,2:KZ2))*RVIMPLY(I)
           END DO
-c
+
         ENDIF
-c
+
         IF(IMPLX==1) THEN
-c
+
           DO I=2,IX2
             P(I,2:JY2,2:KZ2) = P(I,2:JY2,2:KZ2)
      &           -0.5*ALFXDT*RU1*AP(I)/RP(I)*
@@ -2942,15 +2931,18 @@ C
 C Evaluates the density field based on the Boussinesq approximation
 C
 !         IF(IDENS.EQ.1) THEN
+         
           CALL BOUNDINOUTD(DENS,WO,ZCG,ALFXDT,NX,NY,NZ,NZG)
           CALL RHS_DENSITY(UO,VO,WO,DENS,TV,RHB,RS,NX,NY,NZ,YC,YV)
           CALL BOUNDARY_DENS(RHB,XC,YC,NX,NY,NZ)
           CALL BOUNDARY_DENS(RS,XC,YC,NX,NY,NZ)
 	  CALL REFRESHBC(RHB,NX*NY,NZ)
           CALL REFRESHBC(RS,NX*NY,NZ)
+         
           CALL DENSITY(DENS,UO,VO,RHA,RHB,RS,XC,YC,ALFXDT,GAMXDT,RHOXDT,NX,NY,NZ)
-	  CALL BOUNDARY_DENS(DENS,XC,YC,NX,NY,NZ)
-!           CALL BOUNDINOUTD(DENS,WO,ZCG,ALFXDT,NX,NY,NZ,NZG)
+	 
+          CALL BOUNDINOUTD(DENS,WO,ZCG,ALFXDT,NX,NY,NZ,NZG)
+          CALL BOUNDARY_DENS(DENS,XC,YC,NX,NY,NZ)
           CALL REFRESHBC(DENS,NX*NY,NZ)
 
           IF(ibm>=1) then

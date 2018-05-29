@@ -848,8 +848,17 @@ c.....convective boundary condition
                 WBC(I,J,KZ2) = WOF(I,J,KZ2)-COEF*(WOF(I,J,KZ2)-WOF(I,J,KZ2-1))
             ENDDO
             ENDDO
+
+            UBC(:,1 ,:) = UBC(:,ny-1,:) ! update gc 
+            UBC(:,ny,:) = UBC(:, 2  ,:)
+            VBC(:,1 ,:) = VBC(:,ny-1,:)
+            VBC(:,ny,:) = VBC(:, 2  ,:)
+            WBC(:,1 ,:) = WBC(:,ny-1,:)
+            WBC(:,ny,:) = WBC(:, 2  ,:)
+
+
           ENDIF
-c
+
 c.....convective boundary condition
           IF(ITYPE(6)==731) THEN
 
@@ -935,20 +944,11 @@ c.....extrapolation from the interior
 
 c.....convective boundary condition
         CASE (730)
-          write(*,*), "Line 957", WOF(nx-1,1,nz-1), WOF(nx-1,ny-1,nz-1)
-          write(*,*), "Line 957", WOF(nx-1,2,nz-1), WOF(nx-1,ny,nz-1)
-          write(*,*), "Line 957", WBC(nx-1,1,nz-1), WBC(nx-1,ny-1,nz-1)
-          write(*,*), "Line 957", WBC(nx-1,2,nz-1), WBC(nx-1,ny,nz-1)     
+ 
           UBC(:,:,NZ ) = UOF(:,:,NZ )
           VBC(:,:,NZ ) = VOF(:,:,NZ )
-  
-          ! one possible solution
+          WBC(:,:,KZ2) = WOF(:,:,KZ2)
 
-          WBC(:,2:ny-1,KZ2) = WOF(:,2:ny-1,KZ2)
-          write(*,*), "Line 958", WOF(nx-1,1,nz-1), WOF(nx-1,ny-1,nz-1)
-          write(*,*), "Line 958", WOF(nx-1,2,nz-1), WOF(nx-1,ny,nz-1)
-          write(*,*), "Line 958", WBC(nx-1,1,nz-1), WBC(nx-1,ny-1,nz-1)
-          write(*,*), "Line 958", WBC(nx-1,2,nz-1), WBC(nx-1,ny,nz-1)
 c.....convective boundary condition
         CASE (731)
 
@@ -965,17 +965,10 @@ c.....convective boundary condition
         SELECT CASE(ITYPE(2))
 
         CASE(82)
-          write(*,*), "Line 959", UOF(nx-1,1,nz-1), UOF(nx-1,ny-1,nz-1)
-          write(*,*), "Line 959", UOF(nx-1,2,nz-1), UOF(nx-1,ny,nz-1)
-          write(*,*), "Line 959", UBC(nx-1,1,nz-1), UBC(nx-1,ny-1,nz-1)
-          write(*,*), "Line 959", UBC(nx-1,2,nz-1), UBC(nx-1,ny,nz-1)     
+
           UBC(IB1,:,:) = UOF(IX1,:,:)
           UBC(IX2,:,:) = UOF(IX2-1,:,:)
-          write(*,*), "Line 960", UOF(nx-1,1,nz-1), UOF(nx-1,ny-1,nz-1)
-          write(*,*), "Line 960", UOF(nx-1,2,nz-1), UOF(nx-1,ny,nz-1)
-          write(*,*), "Line 960", UBC(nx-1,1,nz-1), UBC(nx-1,ny-1,nz-1)
-          write(*,*), "Line 960", UBC(nx-1,2,nz-1), UBC(nx-1,ny,nz-1)
- 
+
         END SELECT    
 
       ENDIF
@@ -2242,13 +2235,16 @@ c
       
       write(*,*) "The rank of processor", myrank
       IF(ITYPE(5)==305) THEN
+
       dens(:,:,KB1)=dens(:,:,KZ1)
+      dens(:,:,1)=dens(:,:,KB1)
       ENDIF
 
       IF(ITYPE(6)==730) THEN
-!      dens(:,:,KZ2) = dens(:,:,KZ2-1)
-!      dens(:,:,NZ) = dens(:,:,KZ2) 
-       WRITE(*,*)"****************=",KZ2,NZ
+      dens(:,:,KZ2) = dens(:,:,KZ2-1)
+      dens(:,:,NZ) = dens(:,:,KZ2) 
+
+!       WRITE(*,*)"****************=",KZ2,NZ
 !         AREA = 0.0
 !         UCONVT = 0.0
 ! !       IF(ez+1.eq.NZG) THEN
@@ -2267,12 +2263,15 @@ c
 ! !      &         CALL MPI_RECV(QIN,2,MTYPE,0,0,MPI_COMM_EDDY,STATUS,IERR)
 ! 
 !        COEFF = QIN(2)*ALFXDT*CP(KZ2)
-         DO J=JY1,JY2
-         DO I=IX1,IX2
-         dens(I,J,KZ2)=dens(I,J,KZ2)-0.50*(WO(I,J,KZ2)+WO(I-1,J,KZ2))*ALFXDT*(dens(I,J,KZ2)-dens(I,J,KZ2-1))/(ZCG(KZ2)-ZCG(KZ2-1))
-         dens(I,J,NZ)=dens(I,J,NZ)-0.50*(WO(I,J,NZ)+WO(I-1,J,NZ))*ALFXDT*(dens(I,J,NZ)-dens(I,J,KZ2))/(ZCG(NZ)-ZCG(KZ2))
-         ENDDO
-         ENDDO
+
+
+! extrapolating bc
+!         DO J=JY1,JY2
+!         DO I=IX1,IX2
+!         dens(I,J,KZ2)=dens(I,J,KZ2)-0.50*(WO(I,J,KZ2)+WO(I-1,J,KZ2))*ALFXDT*(dens(I,J,KZ2)-dens(I,J,KZ2-1))/(ZCG(KZ2)-ZCG(KZ2-1))
+!         dens(I,J,NZ)=dens(I,J,NZ)-0.50*(WO(I,J,NZ)+WO(I-1,J,NZ))*ALFXDT*(dens(I,J,NZ)-dens(I,J,KZ2))/(ZCG(NZ)-ZCG(KZ2))
+!         ENDDO
+!         ENDDO
 !       ENDIF
       ENDIF
       
