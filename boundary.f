@@ -2233,7 +2233,6 @@ c
       INTEGER IBND
       INTEGER STATUS(MPI_STATUS_SIZE)
       
-      write(*,*) "The rank of processor", myrank
       IF(ITYPE(5)==305) THEN
 
       dens(:,:,KB1)=dens(:,:,KZ1)

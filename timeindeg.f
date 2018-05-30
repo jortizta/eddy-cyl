@@ -1211,11 +1211,13 @@ C
       DO K=KBW,KEW
       DO J=JY1,JY2
       DO I=IX1,IX2
+
+        WSTAR = WO(I,J,K)
+     &       +GAMXDT*WB(I,J,K)
      &       +RHOXDT*WA(I,J,K)
      &       -ALFXDT*CW(K)*(P(I,J,K+1)-P(I,J,K))
      &       +COEF*WS(I,J,K)
      &       -ALFXDT*DPDZ
-
 
         WA(I,J,K) = WB(I,J,K)
         WB(I,J,K) = WS(I,J,K)

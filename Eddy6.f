@@ -752,7 +752,6 @@ c
       ELSE
 !**************************************************************************************************
 ! Original
-    	call add_density(xc,yc,nx,ny,nz,dens,ierr)
 	call add_density(xc,yc,nx,ny,nz,dens,ierr)
         CALL SPONGE_SETUP(NX,NY,NZ,NZG,XC,XU,ZWG,ZCG,IERR)
         IDIR  = -1 ! IOMPI_3DSCALAR reads restart files
