@@ -95,7 +95,7 @@ c Karu adds----------------------------------------------
        DO J=JY1,JY2
        DO K=KZ1,KZ2
                   
-         DENS(I,J,K) = DENS(I,J,K) + dfxd(K)*(DENS_BG(I,J) - DENS(I,J,K))*ALFXDT*1.0
+         DENS(I,J,K) = DENS(I,J,K) + dfxd(I)*(DENS_BG(I,J) - DENS(I,J,K))*ALFXDT*1.0
 
        ENDDO
        ENDDO
