@@ -1137,7 +1137,9 @@ C
        ENDDO
 
 
-       DO K=KZ1,KZ1+vspngx3in
+       IF (ivspngl==1) THEN
+
+       DO K=KZ1,KZ2
        DO J=JY1,JY2
        DO I=IBU,IEU
 
@@ -1147,6 +1149,7 @@ C
        ENDDO
        ENDDO
 
+       ENDIF
 
       clocktemp1 = tclock() - clocktemp1
       clock(1) = clock(1) + clocktemp1
@@ -1190,8 +1193,10 @@ C
        ENDDO
        ENDDO
 
+       
+       IF (ivspngl==1) THEN
 
-       DO K=KZ1,KZ1+vspngx3in
+       DO K=KZ1,KZ2
        DO J=JY1,JY2
        DO I=IBU,IEU
 
@@ -1200,7 +1205,8 @@ C
        ENDDO
        ENDDO
        ENDDO
-
+ 
+       ENDIF
 
       clock(4) = clock(4) + tclock()-clocktemp1
 
@@ -1239,7 +1245,9 @@ C
        ENDDO
 
 
-       DO K=KBW,KBW+vspngx3in 
+       IF (ivspngl==1) THEN
+
+       DO K=KBW,KEW 
        DO J=JY1,JY2
        DO I=IX1,IX2
 
@@ -1248,6 +1256,8 @@ C
        ENDDO
        ENDDO
        ENDDO
+
+       ENDIF
 
       clock(7) = clock(7) + tclock()-clocktemp1
 

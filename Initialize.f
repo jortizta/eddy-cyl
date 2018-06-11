@@ -135,24 +135,28 @@ c	dens_bg(i,j)  =  denP1*(xc(i)-1.0)
         INTEGER stat
         INTEGER NX,NY,NZ,NZG
         REAL ZWG(NZG),ZCG(NZG),XC(NX),XU(NX)
-	      INTEGER I,J,K
-	      ALLOCATE(PHIX1(NX,2))
+	INTEGER I,J,K
+	ALLOCATE(PHIX1(NX,2))
         ALLOCATE(dfxug(NZG),dfxwg(NZG),dfxul(NZ),dfxwl(NZ),dfxu(NX),dfxw(NX))
         ALLOCATE(dfxdg(NZG),dfxdl(NZ),dfxd(NX))
-	      ALLOCATE(X1inf(NX,NY,2,5))
+	ALLOCATE(X1inf(NX,NY,2,5))
+
+
+        ivspngl=0
+        idspngl=0
 
         ! Velocity sponge
 
-        vspngx1=10    !sponge thickness in the radial direction
-        vspngx3in=10 !sponge thickness in the streamwise direction: inlet
+        vspngx1=16    !sponge thickness in the radial direction
+        vspngx3in=20 !sponge thickness in the streamwise direction: inlet
 !       vspngx3out=0  not implemented: sponge thickness in 
 !       the streamwise direction: outlet
 
         ! Density sponge
 
-        dspngx1=10    !sponge thickness in the radial direction
-        dspngx3in=10 !sponge thickness in the streamwise direction: inlet
-        dspngx3out=18  !sponge thickness in the streamwise direction: outlet
+        dspngx1=16    !sponge thickness in the radial direction
+        dspngx3in=20 !sponge thickness in the streamwise direction: inlet
+        dspngx3out=72  !sponge thickness in the streamwise direction: outlet
 
 !  -- Velocity sponge --
 
@@ -185,12 +189,6 @@ c	dens_bg(i,j)  =  denP1*(xc(i)-1.0)
          endif
         ENDDO
 
-         DO K=KZ1,KZ2
-         dfxul(K)=dfxug((KZ2-1)*(myrank)+K)
-         ENDDO
-
-
-
        ! Sponge in the inlet for staggered velocity
 
        DO K=NZG,1,-1
@@ -201,11 +199,12 @@ c	dens_bg(i,j)  =  denP1*(xc(i)-1.0)
          endif
        ENDDO
 
-			  DO K=KZ1,KZ2
+        DO K=KZ1,KZ2
+         dfxul(K)=dfxug((KZ2-1)*(myrank)+K)
          dfxwl(K)=dfxwg((KZ2-1)*(myrank)+K)
         ENDDO
 
-
+        IF (ANY(dfxwl>0.0)) ivspngl=1
 
 !  -- Density sponge --
 
@@ -220,10 +219,9 @@ c	dens_bg(i,j)  =  denP1*(xc(i)-1.0)
          if (K.GE.NZG-dspngx3out.AND.dspngx3out.GT.0) then
 !         dfxdg(K)=25.0d0*((zcg(k-2)-zcg(nzg-dspngx3out))/(zcg(nzg-2)-zcg(nzg-dspngx3out)))**2.d0
          dfxdg(K)=100.0d0*((zcg(k-2)-zcg(nzg-dspngx3out))/(zcg(nzg-2)-zcg(nzg-dspngx3out)))**2.d0
-         if (MYRANK.eq.0) write(*,*)"GLOBAL dens",dfxdg(K),K
+!         if (MYRANK.eq.0) write(*,*)"GLOBAL dens",dfxdg(K),K
          endif
          ENDDO
-
 
          ! Sponge in the inlet
 
@@ -236,9 +234,11 @@ c	dens_bg(i,j)  =  denP1*(xc(i)-1.0)
 
          DO K=KZ1,KZ2
          dfxdl(K)=dfxdg((KZ2-1)*(myrank)+K)
-         write(*,*) 'MR,dfxdl(',K,')',myrank,dfxdl(K)
-
+        ! write(*,*) 'MR,dfxdl(',K,')',myrank,dfxdl(K)
          ENDDO
+
+        IF (ANY(dfxdl>0.0)) idspngl=1
+
 
          ! Sponge in the radial
 

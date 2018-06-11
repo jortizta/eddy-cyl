@@ -70,9 +70,11 @@ c Karu adds----------------------------------------------
 
 ! Sponge density: inlet, outlet, radial
 
+      IF (idspngl==1) then
+     
        DO I=IX1,IX2
        DO J=JY1,JY2
-       DO K=KZ2-dspngx3out,KZ2
+       DO K=KZ1,KZ2
                   
          DENS(I,J,K) = DENS(I,J,K) + dfxdl(K)*(DENS_BG(I,J) - DENS(I,J,K))*ALFXDT*1.0
 
@@ -82,7 +84,7 @@ c Karu adds----------------------------------------------
 
        DO I=IX1,IX2
        DO J=JY1,JY2
-       DO K=KZ1,KZ1+dspngx3in
+       DO K=KZ1,KZ2
                   
          DENS(I,J,K) = DENS(I,J,K) + dfxdl(K)*(DENS_BG(I,J) - DENS(I,J,K))*ALFXDT*1.0
 
@@ -90,6 +92,9 @@ c Karu adds----------------------------------------------
        ENDDO
        ENDDO
 
+      
+      ENDIF  
+     
 
        DO I=IX2-dspngx1,IX2
        DO J=JY1,JY2

@@ -79,6 +79,7 @@ c-------------------------------------------------------- A. Posa - Oct 2011 ---
       module spnge
          integer :: vspngx1,vspngx3in,vspngx3out 
          integer :: dspngx1,dspngx3in,dspngx3out 
+         integer :: idspngl,ivspngl 
          real, dimension(:,:), allocatable :: PhiX1
          real, dimension(:,:,:,:), allocatable :: X1inf
          real, dimension(:), allocatable :: dfxug,dfxwg,dfxul,dfxwl,dfxu
