@@ -500,30 +500,28 @@ C$$$c
 C$$$      return
 C$$$      end
 
-!THIS SUBROUTINE WRITES DATA OF 5 SET OF PLANES FOR POSTPROCESSING!
       SUBROUTINE IOSCALAR_POST_5P(NAME,P,DP,NX,NY,NZ,DIR,TIME,DTM1,nstep)
-c
+!    THIS SUBROUTINE WRITES DATA OF 5 SET OF PLANES FOR POSTPROCESSING
+
       INCLUDE 'common.h'
       INCLUDE 'mpif.h'
-c
+
       CHARACTER NAME*(*)
       INTEGER DIR,NX,NY,NZ,NZG,nstep
       REAL P(NX,NY,NZ),DP(NX,NY,NZ)
-c      REAL*4 P1(NX,NY,NZ)
       REAL TIME,DTM1
       REAL,ALLOCATABLE,DIMENSION(:,:,:) :: TMPF,TEMP
-C
+
       INTEGER I,J,K,KS,JP,STATUS(MPI_STATUS_SIZE)
-!      INTEGER KX,KXX0,KXX1,KXX2,KXX3,KXX4,MK,NKR,COUNTER,KMIN,KMAX,NK,NKRR
       INTEGER KX,KXX0,KXX1,KXX2,KXX3,KXX4,MK,NKR,COUNTER,NK,NKRR
-C     IF DIR = -1 READ ELSE WRITE
+!     IF DIR = -1 READ ELSE WRITE
 
       NZG = MYSIZE*(NZ-2)+2
-
+      NKRR = KMAX5P-KMIN5P+1+5*(FLOOR((NZG-2-KMAX5P)/20.0))
 
       IF(DIR==-1) THEN
         OPEN(19,FILE=NAME,STATUS='UNKNOWN',FORM='UNFORMATTED')
-        READ(19) I,J,K,JP 
+        READ(19) I,J,NKRR,JP 
         IF(MYSIZE/=1) THEN
           DO K=1,MYRANK*(NZ-2)
             READ(19)
@@ -539,24 +537,25 @@ C     IF DIR = -1 READ ELSE WRITE
         READ(19) TIME
         write(6,*) 'time=',time
         READ(19) DTM1,grav
+        READ(19) KMIN5P,KMAX5P,NZG
         CLOSE(19)
 
       ELSEIF(DIR==1) THEN
-c     note that all files read the input, but only root writes to output
+!     note that all files read the input, but only root writes to output
+
         IF(MYRANK==0) THEN
-        !KMAX=1114;KMIN=151;
-        NKRR = KMAX5P-KMIN5P+1+5*(FLOOR((NZG-2-KMAX5P)/20.0))
-        ALLOCATE (TMPF(NX,NY,NZG),TEMP(NX-10,NY,NKRR))
+
+        ALLOCATE (TMPF(NX,NY,NZG),TEMP(NX,NY,NKRR))
           OPEN(19,FILE=NAME,STATUS='UNKNOWN',FORM='UNFORMATTED')
-          WRITE(19) NX,NY,MYSIZE*(NZ-2)+2,1
+          WRITE(19) NX,NY,NKRR,1
           IF(MYSIZE==1) THEN
-c case of a serial run
+! case of a serial run
             DO K=1,NZ
               WRITE(19) ((P(I,J,K),I=1,NX),J=1,NY)
             ENDDO
           ELSE            
-C
-c the processor 0 writes the local values on a file
+
+! the processor 0 writes the local values on a file
             DO K=1,KZ2
              DO I=1,NX
               DO J=1,NY
@@ -564,43 +563,37 @@ c the processor 0 writes the local values on a file
               ENDDO
              ENDDO
             ENDDO
-             !WRITE(*,'(2(4x,e15.8))')TMPF(2,33,6),P(2,33,6)
 
-c
-c the processor 0 receives the values from the other processors
-c and writes them
-c
+! the processor 0 receives the values from the other processors
+! and writes them
+
             DO JP=1,MYSIZE-1
               CALL MPI_RECV(DP(1,1,1),NX*NY*NZ,MTYPE,JP,0,
      &             MPI_COMM_EDDY,STATUS,IERR)
               DO K=KZ1,KZ2+(JP+1)/MYSIZE
               KS = (KZ2-1)*JP + K
-!              write(*,*)"ISSUE HERE1"
                DO I=1,NX
                 DO J=1,NY
                 TMPF(I,J,KS) = DP(I,J,K)
                 ENDDO
                ENDDO
               ENDDO
-!               IF(JP==1) WRITE(*,'(i6,2(4x,e15.8))')JP,TMPF(2,33,15),DP(2,33,6)
-!              IF(JP==256) WRITE(*,'(i6,2(4x,e15.8))')JP,TMPF(2,33,2311),DP(2,33,7)
 
             ENDDO
-C            
+            
           ENDIF
             
             DO K=KMIN5P,KMAX5P
+
             KX = K-(KMIN5P-1)
-             DO I=1,NX-10
+
+             DO I=1,NX
               DO J=1,NY
-!               if(K.gt.KMIN.or.K.lt.KMAX) then
               TEMP(I,J,KX) = TMPF(I,J,K)
-!               endif
               ENDDO
              ENDDO
             ENDDO
 
-!           write(*,*) 'ALREADY HERE1'
            MK = KX;COUNTER = 1;NK = 1;
            DO NKR=1,FLOOR((NZG-2-KMAX5P)/20.0)
             MK = MK+1
@@ -609,7 +602,7 @@ C
             KXX2 = KMAX5P+NK*20
             KXX3 = KMAX5P+NK*20+1
             KXX4 = KMAX5P+NK*20+2
-!            write(*,*) 'MK',MK,'KXX1',KXX1,'KXX2',KXX2,'KXX3',KXX3
+             
              DO I=1,NX-10
               DO J=1,NY
               TEMP(I,J,MK  ) = TMPF(I,J,KXX0)
@@ -623,24 +616,23 @@ C
             NK = NK+1
             ENDDO
 
-!          WRITE(*,'(6(4x,e15.8))') TMPF(2,33,992),TMPF(2,33,993),TMPF(2,33,994),TMPF(2,33,1002),TMPF(2,33,1003),TMPF(2,33,1004)  
-c          WRITE(*,'(6(4x,e15.8))') TEMP(2,33,767),TEMP(2,33,768),TEMP(2,33,769),TEMP(2,33,770),TEMP(2,33,771),TEMP(2,33,772)
-!          WRITE(*,'(6(4x,e15.8))') TEMP(2,33,10),TEMP(2,33,1000),TEMP(2,33,1200),TEMP(2,33,1300),TEMP(2,33,1400),TEMP(2,33,1500)
+
           DO K=1,NKRR
-          WRITE(19) ((TEMP(I,J,K),I=1,NX-10),J=1,NY)
+          WRITE(19) ((TEMP(I,J,K),I=1,NX),J=1,NY)
           ENDDO
           WRITE(19) nstep
           WRITE(19) TIME
           WRITE(19) DTM1,grav
+          WRITE(19) KMIN5P,KMAX5P,NZG
           CLOSE(19)
 
         ELSE
-c the local values are sent to the processor 0
+! the local values are sent to the processor 0
           CALL MPI_SEND(P(1,1,1),NX*NY*NZ,MTYPE,0,0,MPI_COMM_EDDY,IERR)
         ENDIF
 
       ELSEIF(DIR==2) THEN
-c     note that all files write to output
+!     note that all files write to output
         OPEN(19,FILE=NAME//PROC(MYRANK),
      $       STATUS='UNKNOWN',FORM='UNFORMATTED')
         WRITE(19) NX,NY,NZ,1,TIME,DTM1,grav
@@ -649,9 +641,10 @@ c     note that all files write to output
         ENDDO
         CLOSE(19)
       ENDIF
-c
+
       return
       end
+
 
 c     ***************************************************************
 c
