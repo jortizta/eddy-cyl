@@ -603,7 +603,7 @@ C$$$      end
             KXX3 = KMAX5P+NK*20+1
             KXX4 = KMAX5P+NK*20+2
              
-             DO I=1,NX-10
+             DO I=1,NX
               DO J=1,NY
               TEMP(I,J,MK  ) = TMPF(I,J,KXX0)
               TEMP(I,J,MK+1) = TMPF(I,J,KXX1)
