@@ -81,17 +81,6 @@ c Karu adds----------------------------------------------
        ENDDO
        ENDDO
        ENDDO
-
-       DO I=IX1,IX2
-       DO J=JY1,JY2
-       DO K=KZ1,KZ2
-                  
-         DENS(I,J,K) = DENS(I,J,K) + dfxdl(K)*(DENS_BG(I,J) - DENS(I,J,K))*ALFXDT*1.0
-
-       ENDDO
-       ENDDO
-       ENDDO
-
       
       ENDIF  
      
