@@ -3435,6 +3435,53 @@ c        enddo
       return
 
       end
+
+
+      SUBROUTINE IOSCALAR_MEAN(NAME,TEMP,NX,NY,NZ,NKRR,DIR,TIME,DTM1,nstep)
+
+      INCLUDE 'common.h'
+      INCLUDE 'mpif.h'
+
+      CHARACTER NAME*(*)
+      INTEGER DIR,NX,NY,NZ,NKRR,nstep
+      REAL TEMP(NX,NY,NKRR)
+      REAL TIME,DTM1
+
+      INTEGER I,J,K,JP,STATUS(MPI_STATUS_SIZE)
+      INTEGER KX,KXX1,KXX2,KXX3,MK,NKR,COUNTER,KMIN,KMAX,NK
+
+      IF(DIR==-1) THEN
+        OPEN(19,FILE=NAME,STATUS='UNKNOWN',FORM='UNFORMATTED')
+        READ(19) I,J,K,JP
+        DO k=1,NKRR
+        READ(19) ((TEMP(I,J,K),I=1,NX),J=1,NY)
+        ENDDO
+        READ(19) nstep
+        READ(19) TIME
+        READ(19) DTM1,grav
+        WRITE(*,*)"READING DONE"
+        CLOSE(19)
+
+      ELSEIF(DIR==1) THEN
+          OPEN(19,FILE=NAME,STATUS='UNKNOWN',FORM='UNFORMATTED')
+          WRITE(19) NX,NY,MYSIZE*(NZ-2)+2,1
+          DO k=1,NKRR
+          WRITE(19) ((TEMP(I,J,K),I=1,NX),J=1,NY)
+          ENDDO
+          WRITE(19) nstep
+          WRITE(19) TIME
+          WRITE(19) DTM1,grav
+          CLOSE(19)
+      ENDIF
+
+      return
+      end
+
+
+
+
+
+
 C------------------------------------------------------------------------
 
 

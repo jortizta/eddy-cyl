@@ -41,7 +41,7 @@ c
 c Karu adds ----------------------
         RHB(I,J,K) = RS(I,J,K)
 c -------------------------------        
-	     RS(I,J,K)  = DENS(I,J,K)
+	RS(I,J,K)  = DENS(I,J,K)
 	
 c	DENS(I,J,K) = RS(I,J,K)
 

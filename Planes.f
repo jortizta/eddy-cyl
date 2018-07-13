@@ -1248,72 +1248,72 @@
 ! 
 
 
-        SUBROUTINE DERIVATIVE(VAR,DERI,NX,NY,NZ,NZG,XC,ZCG,DIR,IVAR)
-        INCLUDE 'common.h'
-        INCLUDE 'mpif.h'
-        INTEGER :: NX,NY,NZ,NZG
-        REAL    :: XU(NX),ZWG(NZG)
-        REAL    :: XC(NX),YC(NY),ZC(NZ),ZCG(NZG)
-        INTEGER :: I,J,K,DIR,IVAR
-        REAL    :: VAR(NX,NY,NZ),DERI(NX,NY,NZ)
-        REAL    :: dtheta,dr,dz
-
-        IF(DIR.EQ.1) THEN
-        do k=kz1,kz2
-        do j=jy1,jy2
-        do i=ix1,ix2
-          dr=xc(i)-xc(i-1)
-          IF(IVAR.EQ.1) THEN
-          DERI(I,J,K) = (VAR(I,J,K)-VAR(I-1,J,K))/dr
-          ELSEIF(IVAR.EQ.2) THEN
-          DERI(I,J,K) =(0.25*(VAR(i,j,k)+VAR(i,j-1,k)+VAR(i+1,j,k)+VAR(i+1,j-1,k))-0.25*(VAR(i,j,k)+
-     &    VAR(i,j-1,k)+VAR(i-1,j,k)+VAR(i-1,j-1,k)))/dr
-          ELSEIF(IVAR.EQ.3) THEN
-          DERI(I,J,K) =(0.25*(VAR(i,j,k)+VAR(i,j,k-1)+VAR(i+1,j,k)+VAR(i+1,j,k-1))-0.25*(VAR(i,j,k)+
-     &    VAR(i,j,k-1)+VAR(i-1,j,k)+VAR(i-1,j,k-1)))/dr
-          ENDIF
-        enddo
-        enddo
-        enddo
-        ELSEIF(DIR.EQ.2) THEN
-        do k=kz1,kz2
-        do j=jy1,jy2
-        do i=ix1,ix2
-          dtheta=dely
-          IF(IVAR.EQ.1) THEN
-          DERI(I,J,K) = (0.25*(VAR(i,j,k)+VAR(i,j+1,k)+VAR(i-1,j,k)+VAR(i-1,j+1,k))-0.25*(VAR(i,j,k)+
-     &    VAR(i,j-1,k)+VAR(i-1,j,k)+VAR(i-1,j-1,k)))/dtheta
-          ELSEIF(IVAR.EQ.2) THEN
-          DERI(I,J,K) = (VAR(I,J,K)-VAR(I,J-1,K))/dtheta
-          ELSEIF(IVAR.EQ.3) THEN
-          DERI(I,J,K) =(0.25*(VAR(i,j,k)+VAR(i,j+1,k)+VAR(i,j,k-1)+VAR(i,j+1,k-1))-0.25*(VAR(i,j,k)+
-     &    VAR(i,j-1,k)+VAR(i,j,k-1)+VAR(i,j-1,k-1)))/dtheta
-          ENDIF
-        enddo
-        enddo
-        enddo
-        ELSEIF(DIR.EQ.3) THEN
-        do k=kz1,kz2
-        do j=jy1,jy2
-        do i=ix1,ix2
-          dz=zcg(k)-zcg(k-1)
-          IF(IVAR.EQ.1) THEN
-          DERI(I,J,K) =(0.25*(VAR(i,j,k)+VAR(i,j,k+1)+VAR(i-1,j,k)+VAR(i-1,j,k+1))-0.25*(VAR(i,j,k)+
-     &    VAR(i,j,k-1)+VAR(i-1,j,k)+VAR(i-1,j,k-1)))/dz
-          ELSEIF(IVAR.EQ.2) THEN
-          DERI(I,J,K) =(0.25*(VAR(i,j,k)+VAR(i,j-1,k)+VAR(i,j,k+1)+VAR(i,j-1,k+1))-0.25*(VAR(i,j,k)+
-     &    VAR(i,j-1,k)+VAR(i,j,k-1)+VAR(i,j-1,k-1)))/dz
-          ELSEIF(IVAR.EQ.3) THEN
-          DERI(I,J,K) = (VAR(I,J,K)-VAR(I,J,K-1))/dz
-          ENDIF
-        enddo
-        enddo
-        enddo
-        ENDIF
-
-        RETURN
-        END
-
+!        SUBROUTINE DERIVATIVE(VAR,DERI,NX,NY,NZ,NZG,XC,ZCG,DIR,IVAR)
+!        INCLUDE 'common.h'
+!        INCLUDE 'mpif.h'
+!        INTEGER :: NX,NY,NZ,NZG
+!        REAL    :: XU(NX),ZWG(NZG)
+!        REAL    :: XC(NX),YC(NY),ZC(NZ),ZCG(NZG)
+!        INTEGER :: I,J,K,DIR,IVAR
+!        REAL    :: VAR(NX,NY,NZ),DERI(NX,NY,NZ)
+!        REAL    :: dtheta,dr,dz
+!
+!        IF(DIR.EQ.1) THEN
+!        do k=kz1,kz2
+!        do j=jy1,jy2
+!        do i=ix1,ix2
+!          dr=xc(i)-xc(i-1)
+!          IF(IVAR.EQ.1) THEN
+!          DERI(I,J,K) = (VAR(I,J,K)-VAR(I-1,J,K))/dr
+!          ELSEIF(IVAR.EQ.2) THEN
+!          DERI(I,J,K) =(0.25*(VAR(i,j,k)+VAR(i,j-1,k)+VAR(i+1,j,k)+VAR(i+1,j-1,k))-0.25*(VAR(i,j,k)+
+!     &    VAR(i,j-1,k)+VAR(i-1,j,k)+VAR(i-1,j-1,k)))/dr
+!          ELSEIF(IVAR.EQ.3) THEN
+!          DERI(I,J,K) =(0.25*(VAR(i,j,k)+VAR(i,j,k-1)+VAR(i+1,j,k)+VAR(i+1,j,k-1))-0.25*(VAR(i,j,k)+
+!     &    VAR(i,j,k-1)+VAR(i-1,j,k)+VAR(i-1,j,k-1)))/dr
+!          ENDIF
+!        enddo
+!        enddo
+!        enddo
+!        ELSEIF(DIR.EQ.2) THEN
+!        do k=kz1,kz2
+!        do j=jy1,jy2
+!        do i=ix1,ix2
+!          dtheta=dely
+!          IF(IVAR.EQ.1) THEN
+!          DERI(I,J,K) = (0.25*(VAR(i,j,k)+VAR(i,j+1,k)+VAR(i-1,j,k)+VAR(i-1,j+1,k))-0.25*(VAR(i,j,k)+
+!     &    VAR(i,j-1,k)+VAR(i-1,j,k)+VAR(i-1,j-1,k)))/dtheta
+!          ELSEIF(IVAR.EQ.2) THEN
+!          DERI(I,J,K) = (VAR(I,J,K)-VAR(I,J-1,K))/dtheta
+!          ELSEIF(IVAR.EQ.3) THEN
+!          DERI(I,J,K) =(0.25*(VAR(i,j,k)+VAR(i,j+1,k)+VAR(i,j,k-1)+VAR(i,j+1,k-1))-0.25*(VAR(i,j,k)+
+!     &    VAR(i,j-1,k)+VAR(i,j,k-1)+VAR(i,j-1,k-1)))/dtheta
+!          ENDIF
+!        enddo
+!        enddo
+!        enddo
+!        ELSEIF(DIR.EQ.3) THEN
+!        do k=kz1,kz2
+!        do j=jy1,jy2
+!        do i=ix1,ix2
+!          dz=zcg(k)-zcg(k-1)
+!          IF(IVAR.EQ.1) THEN
+!          DERI(I,J,K) =(0.25*(VAR(i,j,k)+VAR(i,j,k+1)+VAR(i-1,j,k)+VAR(i-1,j,k+1))-0.25*(VAR(i,j,k)+
+!     &    VAR(i,j,k-1)+VAR(i-1,j,k)+VAR(i-1,j,k-1)))/dz
+!          ELSEIF(IVAR.EQ.2) THEN
+!          DERI(I,J,K) =(0.25*(VAR(i,j,k)+VAR(i,j-1,k)+VAR(i,j,k+1)+VAR(i,j-1,k+1))-0.25*(VAR(i,j,k)+
+!     &    VAR(i,j-1,k)+VAR(i,j,k-1)+VAR(i,j-1,k-1)))/dz
+!          ELSEIF(IVAR.EQ.3) THEN
+!          DERI(I,J,K) = (VAR(I,J,K)-VAR(I,J,K-1))/dz
+!          ENDIF
+!        enddo
+!        enddo
+!        enddo
+!        ENDIF
+!
+!        RETURN
+!        END
+!
 
         SUBROUTINE DERIVATIVE_1CPU(VAR,DERI,NX,NY,NZ,NZG,XC,ZCG,DIR,IVAR)
         INCLUDE 'common.h'

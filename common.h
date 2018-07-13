@@ -31,7 +31,7 @@ c
       INTEGER  itype(6)
       INTEGER  mp,lp,np
       INTEGER  itmax,itini,itscr,istat,itser,itres,itpost,it5p,kmin5p,kmax5p,
-     &         itpln,ivrtx,itbdy,itcalf,it2d,resstep
+     &         itpln,ivrtx,itbdy,itcalf,it2d,resstep,res1,res2,pstride
      &        ,itVPfield,nVPfield,nwrite,nwrite2d,nwritebdy,iolvl,ioclock
       INTEGER  i2dflag,i3dflag
       INTEGER  itmprb,itke,yspctr,itmavg,iregtmavg

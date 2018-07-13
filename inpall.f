@@ -706,4 +706,83 @@ c      CALL MPI_FINALIZE(IERR)
 c      STOP
 C
       RETURN 
-      END 
+      END
+
+      SUBROUTINE INPALL_POST
+C
+C-----------------------------------------------------------------------
+C
+C     PURPOSE:    - READ INPUT-DATA FROM UNIT 1
+C                                                                       
+C     INPUT:      - NAMELIST DIRECTED DATA FROM UNIT 1
+C                                                                       
+C-----------------------------------------------------------------------
+C
+      INCLUDE 'common.h'
+      INCLUDE 'immersed.h'
+      INCLUDE 'io.h'
+      INCLUDE 'mpif.h'
+      CHARACTER   TEXT(72)*1
+      INTEGER     I    
+     
+       NAMELIST /POST/ RES1,RES2,PSTRIDE
+      
+
+C-----------------------------------------------------------------------
+C                                                            READ UNIT 1
+C-----------------------------------------------------------------------
+C 
+
+      IF(MYRANK==0) THEN
+         OPEN (1,STATUS='OLD',FILE='post.input')
+         OPEN (2,STATUS='SCRATCH')
+         OPEN (3,STATUS='UNKNOWN'
+     &        ,FILE='post.input.backup')
+C 
+C-----------------------------------------------------------------------
+C                            COPY NAMELIST-DIRECTED INPUT DATA TO UNIT 2
+C-----------------------------------------------------------------------
+
+         REWIND 1 
+         REWIND 2 
+         REWIND 3
+ 10      READ (1,'(72(A1))',END=20) (TEXT(I),I=1,72)
+         WRITE(3,'(72(A1))') (TEXT(I),I=1,72)
+         IF (TEXT(1) .EQ. '*') GOTO 10
+         WRITE(2,'(72(A1))') (TEXT(I),I=1,72)
+         GOTO 10
+ 20      REWIND 2
+      ENDIF
+
+C 
+C-----------------------------------------------------------------------
+C                                    SET DEFAULT-VALUES & READ NAMELISTS
+C-----------------------------------------------------------------------
+C
+C....."STRPRM" 
+C
+c
+c names of the grid and geometry files
+c 
+      IF(MYRANK==0) THEN
+         READ (2,POST) 
+         WRITE(*,POST)
+      ENDIF
+
+!      CALL MPI_BCAST(STR1,60,MPI_CHARACTER,0,MPI_COMM_EDDY,IERR)
+!      CALL MPI_BCAST(STR2,60,MPI_CHARACTER,0,MPI_COMM_EDDY,IERR)
+
+	RETURN
+	END 
+
+
+
+
+
+
+
+
+
+
+
+ 
