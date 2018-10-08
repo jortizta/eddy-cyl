@@ -1625,11 +1625,12 @@ c.... Local arrays
       integer i,j,k
       real    dudx,dudy,dudz,dvdx,dvdy,dvdz,dwdx,dwdy,dwdz
       real    s2,o2,ss,sdsd,IVso,Cwale,c1,c2,p1,p2,p3,Delta2,ppp
-      real    s(3,3),o(3,3),a(3,3),b(3,3)
+      real    s(3,3),o(3,3),a(3,3),b(3,3),error
 c
 c.... Functions
       real    tensor_double_inner_product,tensor_double_product
 
+      error = 1.0e-10
       c1 = 1.0/6.0
       c2 = 2.0/3.0
       p1 = 3.0/2.0
@@ -1695,10 +1696,14 @@ c.... Functions
 
         IVso = tensor_double_inner_product(a,b,3)
 
+
         sdsd = c1*(s2*s2 + o2*o2) + c2*s2*o2  +2.0*IVso 
 
+
+        if(sdsd.le.0) sdsd=0
+
         Delta2 = (RP(I)/(AP(I)*BP(J)*CP(K)))**PPP        
-        tv(i,j,k) = Cwale*Delta2*(sdsd**p1)/(s2**p2 + sdsd**p3)
+        tv(i,j,k) = Cwale*Delta2*(sdsd**p1)/(s2**p2 + sdsd**p3 + error)
 
       enddo
       enddo
