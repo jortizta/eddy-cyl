@@ -1,7 +1,7 @@
 C
 C -------------------------------------- A. Posa - 03/11/2014 ----
 C
-      SUBROUTINE DENSITY(DENS,UO,VO,RHA,RHB,RS,XC,YC,ALFXDT,GAMXDT,RHOXDT,IM,JM,KM)
+      SUBROUTINE DENSITY(DENS,UO,VO,TV,RHA,RHB,RS,XC,YC,ALFXDT,GAMXDT,RHOXDT,IM,JM,KM)
 c
       USE spnge
       USE density_bg
@@ -11,7 +11,7 @@ c
       INTEGER IM,JM,KM,var,dir,face,err
       REAL XC(IM),YC(JM)
       REAL DENS(IM,JM,KM),RHA(IM,JM,KM),RHB(IM,JM,KM),UO(IM,JM,KM),VO(IM,JM,KM)
-      REAL RS(IM,JM,KM),DUM1(IM,JM,KM)
+      REAL RS(IM,JM,KM),DUM1(IM,JM,KM),TV(IM,JM,KM)
 c
       INTEGER I,J,K
       REAL ALFXDT,GAMXDT,RHOXDT,COEF
