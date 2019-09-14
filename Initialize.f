@@ -149,8 +149,7 @@ c	dens_bg(i,j)  =  denP1*(xc(i)-1.0)
 
         vspngx1=16    !sponge thickness in the radial direction
         vspngx3in=20 !sponge thickness in the streamwise direction: inlet
-!       vspngx3out=0  not implemented: sponge thickness in 
-!       the streamwise direction: outlet
+        vspngx3out=54  ! sponge thickness in the streamwise direction: outlet
 
         ! Density sponge
 
@@ -199,6 +198,22 @@ c	dens_bg(i,j)  =  denP1*(xc(i)-1.0)
          endif
        ENDDO
 
+        ! Sponge in the outlet for centered velocity
+
+         DO K=1,NZG
+         if (K.GE.NZG-vspngx3out.AND.vspngx3out.GT.0) then
+            dfxug(K)=10.0d0*((zcg(k-2)-zcg(nzg-vspngx3out))/(zcg(nzg-2)-zcg(nzg-dspngx3out)))**2.d0
+         endif
+         ENDDO
+    
+        ! Sponge in the outlet for staggered velocity
+
+         DO K=1,NZG
+         if (K.GE.NZG-vspngx3out.AND.vspngx3out.GT.0) then
+            dfxwg(K)=10.0d0*((zwg(k-2)-zwg(nzg-dspngx3out))/(zwg(nzg-2)-zwg(nzg-dspngx3out)))**2.d0
+         endif
+         ENDDO
+      
         DO K=KZ1,KZ2
          dfxul(K)=dfxug((KZ2-1)*(myrank)+K)
          dfxwl(K)=dfxwg((KZ2-1)*(myrank)+K)
@@ -248,55 +263,9 @@ c	dens_bg(i,j)  =  denP1*(xc(i)-1.0)
 	       endif
          ENDDO
 
-
-
-
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-      ! Sponge in the outlet with 4 real points and the ghost to increase dt
-
-!       DO K = NZG/2,NZG,+1
-!
-!       if ( K.GE.NZG-5 .and. x1spng(1).gt.0 ) then
-!
-!         dfxug(K) = 200.0*((zcg(k) - zcg( NZG - 5))/(zcg(NZG-1)-zcg( NZG - 5 )))
-!
-!         if (myrank.eq.0) write(*,*)"GLOBAL",dfxug(K),K
-!
-!       endif
-!
-!       ENDDO
-!
-!       DO K = KZ1,KZ2
-!         dfxul(K) = dfxul((KZ2-1)*myrank+K)
-!       ENDDO
-!
-!
-!
-!       DO K = NZG/2,NZG,+1
-!
-!       if ( K.GE.NZG-5 .and. x1spng(1).gt.0 ) then
-!
-!         dfxwg(K) = 200.0*((zwg(k) - zwg( NZG - 5))/(zwg(NZG-1)-zwg( NZG - 5 )))
-!
-!       ! if (myrank.eq.0) write(*,*)"GLOBAL",dfxwg(K),K
-!
-!        endif
-!
-!       ENDDO
-!
-!      DO K = KZ1,KZ2
-!         dfxwl(K) = dfxwl((KZ2-1)*myrank+K)
-!      ENDDO
-!
-
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	stat=0
 	if (MYRANK==0) write(*,'(a)') "SPONGE SETUP COMPLETED"
-! 	WRITE(*,*), UO(:,:,:)
+       
        RETURN
        END
 

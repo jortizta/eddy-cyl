@@ -1,10 +1,12 @@
 C
 C -------------------------------------- A. Posa - 03/11/2014 ----
 C
+C     -------------------------------------- Karu
+      
       SUBROUTINE DENSITY(DENS,UO,VO,TV,RHA,RHB,RS,XC,YC,ALFXDT,GAMXDT,RHOXDT,IM,JM,KM)
 c
-      USE spnge
       USE density_bg
+      USE spnge
       INCLUDE 'common.h'
       INCLUDE 'mpif.h'
 c
@@ -44,22 +46,24 @@ c -------------------------------
 	RS(I,J,K)  = DENS(I,J,K)
 	
 c	DENS(I,J,K) = RS(I,J,K)
-
 c the RHS at the time level L-1 is stored in RHA
       ENDDO
       ENDDO
       ENDDO
-
 c Karu adds----------------------------------------------      
-
+c.....predicted density from explicit step
       RHB = RS+0.5*ALFXDT*RHB
       
       CALL BOUNDARY_DENS(RHB,XC,YC,IM,JM,KM)
       CALL REFRESHBC(RHB,IM*JM,KM)
- 
-      IF(imply==1 .OR. implcy==1) then 
-         CALL INVERSEYD(RS,ALFXDT,GAMXDT,RHOXDT,IM,JM,KM)
+
+      ! Karu adds ... (Karu: I should be more organized)
+      IF(imply==1 .AND. implcy==1) then          
+         CALL INVERSEYD_NEW(RS,VO,TV,ALFXDT,GAMXDT,RHOXDT,IM,JM,KM)
          DENS = RS
+      ELSEIF(imply==1) then         
+         CALL INVERSEYD(RS,TV,ALFXDT,GAMXDT,RHOXDT,IM,JM,KM)
+         DENS = RS         
       ENDIF
       
       IF(implx==1 .OR. implcx==1) then
@@ -94,11 +98,6 @@ c Karu adds----------------------------------------------
        ENDDO
        ENDDO
        ENDDO
-
-
-
-
-
 
 c ----------------------------------------------      
 c ----------------------------------------------      
@@ -288,12 +287,105 @@ C c
       RETURN
       END    
 
-      SUBROUTINE INVERSEYD(RS,ALFXDT,GAMXDT,RHOXDT,IM,JM,KM)
+      SUBROUTINE INVERSEYD_NEW(RS,VO,TV,ALFXDT,GAMXDT,RHOXDT,IM,JM,KM)
+c Karu adds
+      INCLUDE 'common.h'
+c
+      INTEGER IM,JM,KM
+      REAL RS(IM,JM,KM),VO(IM,JM,KM),TV(IM,JM,KM)
+c
+      INTEGER I,J,K,JJ,I1,I2,NI,ID
+      REAL AY(MMY),BY(MMY),CY(MMY),RY(MMY),V1D(MMY)
+C
+      REAL ALFXDT,GAMXDT,RHOXDT
+      REAL TVJP,TVJM,RFLAGY,RFLAGCY      
+      REAL COEF,COEFY,AYV,BYV,CYV,AYC,BYC,CYC
+      REAL ALPHA,BETA
+
+      REAL vxp,vxm,vzp,vzm,vyp,vym
+*
+**** Compute provisional values for each momentum eq.
+*
+      COEF=0.5*ALFXDT
+c
+      rflagy  = real(imply)     ! 1 if the viscous terms are treated implicitly
+      rflagcy = real(implcy)   ! 1 if the convective terms are treated implicitly
+c
+c------------------------------------------------------------------
+c                             If fully implicit compute vstar first!
+c------------------------------------------------------------------
+c
+
+c------------------------------------------------------------------
+c                                                    compute wstar
+c------------------------------------------------------------------
+ 
+
+      do k=kbw,kew
+      do id=1,nimply
+        i1 = implyvlim(id,1)
+        i2 = implyvlim(id,2)
+      do i=i1,i2
+      do j=jy1,jy2
+c..fill arrays for 3-diagonl system
+        jj=j-1
+	tvjp = 0.5*(tv(i,j,k)+tv(i,j+1,k)) + ru1/prn
+	tvjm = 0.5*(tv(i,j,k)+tv(i,j-1,k)) + ru1/prn
+c...rhs
+        ry(jj)=rs(i,j,k)
+c
+c...Viscous diffusion
+c...coefy
+        coefy  = rflagy*coef*bp(j)/rp(i)**2
+c...w(j-1)
+        ayv =-coefy*bv(j-1)*tvjm
+c...w(j+1)
+        cyv =-coefy*bv(j  )*tvjp
+c...w(j)
+        byv =-ayv - cyv
+c
+c...Convective term (the component V is known)
+        vzp=vo(i,j  ,k)
+        vzm=vo(i,j-1,k)
+c...coefy
+        coefy = rflagcy*0.5*coef*bp(j)/rp(i)
+c...w(j-1)
+        ayc =-coefy*vzm
+c...w(j+1)
+        cyc = coefy*vzp
+c...w(j)
+        byc = ayc + cyc
+        
+        ay(jj) = ayv + ayc
+        cy(jj) = cyv + cyc
+        by(jj) = 1.0  + byv + byc
+      enddo
+c...periodic boundary conditions
+      beta =ay(1)
+      alpha=cy(jy2-1)
+c...solve the system
+      call cyclic(ay,by,cy,alpha,beta,ry,v1d,jy2-1)
+c
+c...the provisional velocity is stored in WS
+      do j=jy1,jy2
+        jj=j-1
+        rs(i,j,k)=v1d(jj)
+      enddo
+
+      enddo
+      enddo
+      enddo
+      call refreshbc(rs,im*jm,km)
+
+      RETURN
+      END    
+      
+      SUBROUTINE INVERSEYD(RS,TV,ALFXDT,GAMXDT,RHOXDT,IM,JM,KM)
 c
       INCLUDE 'common.h'
 c
       INTEGER IM,JM,KM
-      REAL RS(IM,JM,KM)
+      REAL RS(IM,JM,KM),TV(IM,JM,KM)
 c
       INTEGER I,J,K,JJ,I1,I2,NI,ID
       REAL AY(MMY),BY(MMY),CY(MMY),RY(MMY),V1D(MMY)
@@ -329,8 +421,8 @@ c------------------------------------------------------------------
       do j=jy1,jy2
 c..fill arrays for 3-diagonl system
         jj=j-1
-	tvjp = ru1/prn
-	tvjm = ru1/prn
+	tvjp = 0.5*(tv(i,j,k)+tv(i,j+1,k)) + ru1/prn
+	tvjm = 0.5*(tv(i,j,k)+tv(i,j+1,k)) + ru1/prn
 c...rhs
         ry(jj)=rs(i,j,k)
 c

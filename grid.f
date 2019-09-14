@@ -244,10 +244,10 @@ c
         enddo
         close(120)
 
-        call hdf5_3Dgrid_sp('grid3du.h5sp',xu,yc,zcg,nx,ny,nzg)
-        call hdf5_3Dgrid_sp('grid3dv.h5sp',xc,yv,zcg,nx,ny,nzg)
-        call hdf5_3Dgrid_sp('grid3dw.h5sp',xc,yc,zwg,nx,ny,nzg)
-        call hdf5_3Dgrid_sp('grid3dc.h5sp',xc,yc,zcg,nx,ny,nzg)
+!        call hdf5_3Dgrid_sp('grid3du.h5sp',xu,yc,zcg,nx,ny,nzg)
+!        call hdf5_3Dgrid_sp('grid3dv.h5sp',xc,yv,zcg,nx,ny,nzg)
+!        call hdf5_3Dgrid_sp('grid3dw.h5sp',xc,yc,zwg,nx,ny,nzg)
+!        call hdf5_3Dgrid_sp('grid3dc.h5sp',xc,yc,zcg,nx,ny,nzg)
         
 c
 c        ENDIF

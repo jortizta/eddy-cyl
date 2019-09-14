@@ -346,6 +346,10 @@ c...start mpi, get rank and number of processors
 c
 c...input parameters (namelist-statements)
 c
+
+      begin_time=tclock()
+      save_res = .TRUE.
+
       CALL INPALL(nx,ny,nz,nzg)
 
       hspdir = './'
@@ -782,38 +786,29 @@ c        CALL IOMPI_3DSCALAR(trim(hspdir)//'res.ini.p',P,NX,NY,NZ,IDIR)
 !         CALL HDF5_MPI_3DREAL(trim(hspdir)//'res.ini.dens',DENS,NX,NY,NZ,IDIR)
         ENDIF
 
-C$$$!MOD ***************************************************************************************
-C$$$        call add_density(xc,yc,nx,ny,nz,dens,ierr)
-C$$$        CALL SPONGE_SETUP(NX,NY,NZ,NZG,XC,XU,ZWG,ZCG,IERR)
-C$$$        IDIR  = -1 ! IOMPI_3DSCALAR reads restart files
+! If restarting after interpolation add
+!        CALL BOUNDARY_DENS(DENS,XC,YC,NX,NY,NZ)
+!        CALL REFRESHBC(DENS,NX*NY,NZ)
+!
+!        do k=kz1,kz2
+!        do j=jy1,jy2
+!        do i=ix1,ix2
+!
+!        dens(i,j,k)   =  dens(i,j,k)+denP1*rp(i)*sin(yc(j))
+!
+!        enddo
+!        enddo
+!        enddo
+!
+!        CALL BOUNDARY_DENS(DENS,XC,YC,NX,NY,NZ)
+!        CALL REFRESHBC(DENS,NX*NY,NZ)
+!
+!        CALL REFRESHBC(UO,NX*NY,NZ)
+!        CALL REFRESHBC(VO,NX*NY,NZ)
+!        CALL REFRESHBC(WO,NX*NY,NZ)
+!
+!        CALL BOUNDARY(UO,VO,WO,XU,XC,YV,YC,ZW,ZC,NX,NY,NZ,TLEVEL)
 
-C$$$        UO = 0
-C$$$        IF(MYRANK.EQ.0) write(6,*) 'Reading u restart file ...'
-C$$$        write(ICfile,'(a,i8.8,a)')trim(hspdir)//"u_",resstep,".res"
-C$$$        CALL IOSCALAR_MOD(ICfile,UO,DP,NX,NY,NZ,IDIR,TIME,DTM1,nstep)
-
-C$$$        VO = 0
-C$$$        IF(MYRANK.EQ.0) write(6,*) 'Reading v restart file ...'
-C$$$        write(ICfile,'(a,i8.8,a)')trim(hspdir)//"v_",resstep,".res"
-C$$$        CALL IOSCALAR_MOD(ICfile,VO,DP,NX,NY,NZ,IDIR,TIME,DTM1,nstep)
-
-C$$$        WO = 1
-C$$$        IF(MYRANK.EQ.0) write(6,*) 'Reading w restart file ...'
-C$$$        write(ICfile,'(a,i8.8,a)')trim(hspdir)//"w_",resstep,".res"
-C$$$        CALL IOSCALAR_MOD(ICfile,WO,DP,NX,NY,NZ,IDIR,TIME,DTM1,nstep)
-
-C$$$        P = 0
-C$$$        IF(MYRANK.EQ.0) write(6,*) 'Reading p restart file ...'
-C$$$        write(ICfile,'(a,i8.8,a)')trim(hspdir)//"p_",resstep,".res"
-C$$$        CALL IOSCALAR_MOD(ICfile,P ,DP,NX,NY,NZ,IDIR,TIME,DTM1,nstep)
-
-
-C$$$! ***************************************************************************************
-
-
-
-
-!          WRITE(*,*)"********************",TIME
 
 ! Karu adds ------------------------------------
         CALL BOUNDARY_DENS(DENS,XC,YC,NX,NY,NZ)
@@ -821,21 +816,6 @@ C$$$! **************************************************************************
 !------------------------------------------------
         TSTEP=DTM1
 
-c        do i=1,nx
-c          dp(i,1,2) = sum(wo(i,:,:)/real(ny-2)/real(nz-2))
-c        enddo
-c        do i=ix1,ix2
-c          wo(i,:,:) = wo(i,:,:)*dp(i,1,1)/dp(i,1,2)
-c        enddo
-c        do j=1,ny
-c          wo(1,j,:) = wo(2,jsym(j),:)
-c        enddo
-c        wo(nx,:,:) =-wo(ix2,:,:)
-c        endif
-
-c        UO = UO*15.0
-c        VO = VO*15.0
-c	WO = WO*15.0
         IF(MYRANK.EQ.0) write(6,*) 'Restart files read. time=',time
 
         IF(ISCHM==1) THEN
@@ -846,15 +826,15 @@ c
 c            CALL IOMPI_3DSCALAR(trim(hspdir)//'res.ini.ua',UA,NX,NY,NZ,IDIR)
 c            CALL IOMPI_3DSCALAR(trim(hspdir)//'res.ini.va',VA,NX,NY,NZ,IDIR)
 c            CALL IOMPI_3DSCALAR(trim(hspdir)//'res.ini.wa',WA,NX,NY,NZ,IDIR)
-            CALL HDF5_MPI_3DREAL(trim(hspdir)//'res.ini.ua',UA,NX,NY,NZ,IDIR)
-            CALL HDF5_MPI_3DREAL(trim(hspdir)//'res.ini.va',VA,NX,NY,NZ,IDIR)
-            CALL HDF5_MPI_3DREAL(trim(hspdir)//'res.ini.wa',WA,NX,NY,NZ,IDIR)
+!            CALL HDF5_MPI_3DREAL(trim(hspdir)//'res.ini.ua',UA,NX,NY,NZ,IDIR)
+!            CALL HDF5_MPI_3DREAL(trim(hspdir)//'res.ini.va',VA,NX,NY,NZ,IDIR)
+!            CALL HDF5_MPI_3DREAL(trim(hspdir)//'res.ini.wa',WA,NX,NY,NZ,IDIR)
 c            CALL IOSCALAR('res.ini.ua',UA,DP,NX,NY,NZ,IDIR,TIME)
 c            CALL IOSCALAR('res.ini.va',VA,DP,NX,NY,NZ,IDIR,TIME)
 c            CALL IOSCALAR('res.ini.wa',WA,DP,NX,NY,NZ,IDIR,TIME)
-            IF(IDENS.EQ.1)
-     %CALL HDF5_MPI_3DREAL(trim(hspdir)//'res.ini.rha',RHA,NX,NY,NZ,IDIR)
-          ELSE
+            IF(IDENS.EQ.1) THEN
+!            CALL HDF5_MPI_3DREAL(trim(hspdir)//'res.ini.rha',RHA,NX,NY,NZ,IDIR)
+            ELSE
             CALL RHS(UO,VO,WO,DENS,US,VS,WS,TV,UB,VB,WB,DP,NX,NY,NZ,XC,XU,YC,YV,TIME)
             UA=UB
             VA=VB
@@ -863,7 +843,7 @@ c            CALL IOSCALAR('res.ini.wa',WA,DP,NX,NY,NZ,IDIR,TIME)
               CALL RHS_DENSITY(UO,VO,WO,DENS,TV,RHB,RS,NX,NY,NZ,YC,YV)
               RHA=RHB
 ! Karu adds ------------------------------------
-              write(6,*) "HERE"
+              
               CALL BOUNDARY_DENS(RHA,XC,YC,NX,NY,NZ)
               CALL BOUNDARY_DENS(RHB,XC,YC,NX,NY,NZ)
               CALL BOUNDARY_DENS(RS,XC,YC,NX,NY,NZ)
@@ -889,8 +869,8 @@ c LES with the Lagrangian SGS model
 c
 c          CALL IOMPI_3DSCALAR(trim(hspdir)//'res.ini.ilm',ILM,NX,NY,NZ,IDIR)
 c          CALL IOMPI_3DSCALAR(trim(hspdir)//'res.ini.imm',IMM,NX,NY,NZ,IDIR)
-          CALL HDF5_MPI_3DREAL(trim(hspdir)//'res.ini.ilm',ILM,NX,NY,NZ,IDIR)
-          CALL HDF5_MPI_3DREAL(trim(hspdir)//'res.ini.imm',IMM,NX,NY,NZ,IDIR)
+!          CALL HDF5_MPI_3DREAL(trim(hspdir)//'res.ini.ilm',ILM,NX,NY,NZ,IDIR)
+!          CALL HDF5_MPI_3DREAL(trim(hspdir)//'res.ini.imm',IMM,NX,NY,NZ,IDIR)
 c          CALL IOSCALAR('res.ini.ilm',ILM,DP,NX,NY,NZ,IDIR,TIME)
 c          CALL IOSCALAR('res.ini.imm',IMM,DP,NX,NY,NZ,IDIR,TIME)
         ENDIF
@@ -1695,6 +1675,17 @@ c-----------------------------------------------------------------------
 c                                            compute turbulent viscosity
 c-----------------------------------------------------------------------
 c
+
+        if((tclock()-begin_time) .ge. background_time) then
+          if(save_res) then
+                  itres = icycle + 2
+                  if (myrank .eq. 0) then
+                          print*, itres
+                  endif
+                  save_res = .FALSE.
+          endif
+        endif      
+
       IF(ISGS/=0) THEN
 
         clock(37) = tclock()
@@ -3371,15 +3362,17 @@ c        CALL IOMPI_3DSCALAR(trim(hspdir)//'p.res', P,NX,NY,NZ,IDIR)
         write(ICfile,'(a,i8.8,a)')trim(hspdir)//"p_",icycle,".res"
         CALL IOSCALAR(ICfile,P ,DP,NX,NY,NZ,IDIR,TIME,DTM1,nstep)
 !         CALL HDF5_MPI_3DREAL(ICfile, P,NX,NY,NZ,IDIR)
-
-
-
+        write(ICfile,'(a,i8.8,a)')trim(hspdir)//"tv_",icycle,".res"
+        CALL IOSCALAR(ICfile,TV ,DP,NX,NY,NZ,IDIR,TIME,DTM1,nstep)
+!         CALL HDF5_MPI_3DREAL(ICfile, TV,NX,NY,NZ,IDIR)
 
         IF(IDENS.EQ.1) then
         write(ICfile,'(a,i8.8,a)')trim(hspdir)//"dens_",icycle,".res"
         CALL IOSCALAR(ICfile,DENS,DP,NX,NY,NZ,IDIR,TIME,DTM1,nstep)
 !         CALL HDF5_MPI_3DREAL(ICfile,DENS,NX,NY,NZ,IDIR)
         endif
+
+
 
 c        call write_var_arc(p,xc,yc,zc,nx,ny,nz)
 c        DP(:,1,:) = SUM(WO(:,2:NY-1,:),2)/REAL(NY-2)
@@ -3391,15 +3384,15 @@ c UA,VA,WA are the  components at the time level L-2
 c          CALL IOMPI_3DSCALAR(trim(hspdir)//'ua.res',UA,NX,NY,NZ,IDIR)
 c          CALL IOMPI_3DSCALAR(trim(hspdir)//'va.res',VA,NX,NY,NZ,IDIR)
 c          CALL IOMPI_3DSCALAR(trim(hspdir)//'wa.res',WA,NX,NY,NZ,IDIR)
-          CALL HDF5_MPI_3DREAL(trim(hspdir)//'ua.res',UA,NX,NY,NZ,IDIR)
-          CALL HDF5_MPI_3DREAL(trim(hspdir)//'va.res',VA,NX,NY,NZ,IDIR)
-          CALL HDF5_MPI_3DREAL(trim(hspdir)//'wa.res',WA,NX,NY,NZ,IDIR)
+!          CALL HDF5_MPI_3DREAL(trim(hspdir)//'ua.res',UA,NX,NY,NZ,IDIR)
+!          CALL HDF5_MPI_3DREAL(trim(hspdir)//'va.res',VA,NX,NY,NZ,IDIR)
+!          CALL HDF5_MPI_3DREAL(trim(hspdir)//'wa.res',WA,NX,NY,NZ,IDIR)
 c          CALL IOSCALAR('ua.res',UA,DP,NX,NY,NZ,IDIR,TIME)
 c          CALL IOSCALAR('va.res',VA,DP,NX,NY,NZ,IDIR,TIME)
 c          CALL IOSCALAR('wa.res',WA,DP,NX,NY,NZ,IDIR,TIME)
-          IF(IDENS.EQ.1)
-     %CALL HDF5_MPI_3DREAL(trim(hspdir)//'rha.res',RHA,NX,NY,NZ,IDIR)
-        ENDIF
+!          IF(IDENS.EQ.1)
+!          CALL HDF5_MPI_3DREAL(trim(hspdir)//'rha.res',RHA,NX,NY,NZ,IDIR)
+!        ENDIF
         IF(ISGS/=0) THEN !if a SGS model is used
 
 !c          CALL IOMPI_3DSCALAR(trim(hspdir)//'tv.res',TV,NX,NY,NZ,IDIR)
@@ -3686,8 +3679,8 @@ c
       clocktemp = tclock()
       if(itVPfield>0 .AND. mod(icycle,itVPfield)==0) then
         nVPfield = nVPfield+1
-c        call write_VPfield(trim(hspdir),'field.'//index(nVPfield),uo,vo,wo,p,nx,ny,nz,limVPfield)
-        call write_VPfield_hdf5_sp(trim(hspdir),'field.'//index(nVPfield),uo,vo,wo,p,nx,ny,nz,limVPfield)
+!        call write_VPfield(trim(hspdir),'field.'//index(nVPfield),uo,vo,wo,p,nx,ny,nz,limVPfield)
+!        call write_VPfield_hdf5_sp(trim(hspdir),'field.'//index(nVPfield),uo,vo,wo,p,nx,ny,nz,limVPfield)
         if(myrank.eq.0) then
            open(unit=10,file='time.VPfield',form='formatted',position
      $          ='append')

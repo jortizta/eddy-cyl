@@ -14,7 +14,9 @@ c
       INTEGER, PARAMETER :: MMX=1000,MMY=514,MMZ=7000
       INTEGER, PARAMETER :: NIMPLXMAX=2,NIMPLYMAX=2
       REAL, PARAMETER :: pi=3.141592653589793
-
+     
+      INTEGER background_time,begin_time
+      LOGICAL save_res
 c
       CHARACTER*120  str1,str2,str3,str4,str5,str6
       CHARACTER     index(0:9999)*4,proc(0:999)*3

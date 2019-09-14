@@ -296,7 +296,7 @@
 *recunit:  - Record unit for direct access open of files
 *            1 for Intel Compiler; 4 for GNU Compiler; unknown for Portland
 &IOPRMS
-         recunit = 1
+         recunit = 1, BACKGROUND_TIME = 14275
 &END
 *
 *
