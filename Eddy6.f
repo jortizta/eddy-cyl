@@ -832,7 +832,7 @@ c            CALL IOMPI_3DSCALAR(trim(hspdir)//'res.ini.wa',WA,NX,NY,NZ,IDIR)
 c            CALL IOSCALAR('res.ini.ua',UA,DP,NX,NY,NZ,IDIR,TIME)
 c            CALL IOSCALAR('res.ini.va',VA,DP,NX,NY,NZ,IDIR,TIME)
 c            CALL IOSCALAR('res.ini.wa',WA,DP,NX,NY,NZ,IDIR,TIME)
-            IF(IDENS.EQ.1) THEN
+!            IF(IDENS.EQ.1) THEN
 !            CALL HDF5_MPI_3DREAL(trim(hspdir)//'res.ini.rha',RHA,NX,NY,NZ,IDIR)
             ELSE
             CALL RHS(UO,VO,WO,DENS,US,VS,WS,TV,UB,VB,WB,DP,NX,NY,NZ,XC,XU,YC,YV,TIME)
@@ -3392,7 +3392,7 @@ c          CALL IOSCALAR('va.res',VA,DP,NX,NY,NZ,IDIR,TIME)
 c          CALL IOSCALAR('wa.res',WA,DP,NX,NY,NZ,IDIR,TIME)
 !          IF(IDENS.EQ.1)
 !          CALL HDF5_MPI_3DREAL(trim(hspdir)//'rha.res',RHA,NX,NY,NZ,IDIR)
-!        ENDIF
+        ENDIF
         IF(ISGS/=0) THEN !if a SGS model is used
 
 !c          CALL IOMPI_3DSCALAR(trim(hspdir)//'tv.res',TV,NX,NY,NZ,IDIR)
