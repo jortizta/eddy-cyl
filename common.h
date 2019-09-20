@@ -85,7 +85,7 @@ c
       COMMON /IMPCOEF/ ruimplx,rvimplx,rwimplx,ruimply,rvimply,rwimply
       COMMON /DAT1/    itmax,itini,itscr,istat,itser,itres,itpost,it5p,kmin5p,kmax5p,
      &                 itpln,ivrtx,itbdy,itcalf,it2d,itVPfield,resstep
-     &                 ,nVPfield,nwrite,nwrite2d,nwritebdy,iolvl,ioclock
+     &                 ,nVPfield,nwrite,nwrite2d,nwritebdy,iolvl,ioclock,background_time
       COMMON /DAT2/    ru1,css,eps,dpdx,dpdy,dpdz,frn,prn,denP1,grav,rho_0,gt1,gt2,g_orig
       COMMON /IOFILE/  str1,str2,str3,str4,str5,str6
       COMMON /tmstep/  cflc,tstep,dtsave,tini
